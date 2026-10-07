@@ -1,0 +1,2 @@
+vox-lux branch claude/whatif-machine commit 7c2d2d2
+Hoofdstukken samenvoegen: python3 whatif-demo/long/concat_long.py long/sun-went-out/sun-went-out.mp4 sun-out-1-street sun-out-2-village sun-out-3-river sun-out-4-coast sun-out-5-year
