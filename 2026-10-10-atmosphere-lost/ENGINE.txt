@@ -1,0 +1,3 @@
+vox-lux branch claude/whatif-machine, commit 2c45700a26ae6c6359bdadf753780e7fb79695cd
+render: python3 whatif-demo/make_whatif.py 43 --from render (topics/atmosphere-lost)
+Let op: render gestart op de engine van vóór merge 7dfdca9 (natuurpark kreeg daarna een beek); scenario ongewijzigd.
