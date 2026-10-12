@@ -97,12 +97,15 @@ def cover(img):
     ih, iw = img.shape[:2]; s = max(W / iw, H / ih)
     r = cv2.resize(img, (int(iw * s + .5), int(ih * s + .5)), interpolation=cv2.INTER_CUBIC)
     y, x = (r.shape[0] - H) // 2, (r.shape[1] - W) // 2; return r[y:y + H, x:x + W].astype(np.float32)
-def clip_frames(path, n):
+# seconds of each Comfy clip that are clean (Wan sometimes morphs at the end); None = whole clip, 0 = use the still
+USE = {}
+def clip_frames(path, n, use=None):
     """Exactly n frames at FPS: the Comfy clip slowed down to fill the scene (motion-interpolated), upscaled + sharpened."""
     d0 = float(subprocess.check_output(['ffprobe', '-v', 'error', '-show_entries', 'format=duration', '-of', 'csv=p=0', path]))
+    if use: d0 = min(d0, use)
     k = min(1.5, max(1.0, n / FPS / d0))           # never slow down more than 1.5x (stronger interpolation warps the picture)
     pp = n / FPS > d0 * k + 0.05                   # still too short: play on slowly in reverse (ping-pong)
-    slow = f'setpts={k:.4f}*PTS,minterpolate=fps={FPS}:mi_mode=mci:mc_mode=aobmc:vsbmc=1'
+    slow = f'trim=duration={d0:.3f},setpts={k:.4f}*PTS,minterpolate=fps={FPS}:mi_mode=mci:mc_mode=aobmc:vsbmc=1'
     up = f'scale={W}:{H}:force_original_aspect_ratio=increase:flags=lanczos,crop={W}:{H},unsharp=5:5:0.6,tpad=stop_mode=clone:stop_duration=2'
     vf = (f'{slow},split[a][b];[b]reverse[r];[a][r]concat=n=2:v=1:a=0,{up}' if pp else f'{slow},{up}')
     p = subprocess.Popen(['ffmpeg', '-v', 'error', '-i', path, '-vf', vf, '-frames:v', str(n), '-f', 'rawvideo', '-pix_fmt', 'bgr24', '-'],
@@ -149,7 +152,8 @@ def render(i):
     e = SC[i + 1][0] if i + 1 < len(SC) else T
     d = e - s; n = int(round(e * FPS)) - int(round(s * FPS))
     clip = f'clips/{still}.mp4'
-    src = clip_frames(clip, n) if os.path.exists(clip) else None
+    use = USE.get(still)
+    src = clip_frames(clip, n, use) if os.path.exists(clip) and use != 0 else None
     img = None if src else cover(cv2.imread(f'stills/{still}.jpg'))
     reuse = any(x[1] == still for x in SC[:i])
     out = f'build/s{i:02d}.mp4'
