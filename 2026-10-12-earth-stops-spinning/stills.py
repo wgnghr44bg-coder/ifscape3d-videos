@@ -2,8 +2,9 @@
 """Stills for Wan image-to-video (xAI grok-imagine-image, 9:16, ~$0.02 each). Usage: python3 stills.py 02 05"""
 import json, sys, time, base64, urllib.request
 from pathlib import Path
-STYLE = (", stylized 3D animated film still, Pixar-like cinematic render, soft volumetric lighting, warm rich colours, "
-         "clean shapes, detailed, consistent art style, vertical composition, no text")
+STYLE = (", clean 3D CGI render made in Blender, smooth simple geometry, low-detail stylized 3D models, "
+         "matte plastic materials, crisp ray-traced shadows, global illumination, bright clean colours, "
+         "isometric-like slightly high camera, looks like a 3D game scene, no painterly texture, no text, vertical composition")
 P = {
  '02': "a calm European city park on a sunny morning, a few people walking on a gravel path, leafy trees, pigeons, old apartment buildings and a church tower in the background, eye-level view",
  '05': "a violent windstorm tearing through a European city street, trees bent almost flat, leaves, branches and debris flying sideways, dark dramatic sky, eye-level view",
