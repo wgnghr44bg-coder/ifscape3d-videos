@@ -121,9 +121,6 @@ def frame(img, t, d, motion, eff, i):
         c = (np.sin(xx * .09 + t * 1.7 + np.sin(yy * .05 + t)) * np.sin(yy * .07 - t * 1.3 + np.sin(xx * .04 - t * .7))) ** 2
         c = cv2.resize(c * np.clip(1 - yy / (H // 8) * 1.3, 0, 1), (W, H), interpolation=cv2.INTER_CUBIC)[..., None]
         fr += c * np.array([60, 45, 20], np.float32)
-        for x, y, sp, sz in PART[:60]:
-            px, py = int((x * W + 20 * math.sin(t * .6 + y * 7)) % W), int((y * H - sp * 60 * t) % H)
-            cv2.circle(fr, (px, py), int(1 + sz * 3), (235, 225, 200), 1 if sz > .7 else -1, cv2.LINE_AA)
     if eff == 'dust':
         for x, y, sp, sz in PART:
             px, py = int((x * W + 30 * t * (sp - .5)) % W), int((y * H + 12 * t * sp) % H)
