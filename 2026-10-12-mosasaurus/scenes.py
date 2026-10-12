@@ -16,19 +16,19 @@ BANG = st(12)                                          # flash + bang right befo
 CUT = LINES[10][0] - 0.05                              # silence starts just before "Then."
 END = LINES[-1][1] + 0.1                               # final sting after the last line
 T = END + 1.5
-# (start, still, motion, effect, label, sub-label)
+# (start, still, motion, effect, label, number) -> Alteraqon lower-third top-left (gold line, spaced label, big thin number)
 SC = [(0.0, 'm01', 'in', 'water', None, None),
       (st(3), 'm03', 'up', 'sun', None, None),
       (st(7), 'm07', 'in', 'bob', None, None),
       (st(9), 'm09', 'in', 'water', None, None),
       (BANG, 'm12', 'out', 'shake', None, None),
-      (st(13), 'm13', 'right', 'sun', None, None),
-      (st(14), 'm14', 'in', 'water', None, None),
+      (st(13), 'm13', 'right', 'sun', 'MAXIMUM LENGTH', '15 m'),
+      (st(14), 'm14', 'in', 'water', 'ROWS OF TEETH', '2'),
       (st(15), 'm15', 'in', 'water', None, None),
       (st(17), 'm17', 'up', 'bob', None, None),
       (st(19), 'm19', 'left', 'water', None, None),
-      (st(22), 'm22', 'in', 'dust', None, None),
-      (st(24), 'm24', 'right', 'dust', None, None),
+      (st(22), 'm22', 'in', 'dust', 'FIRST FOUND NEAR', 'Maastricht'),
+      (st(24), 'm24', 'right', 'dust', 'TAKEN AS WAR LOOT', '1795'),
       (st(25), 'm25', 'in', 'dust', None, None),
       (st(26), 'm07', 'out', 'bob', None, None),
       (st(28), 'm09', 'in', 'water', None, None)]
@@ -59,8 +59,37 @@ def caption_at(t):
         nxt = LINES[k + 1][0] if k + 1 < len(LINES) else T
         if a - 0.05 <= t < min(b + 0.45, nxt - 0.05): return k
     return None
-LAB = {s[1] + str(i): overlay_text([(s[4], int(H * 0.12), FB, 150, (255, 255, 255), 8),
-                                     (s[5], int(H * 0.12) + 180, FB, 46, (255, 205, 90), 5)]) for i, s in enumerate(SC) if s[4]}
+FL = '/usr/share/fonts/opentype/inter/InterDisplay-Light.otf'
+LX, LY = 84, 96
+def lt_layer(draw_fn):
+    im = Image.new('RGBA', (W, H), (0, 0, 0, 0)); d = ImageDraw.Draw(im); draw_fn(d)
+    sh = np.asarray(im)[..., 3].astype(np.float32) / 255                       # soft shadow for readability
+    sh = cv2.GaussianBlur(sh, (0, 0), 6)[..., None] * 0.55
+    a = np.asarray(im).astype(np.float32); al = a[..., 3:] / 255
+    return a[..., 2::-1] * al, al, sh
+def lower_third(label, num):
+    def lab(d):
+        x = LX
+        for ch in label: d.text((x, LY + 26), ch, font=font(FS, 30), fill=(222, 190, 130, 255)); x += d.textlength(ch, font=font(FS, 30)) + 8
+    def nm(d): d.text((LX - 4, LY + 62), num, font=font(FL, 112), fill=(255, 255, 255, 255))
+    return lt_layer(lab), lt_layer(nm)
+LAB = {i: lower_third(s[4], s[5]) for i, s in enumerate(SC) if s[4]}
+LT_ON = 2.6
+_gy, _gx = np.mgrid[0:H, 0:W].astype(np.float32)
+SHADE = (np.exp(-(((_gx - 260) / 520) ** 2 + ((_gy - 160) / 260) ** 2)) * 0.45)[..., None]   # soft dark patch behind the label
+def draw_lt(fr, i, t):
+    a_out = ss((0.3 + LT_ON + 0.35 - t) / 0.35)
+    if a_out <= 0: return fr
+    fr = fr * (1 - SHADE * a_out * ss((t - 0.2) / 0.4))
+    w = int(280 * ss((t - 0.3) / 0.45))                                          # gold line slides in
+    if w > 0: fr[LY:LY + 4, LX:LX + w] = fr[LY:LY + 4, LX:LX + w] * (1 - a_out) + np.array([130, 190, 222], np.float32) * a_out
+    for k, (pre, al, sh) in enumerate(LAB[i]):
+        a = ss((t - 0.45 - 0.15 * k) / 0.4) * a_out
+        if a <= 0: continue
+        dy = int(14 * (1 - ss((t - 0.45 - 0.15 * k) / 0.4)))
+        if dy: pre, al, sh = (np.roll(x, dy, 0) for x in (pre, al, sh))
+        fr = fr * (1 - sh * a); fr = fr * (1 - al * a) + pre * a
+    return fr
 
 def cover(img):
     ih, iw = img.shape[:2]; s = max(W / iw, H / ih)
@@ -121,13 +150,7 @@ def render(i):
         base = img if src is None else cover(src[min(len(src) - 1, int(f * len(src) / n))])   # stretch clip over the scene
         fr = frame(base, t, d, motion, eff, i)
         if i == 3 and tg > CUT - 0.3: fr *= max(0.15, 1 - (tg - CUT + 0.3) / 0.6)                  # darken into the silence before "Then."
-        if lab:
-            a = ss((t - 0.25) / 0.35) * ss((d - t) / 0.3); pre, al = LAB[still + str(i)]
-            pop = 1 + 0.12 * (1 - ss((t - 0.25) / 0.25))
-            if pop > 1.001:
-                M = cv2.getRotationMatrix2D((W / 2, H * 0.17), 0, pop)
-                pre = cv2.warpAffine(pre, M, (W, H)); al = cv2.warpAffine(al, M, (W, H))[..., None]
-            fr = fr * (1 - al * a) + pre * a
+        if lab: fr = draw_lt(fr, i, t)
         k = caption_at(tg)
         if k is not None: pre, al = CAP[k]; fr = fr * (1 - al) + pre
         if i > 0 and t < 0.12 and s == BANG: fr = fr * (t / 0.12) + 255 * (1 - t / 0.12)                # white flash

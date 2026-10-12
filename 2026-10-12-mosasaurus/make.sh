@@ -20,7 +20,7 @@ L = [{"id": "timeline.place", "params": {"items": [m[k] for k in sc], "track": "
      {"id": "timeline.place", "params": {"item": m['music.wav'], "track": "A2", "seconds": 0}},
      {"id": "timeline.place", "params": {"item": m['amb.wav'], "track": "A3", "seconds": 0}},
      {"id": "timeline.setTrack", "params": {"track": "A1", "name": "Atlas", "volumeDb": 0}},
-     {"id": "timeline.setTrack", "params": {"track": "A2", "name": "Muziek", "volumeDb": -9}},
+     {"id": "timeline.setTrack", "params": {"track": "A2", "name": "Muziek", "volumeDb": -15}},
      {"id": "timeline.setTrack", "params": {"track": "A3", "name": "Geluid", "volumeDb": -11}}]
 open('build/place.jsonl', 'w').write(''.join(json.dumps(x) + '\n' for x in L))
 EOF
