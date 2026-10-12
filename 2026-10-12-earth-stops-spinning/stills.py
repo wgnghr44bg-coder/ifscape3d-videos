@@ -4,9 +4,10 @@ import json, sys, time, base64, urllib.request
 from pathlib import Path
 STYLE = (", clean 3D CGI render made in Blender, smooth simple geometry, low-detail stylized 3D models, "
          "matte plastic materials, crisp ray-traced shadows, global illumination, bright clean colours, "
-         "isometric-like slightly high camera, looks like a 3D game scene, no painterly texture, no text, vertical composition")
+         "looks like a 3D game scene, no painterly texture, no text, vertical composition")
 P = {
  '02': "a calm European city park on a sunny morning, a few people walking on a gravel path, leafy trees, pigeons, old apartment buildings and a church tower in the background, eye-level view",
+ '02c': "close-up medium shot: a man in a coat sitting on a park bench drinking coffee, large in the foreground filling half the frame, several pigeons pecking right in front of the camera, park trees and city buildings softly in the background, eye-level camera",
  '05': "a violent windstorm tearing through a European city street, trees bent almost flat, leaves, branches and debris flying sideways, dark dramatic sky, eye-level view",
 }
 def gen(prompt):
