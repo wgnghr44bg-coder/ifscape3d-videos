@@ -4,11 +4,12 @@ Underwater scenes get CC Bubbles, the bang gets CC Particle World spray. Output 
 import os, shutil, subprocess, sys
 from scenes import SC, CUT
 HERE = os.path.abspath('.')
-BUBBLES = '''var s = c.layers.addSolid([0.75, 0.9, 1.0], "bubbles", 1080, 1920, 1, f.duration);
+BUBBLES = '''var s = c.layers.add(f); s.name = "bubbles";
 var b = s.property("ADBE Effect Parade").addProperty("CC Bubbles");
-b.property("Bubble Amount").setValue(25); b.property("Bubble Speed").setValue(0.35);
-b.property("Bubble Size").setValue(0.45); b.property("Wobble Amplitude").setValue(12);
-s.blendingMode = BlendingMode.SCREEN; var op = s.property("ADBE Transform Group").property("ADBE Opacity"); op.setValue(40);'''
+b.property("Bubble Amount").setValue(18); b.property("Bubble Speed").setValue(0.3);
+b.property("Bubble Size").setValue(0.8); b.property("Wobble Amplitude").setValue(10);
+b.property("Shading Type").setValue(4);
+s.blendingMode = BlendingMode.SCREEN; var op = s.property("ADBE Transform Group").property("ADBE Opacity"); op.setValue(70);'''
 SPRAY = '''var s = c.layers.addSolid([0, 0, 0], "spray", 1080, 1920, 1, f.duration);
 var p = s.property("ADBE Effect Parade").addProperty("CC Particle World");
 function P(path, v, t) { var x = p; for (var i = 0; i < path.length; i++) x = x.property(path[i]); if (t === undefined) x.setValue(v); else x.setValueAtTime(t, v); }
@@ -23,7 +24,7 @@ def run(i):
     fx = BUBBLES if SC[i][3] == 'water' else SPRAY if SC[i][3] == 'shake' else None
     if fx is None: shutil.copy(src, out); return
     if SC[i][0] < CUT < (SC[i + 1][0] if i + 1 < len(SC) else 1e9) and fx is BUBBLES:   # fade out with the picture before "Then."
-        t0 = CUT - 0.3 - SC[i][0]; fx += f'\nop.setValueAtTime({t0:.2f}, 40); op.setValueAtTime({t0 + 0.6:.2f}, 0);'
+        t0 = CUT - 0.3 - SC[i][0]; fx += f'\nop.setValueAtTime({t0:.2f}, 70); op.setValueAtTime({t0 + 0.6:.2f}, 0);'
     proj, jsx = f'{HERE}/build/e{i:02d}.ecproj', f'build/e{i:02d}.jsx'
     open(jsx, 'w').write(f'''var f = app.project.importFile(new ImportOptions(new File("{src}")));
 var c = app.project.items.addComp("scene", 1080, 1920, 1, f.duration, 30);

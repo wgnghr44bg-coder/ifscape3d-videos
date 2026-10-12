@@ -100,9 +100,11 @@ def cover(img):
 def clip_frames(path, n):
     """Exactly n frames at FPS: the Comfy clip slowed down to fill the scene (motion-interpolated), upscaled + sharpened."""
     d0 = float(subprocess.check_output(['ffprobe', '-v', 'error', '-show_entries', 'format=duration', '-of', 'csv=p=0', path]))
-    k = max(1.0, n / FPS / d0)
-    vf = (f'setpts={k:.4f}*PTS,minterpolate=fps={FPS}:mi_mode=mci:mc_mode=aobmc:vsbmc=1,'
-          f'scale={W}:{H}:force_original_aspect_ratio=increase:flags=lanczos,crop={W}:{H},unsharp=5:5:0.6,tpad=stop_mode=clone:stop_duration=2')
+    k = min(1.5, max(1.0, n / FPS / d0))           # never slow down more than 1.5x (stronger interpolation warps the picture)
+    pp = n / FPS > d0 * k + 0.05                   # still too short: play on slowly in reverse (ping-pong)
+    slow = f'setpts={k:.4f}*PTS,minterpolate=fps={FPS}:mi_mode=mci:mc_mode=aobmc:vsbmc=1'
+    up = f'scale={W}:{H}:force_original_aspect_ratio=increase:flags=lanczos,crop={W}:{H},unsharp=5:5:0.6,tpad=stop_mode=clone:stop_duration=2'
+    vf = (f'{slow},split[a][b];[b]reverse[r];[a][r]concat=n=2:v=1:a=0,{up}' if pp else f'{slow},{up}')
     p = subprocess.Popen(['ffmpeg', '-v', 'error', '-i', path, '-vf', vf, '-frames:v', str(n), '-f', 'rawvideo', '-pix_fmt', 'bgr24', '-'],
                          stdout=subprocess.PIPE)
     last = None
