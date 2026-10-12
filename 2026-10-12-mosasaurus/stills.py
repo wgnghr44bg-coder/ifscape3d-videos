@@ -17,8 +17,8 @@ P = {
  'm15': "a Mosasaurus swallowing a large fish whole in the deep blue ocean, centred and large in frame, throat bulging, bubbles and sun rays, dramatic underwater view",
  'm17': "close-up of a Mosasaurus head rising at the calm sea surface to breathe air, nostrils on top of the snout, water running off its scaly skin, golden sunset light, centred",
  'm19': "a huge Mosasaurus chasing a great white shark in the open ocean, both centred and large in frame, the shark looks tiny next to it, sun rays, bubbles, dramatic underwater action",
- 'm22': "18th century quarry workers with lanterns in a chalk cave tunnel uncovering a giant fossil skull with sharp teeth in the white rock wall, centred and large in frame, warm lantern light, dust, wonder",
- 'm24': "French revolutionary soldiers in blue coats and bicorne hats in 1795 loading a giant fossil skull onto a wooden horse cart, the skull centred and large in frame, old Dutch town street, dramatic overcast light",
+ 'm22': "18th century quarry workers with lanterns in a chalk cave tunnel near Maastricht uncovering the fossil skull of a Mosasaurus: a very long, low, narrow reptile skull like a giant crocodile or monitor lizard skull, about 1.5 metres long, long pointed snout, long lower jaw, a row of sharp conical teeth, NOT a human skull, no round cranium, no eye sockets facing forward, lying sideways in the white rock wall, centred and large in frame, warm lantern light, dust, wonder",
+ 'm24': "French revolutionary soldiers in blue coats and bicorne hats in 1795 loading the fossil skull of a Mosasaurus: a very long, low, narrow reptile skull like a giant crocodile or monitor lizard skull, about 1.5 metres long, long pointed snout, long lower jaw, a row of sharp conical teeth, NOT a human skull, no round cranium, no eye sockets facing forward lengthwise onto a wooden horse cart, the long skull centred and large in frame, old Dutch town street, dramatic overcast light",
  'm25': "a giant fossil Mosasaurus skull displayed in a glass case in an old Paris natural history museum, centred and large in frame, wooden cabinets, warm museum light, a few visitors looking at it",
 }
 def gen(prompt):
