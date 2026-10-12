@@ -40,6 +40,14 @@ birds = np.zeros(n)
 for t in rng.uniform(3.2, 21, 25):
     m = int(.12 * sr); mt = np.arange(m) / sr; f = 3000 + 900 * np.sin(2 * np.pi * 18 * mt)
     add(np.sin(2 * np.pi * np.cumsum(f) / sr) * np.sin(np.pi * mt / .12) ** 2 * .02, t)
+STOP = 22.35
+duck = 1 - 0.85 * env(STOP - 0.9, STOP, 0.15)            # everything drops away just before the hit
+rs = lp(rng.standard_normal(n), .03) * 4 * np.clip((tn - (STOP - 5)) / 5, 0, 1) ** 3 * (tn < STOP - 0.9) * .4
+L += rs; R += rs
+for t in np.arange(15.4, STOP - 0.9, 60 / (70 + 0)):        # heartbeat during the build-up
+    b = int(.25 * sr); bt = np.arange(b) / sr; thump = np.sin(2 * np.pi * 50 * bt) * np.exp(-bt * 18) * .45
+    add(thump, t); add(thump * .6, t + .22)
+L *= duck; R *= duck
 h = int(2.5 * sr); ht = np.arange(h) / sr
 add((np.sin(2 * np.pi * (40 * np.exp(-ht * 1.5) + 25) * ht) * np.exp(-ht * 1.6) + lp(rng.standard_normal(h), .05) * 2 * np.exp(-ht * 2)) * .7, 22.35)
 wind = lp(rng.standard_normal(n), .02) * 6 * (1 + .4 * np.sin(tn * 1.7)) * env(24.6, 41, 1.2) * (.35 + .25 * np.clip((tn - 26) / 6, 0, 1))
@@ -54,13 +62,28 @@ with wave.open('build/mix.wav', 'wb') as w:
     w.setnchannels(2); w.setsampwidth(2); w.setframerate(sr); w.writeframes((st * 32767).astype('<i2').tobytes())
 
 # --- captions
+STOP = 22.35
 dt = []
+spd = f"if(lt(t,{STOP}),1000+3*sin(t*7),max(0,1000*(1-(t-{STOP})/0.35)))"
+wnd = f"min(1000,1000*pow(max(0,(t-25.2)/2.4),1.6))"
+hud = dict(fontfile=FONT, fontcolor='white', borderw=5, bordercolor='black@0.8', x='(w-text_w)/2')
+def dtx(text, y, size, en):
+    return ("drawtext=" + ':'.join(f"{k}={v}" for k, v in hud.items()) +
+            f":text='{text}':fontsize={size}:y={y}:enable='{en}'")
+dt.append(dtx('GROUND SPEED', 'h*0.80', 44, f'between(t,9.5,{STOP+2.4})'))
+dt.append(dtx(f"%{{eif\\:{spd}\\:d}} km/h", 'h*0.83', 96, f'between(t,9.5,{STOP+2.4})'))
+dt.append(dtx('WIND SPEED', 'h*0.80', 44, 'between(t,24.86,40.3)'))
+dt.append(dtx(f"%{{eif\\:{wnd}\\:d}} km/h", 'h*0.83', 96, 'between(t,24.86,40.3)'))
+# white flash on the stop
+dt.append(f"drawbox=x=0:y=0:w=iw:h=ih:color=white@1:t=fill:enable='between(t,{STOP},{STOP+0.12})'")
 for k, (a, b, txt) in enumerate(CAPS):
     open(f'build/cap{k}.txt', 'w').write(txt)
     big = txt in ('STOP',)
     dt.append(f"drawtext=fontfile={FONT}:textfile=build/cap{k}.txt:fontsize={150 if big else 82}:fontcolor=white:borderw=7:bordercolor=black@0.85"
               f":line_spacing=12:text_align=C:x=(w-text_w)/2:y=h*0.18:enable='between(t,{a},{b})':alpha='min(1,min((t-{a})/0.25,({b}-t)/0.25))'")
-run('ffmpeg', '-v', 'error', '-y', '-i', 'build/video.mp4', '-i', 'build/mix.wav', '-vf', ','.join(dt),
+amp = f"(if(between(t,{STOP},{STOP+1.6}),26*(1-(t-{STOP})/1.6),0)+if(between(t,25.2,40.3),9,0))"
+shake = (f"scale={int(W*1.06)}:{int(H*1.06)},crop={W}:{H}:'(in_w-{W})/2+{amp}*sin(t*61)':'(in_h-{H})/2+{amp}*sin(t*47+1)'")
+run('ffmpeg', '-v', 'error', '-y', '-i', 'build/video.mp4', '-i', 'build/mix.wav', '-vf', shake + ',' + ','.join(dt),
     '-c:v', 'libx264', '-crf', '19', '-preset', 'slow', '-pix_fmt', 'yuv420p', '-af', 'loudnorm=I=-14:TP=-1.5:LRA=11', '-ar', '48000', '-c:a', 'aac', '-b:a', '192k', '-shortest', '-movflags', '+faststart',
     'earth-stops-spinning.mp4')
 print('ok')
