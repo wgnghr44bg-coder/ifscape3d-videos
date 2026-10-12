@@ -25,8 +25,10 @@ SC = [(0.0, 'm01', 'in', 'water', None, None),
       (st(13), 'm13', 'right', 'sun', 'MAXIMUM LENGTH', '15 m'),
       (st(14), 'm14', 'in', 'water', 'ROWS OF TEETH', '2'),
       (st(15), 'm15', 'in', 'water', None, None),
-      (st(17), 'm17', 'up', 'bob', None, None),
+      (st(17), 'm13', 'left', 'sun', None, None),
+      (st(18), 'm17', 'up', 'bob', None, None),
       (st(19), 'm19', 'left', 'water', None, None),
+      (st(20), 'm01', 'in', 'water', None, None),
       (st(22), 'm22', 'in', 'dust', 'FIRST FOUND NEAR', 'Maastricht'),
       (st(24), 'm24', 'right', 'dust', 'TAKEN AS WAR LOOT', '1795'),
       (st(25), 'm25', 'in', 'dust', None, None),
@@ -95,22 +97,30 @@ def cover(img):
     ih, iw = img.shape[:2]; s = max(W / iw, H / ih)
     r = cv2.resize(img, (int(iw * s + .5), int(ih * s + .5)), interpolation=cv2.INTER_CUBIC)
     y, x = (r.shape[0] - H) // 2, (r.shape[1] - W) // 2; return r[y:y + H, x:x + W].astype(np.float32)
-def clip_frames(path):
-    p = subprocess.Popen(['ffmpeg', '-v', 'error', '-i', path, '-vf', f'scale={W}:{H}:force_original_aspect_ratio=increase,crop={W}:{H}',
-                          '-f', 'rawvideo', '-pix_fmt', 'bgr24', '-'], stdout=subprocess.PIPE)
-    fr = []
-    while (b := p.stdout.read(W * H * 3)) and len(b) == W * H * 3: fr.append(np.frombuffer(b, np.uint8).reshape(H, W, 3))
-    return fr
+def clip_frames(path, n):
+    """Exactly n frames at FPS: the Comfy clip slowed down to fill the scene (motion-interpolated), upscaled + sharpened."""
+    d0 = float(subprocess.check_output(['ffprobe', '-v', 'error', '-show_entries', 'format=duration', '-of', 'csv=p=0', path]))
+    k = max(1.0, n / FPS / d0)
+    vf = (f'setpts={k:.4f}*PTS,minterpolate=fps={FPS}:mi_mode=mci:mc_mode=aobmc:vsbmc=1,'
+          f'scale={W}:{H}:force_original_aspect_ratio=increase:flags=lanczos,crop={W}:{H},unsharp=5:5:0.6,tpad=stop_mode=clone:stop_duration=2')
+    p = subprocess.Popen(['ffmpeg', '-v', 'error', '-i', path, '-vf', vf, '-frames:v', str(n), '-f', 'rawvideo', '-pix_fmt', 'bgr24', '-'],
+                         stdout=subprocess.PIPE)
+    last = None
+    for _ in range(n):
+        b = p.stdout.read(W * H * 3)
+        if len(b) == W * H * 3: last = np.frombuffer(b, np.uint8).reshape(H, W, 3).astype(np.float32)
+        yield last
+    p.wait()
 ss = lambda x: (lambda c: c * c * (3 - 2 * c))(min(1, max(0, x)))
 rng = np.random.default_rng(11)
 PART = rng.uniform(0, 1, (90, 4))
 yy, xx = np.mgrid[0:H // 8, 0:W // 8].astype(np.float32)
 
-def frame(img, t, d, motion, eff, i):
-    u = t / d
-    z = 1.06 + 0.10 * u if motion == 'in' else 1.16 - 0.10 * u if motion == 'out' else 1.12
-    ox = {'left': 1, 'right': -1}.get(motion, 0) * (u - .5) * 70
-    oy = (u - .5) * 70 if motion == 'up' else 0
+def frame(img, t, d, motion, eff, i, live=False):
+    u = t / d; g = 0.35 if live else 1.0            # a moving Comfy clip needs less extra camera motion
+    z = 1.03 + g * (0.10 * u if motion == 'in' else 0.10 - 0.10 * u if motion == 'out' else 0.06)
+    ox = {'left': 1, 'right': -1}.get(motion, 0) * (u - .5) * 70 * g
+    oy = (u - .5) * 70 * g if motion == 'up' else 0
     rot = 0
     if eff == 'bob': oy += 9 * math.sin(t * 1.3); rot = 0.5 * math.sin(t * 0.9)
     if eff == 'shake':
@@ -137,15 +147,17 @@ def render(i):
     e = SC[i + 1][0] if i + 1 < len(SC) else T
     d = e - s; n = int(round(e * FPS)) - int(round(s * FPS))
     clip = f'clips/{still}.mp4'
-    src = clip_frames(clip) if os.path.exists(clip) else None
+    src = clip_frames(clip, n) if os.path.exists(clip) else None
     img = None if src else cover(cv2.imread(f'stills/{still}.jpg'))
+    reuse = any(x[1] == still for x in SC[:i])
     out = f'build/s{i:02d}.mp4'
     p = subprocess.Popen(['ffmpeg', '-v', 'error', '-y', '-f', 'rawvideo', '-pix_fmt', 'bgr24', '-s', f'{W}x{H}', '-r', str(FPS), '-i', '-',
                           '-c:v', 'libx264', '-crf', '17', '-preset', 'fast', '-pix_fmt', 'yuv420p', out], stdin=subprocess.PIPE)
     for f in range(n):
         t = f / FPS; tg = s + t
-        base = img if src is None else cover(src[min(len(src) - 1, int(f * len(src) / n))])   # stretch clip over the scene
-        fr = frame(base, t, d, motion, eff, i)
+        base = img if src is None else next(src)
+        if reuse: base = base[:, ::-1]                                                                # mirrored when a shot is used twice
+        fr = frame(base, t, d, motion, eff, i, src is not None)
         if i == 3 and tg > CUT - 0.3: fr *= max(0.15, 1 - (tg - CUT + 0.3) / 0.6)                  # darken into the silence before "Then."
         if lab: fr = draw_lt(fr, i, t)
         k = caption_at(tg)

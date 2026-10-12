@@ -31,9 +31,9 @@ python3 - <<'EOF2'
 import json
 r = [json.loads(l) for l in open('build/place.out') if l.strip().startswith('{')]
 clips = r[0]['result']['clips']
-FX = {0: ['rays'], 1: ['flare'], 3: ['rays'], 4: ['bang'], 6: ['rays'], 7: ['rays'], 8: ['flare'], 9: ['rays'],
-      10: ['old', ('film_dissolve', 20)], 11: ['old', ('film_dissolve', 14)], 12: ['old', ('cross_dissolve', 12)],
-      13: ['cold', ('dip_to_black', 16)], 14: ['cold', 'rays', ('cross_dissolve', 14)]}
+FX = {0: ['rays'], 1: ['flare'], 3: ['rays'], 4: ['bang'], 6: ['rays'], 7: ['rays'], 9: ['flare'], 10: ['rays'], 11: ['rays'],
+      12: ['old', ('film_dissolve', 20)], 13: ['old', ('film_dissolve', 14)], 14: ['old', ('cross_dissolve', 12)],
+      15: ['cold', ('dip_to_black', 16)], 16: ['cold', 'rays', ('cross_dissolve', 14)]}
 L = []
 for i, todo in FX.items():
     c = clips[i]

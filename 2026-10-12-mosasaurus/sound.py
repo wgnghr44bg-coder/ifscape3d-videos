@@ -60,23 +60,23 @@ mu.add(band(int(3 * sr), 30, 9000) * np.exp(-np.arange(int(3 * sr)) / sr * 2.2),
 # after the bang: dark epic in D minor — bass ostinato, toms, pad
 CM = [(62, 65, 69), (58, 62, 65), (55, 58, 62), (57, 61, 64)]
 t, b = BANG + 0.6, 0
-while t < S[10] - 1.3:
+while t < S[12] - 1.3:
     c = CM[b % 4]; mu.add(pad([hz(m - 12) for m in c] + [hz(c[0])], 4 * B + 0.6, 0.6, 0.6), t, 0.10)
     for k in range(8):
         tt = t + k * B / 2
-        if tt < S[10] - 1.2: mu.add(tone(hz(c[0] - 24 + (12 if k in (3, 7) else 0)), 0.3, 9, ((1, 1), (2, .5), (3, .25))), tt, 0.22)
+        if tt < S[12] - 1.2: mu.add(tone(hz(c[0] - 24 + (12 if k in (3, 7) else 0)), 0.3, 9, ((1, 1), (2, .5), (3, .25))), tt, 0.22)
     for k in (0, 2, 2.5): mu.add(kick(.8, 95, 45, 5), t + k * B, 0.45 if k == 0 else 0.3)
     if b % 2: mu.add(band(int(.4 * sr), 200, 3000) * np.exp(-np.arange(int(.4 * sr)) / sr * 10), t + 3 * B, 0.12)
     t += 4 * B; b += 1
-mu.add(kick(2.5, 100, 30, 1.6), S[10] - 1.1, 0.8)
+mu.add(kick(2.5, 100, 30, 1.6), S[12] - 1.1, 0.8)
 # twist: "But…" — mysterious, soft pad + music-box bells
 for k, c in enumerate([(50, 57, 64, 65), (46, 53, 62, 69), (43, 50, 58, 65), (45, 52, 61, 64)]):
-    mu.add(pad([hz(m) for m in c], (S[13] - S[10]) / 4 + .5, 1.2, 1.4), S[10] + k * (S[13] - S[10]) / 4, 0.08)
+    mu.add(pad([hz(m) for m in c], (S[15] - S[12]) / 4 + .5, 1.2, 1.4), S[12] + k * (S[15] - S[12]) / 4, 0.08)
 for k, m in enumerate([74, 77, 81, 79, 77, 74, 76, 73, 74, 69, 72, 74, 77, 76, 74, 72]):
-    mu.add(tone(hz(m), 2.0, 2.2, ((1, 1), (2.76, .3), (5.4, .1))), S[10] + .5 + k * (S[13] - S[10] - .8) / 16, 0.06, (k % 3 - 1) * .3)
+    mu.add(tone(hz(m), 2.0, 2.2, ((1, 1), (2.76, .3), (5.4, .1))), S[12] + .5 + k * (S[15] - S[12] - .8) / 16, 0.06, (k % 3 - 1) * .3)
 # ending: tension returns, heartbeat, final sting
-mu.bed(dr * env(S[13] - .2, T, 2.0, 1.0) * np.clip((tn - S[13]) / (END - S[13]), 0.2, 1), 0.08)
-t = S[13] + .4
+mu.bed(dr * env(S[15] - .2, T, 2.0, 1.0) * np.clip((tn - S[15]) / (END - S[15]), 0.2, 1), 0.08)
+t = S[15] + .4
 while t < END - 0.3:
     mu.add(kick(.3, 70, 40, 14), t, 0.45); mu.add(kick(.3, 65, 38, 14), t + .2, 0.27); t += 0.85
 mu.add(kick(3.0, 110, 28, 1.2), END, 1.0)
@@ -116,22 +116,22 @@ for a, b in spans({'bob'}):
 am.add(band(int(2.2 * sr), 200, 12000) * np.exp(-np.arange(int(2.2 * sr)) / sr * 2.0), BANG, 0.6)
 for t in rng.uniform(BANG + .3, BANG + 1.9, 40):
     m = int(.03 * sr); tt = np.arange(m) / sr; am.add(np.sin(2 * np.pi * rng.uniform(900, 2500) * tt) * np.exp(-tt * 120), t, .05, rng.uniform(-.8, .8))
-am.add(band(int(1.0 * sr), 250, 1800) * np.sin(np.pi * np.arange(int(1.0 * sr)) / sr) ** 2, S[8] + .2, 0.18)   # breath at the surface
+am.add(band(int(1.0 * sr), 250, 1800) * np.sin(np.pi * np.arange(int(1.0 * sr)) / sr) ** 2, S[9] + .2, 0.18)   # breath at the surface
 # cave: drips + pick clinks
-for t in np.arange(S[10] + .3, S[11] - .4, 0.9):
+for t in np.arange(S[12] + .3, S[13] - .4, 0.9):
     m = int(.08 * sr); tt = np.arange(m) / sr; d = np.sin(2 * np.pi * np.cumsum(1200 + 9000 * tt) / sr) * np.exp(-tt * 50)
     for e in range(4): am.add(d, t + e * .11, .07 * .45 ** e, (-.3, .3)[e % 2])
-for t in np.arange(S[10] + .7, S[11] - .4, 1.4):
+for t in np.arange(S[12] + .7, S[13] - .4, 1.4):
     am.add(tone(2650, .5, 14, ((1, 1), (1.53, .6), (2.4, .3))) + band(int(.5 * sr), 1500, 8000) * np.exp(-np.arange(int(.5 * sr)) / sr * 40), t, .06, -.3)
-am.bed(band(n, 60, 300) * env(S[10], S[11], 0.4), 0.06)
+am.bed(band(n, 60, 300) * env(S[12], S[13], 0.4), 0.06)
 # street: hooves + cart creak
-for t in np.arange(S[11] + .2, S[12] - .1, 0.42):
+for t in np.arange(S[13] + .2, S[14] - .1, 0.42):
     for e in (0, .11): am.add(band(int(.06 * sr), 300, 3000) * np.exp(-np.arange(int(.06 * sr)) / sr * 80), t + e, .14)
-for t in np.arange(S[11] + .8, S[12] - .6, 1.6):
+for t in np.arange(S[13] + .8, S[14] - .6, 1.6):
     m = int(.6 * sr); tt = np.arange(m) / sr; am.add(np.sign(np.sin(2 * np.pi * (260 + 60 * np.sin(tt * 9)) * tt)) * np.sin(np.pi * tt / .6) ** 2, t, .012, .4)
 # museum: room tone + footsteps
-am.bed(band(n, 80, 1500) * env(S[12], S[13], 0.3), 0.04)
-for t in np.arange(S[12] + .2, S[13] - .1, 0.55):
+am.bed(band(n, 80, 1500) * env(S[14], S[15], 0.3), 0.04)
+for t in np.arange(S[14] + .2, S[15] - .1, 0.55):
     for e in range(3): am.add(band(int(.05 * sr), 400, 4000) * np.exp(-np.arange(int(.05 * sr)) / sr * 90), t + e * .09, .08 * .4 ** e)
 # whoosh into every cut (not into the bang, not into the silence)
 for s in SC[1:]:
