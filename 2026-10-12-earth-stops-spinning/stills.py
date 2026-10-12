@@ -2,12 +2,13 @@
 """Stills for Wan image-to-video (xAI grok-imagine-image, 9:16, ~$0.02 each). Usage: python3 stills.py 02 05"""
 import json, sys, time, base64, urllib.request
 from pathlib import Path
-STYLE = (", clean 3D CGI render made in Blender, smooth simple geometry, low-detail stylized 3D models, "
-         "matte plastic materials, crisp ray-traced shadows, global illumination, bright clean colours, "
-         "looks like a 3D game scene, no painterly texture, no text, vertical composition")
+STYLE = (", high quality 3D CGI render made in Blender, stylized but realistic proportions, detailed textures, "
+         "varied natural colours, real clothing fabrics, crisp ray-traced shadows, warm morning sunlight, global illumination, "
+         "looks like a modern 3D animated film or high-end game cutscene, no painterly texture, no text, vertical composition")
 P = {
  '02': "a calm European city park on a sunny morning, a few people walking on a gravel path, leafy trees, pigeons, old apartment buildings and a church tower in the background, eye-level view",
  '02c': "close-up medium shot: a man in a coat sitting on a park bench drinking coffee, large in the foreground filling half the frame, several pigeons pecking right in front of the camera, park trees and city buildings softly in the background, eye-level camera",
+ '02d': "close-up medium shot: a man in his forties wearing a navy wool coat, beige scarf and jeans, sitting on a wooden park bench holding a paper coffee cup, large in the foreground filling half the frame, several grey pigeons pecking right in front of the camera, colourful flower beds, autumn trees and old European apartment buildings softly blurred in the background, eye-level camera",
  '05': "a violent windstorm tearing through a European city street, trees bent almost flat, leaves, branches and debris flying sideways, dark dramatic sky, eye-level view",
 }
 def gen(prompt):
