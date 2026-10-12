@@ -1,0 +1,138 @@
+#!/usr/bin/env python3
+"""Mosasaurus: render one clip per scene (stills or Comfy clips + slow camera motion + effects + captions) into build/.
+Free (OpenCV/PIL/ffmpeg). If clips/<still>.mp4 exists (Comfy), it is used instead of the still. Run from this folder."""
+import cv2, numpy as np, subprocess, math, os, sys
+from PIL import Image, ImageDraw, ImageFont
+W, H, FPS = 1080, 1920, 30
+FB = '/usr/share/fonts/opentype/inter/Inter-ExtraBold.otf'
+FS = '/usr/share/fonts/opentype/inter/Inter-SemiBold.otf'
+BANG = 20.0
+# (start, still, motion, effect, label, sub-label)
+SC = [(0.0, 'm01', 'in', 'water', None, None),
+      (5.0, 'm03', 'up', 'sun', None, None),
+      (10.6, 'm07', 'in', 'bob', None, None),
+      (14.5, 'm09', 'in', 'water', None, None),
+      (BANG, 'm12', 'out', 'shake', None, None),
+      (21.9, 'm13', 'right', 'sun', '15 m', 'LONGER THAN A BUS'),
+      (25.0, 'm14', 'in', 'water', '2 ROWS', 'OF TEETH'),
+      (30.4, 'm15', 'in', 'water', None, None),
+      (33.4, 'm17', 'up', 'bob', 'AIR', 'BREATHING SEA LIZARD'),
+      (40.1, 'm19', 'left', 'water', None, None),
+      (47.7, 'm22', 'in', 'dust', 'MAASTRICHT', 'THE NETHERLANDS'),
+      (55.4, 'm24', 'right', 'dust', '1795', 'WAR LOOT'),
+      (60.3, 'm25', 'in', 'dust', 'PARIS', 'STILL THERE TODAY'),
+      (62.6, 'm07', 'out', 'bob', None, None),
+      (67.3, 'm09', 'in', 'water', None, None)]
+T = 70.2
+# voice lines for captions
+LINES = []
+for r in open('voice-times.tsv').read().splitlines()[1:]:
+    c = r.split('\t'); ts = lambda s: sum(float(x) * m for x, m in zip(s.split(':')[::-1], (1, 60, 3600)))
+    LINES.append((ts(c[1]), ts(c[2]), c[4]))
+
+_fc = {}
+def font(p, s):
+    if (p, s) not in _fc: _fc[p, s] = ImageFont.truetype(p, s)
+    return _fc[p, s]
+def wrap(d, txt, f, maxw):
+    out, cur = [], ''
+    for w in txt.split():
+        if cur and d.textlength(cur + ' ' + w, font=f) > maxw: out.append(cur); cur = w
+        else: cur = (cur + ' ' + w).strip()
+    return out + [cur]
+def overlay_text(blocks):
+    """blocks: (text, y, fontpath, size, colour, stroke) -> premultiplied BGR + alpha arrays."""
+    im = Image.new('RGBA', (W, H), (0, 0, 0, 0)); d = ImageDraw.Draw(im)
+    for txt, y, fp, sz, col, st in blocks:
+        f = font(fp, sz)
+        for ln in wrap(d, txt, f, W - 140):
+            w = d.textlength(ln, font=f)
+            d.text(((W - w) / 2, y), ln, font=f, fill=col + (255,), stroke_width=st, stroke_fill=(0, 0, 0, 230)); y += int(sz * 1.2)
+    a = np.asarray(im).astype(np.float32); al = a[..., 3:] / 255
+    return a[..., 2::-1] * al, al
+CAP = [overlay_text([(t.replace('"', '“', 1).replace('"', '”'), int(H * 0.70), FS, 62, (255, 255, 255), 6)]) for *_, t in LINES]
+def caption_at(t):
+    for k, (a, b, _) in enumerate(LINES):
+        nxt = LINES[k + 1][0] if k + 1 < len(LINES) else T
+        if a - 0.05 <= t < min(b + 0.45, nxt - 0.05): return k
+    return None
+LAB = {s[1] + str(i): overlay_text([(s[4], int(H * 0.12), FB, 150, (255, 255, 255), 8),
+                                     (s[5], int(H * 0.12) + 180, FB, 46, (255, 205, 90), 5)]) for i, s in enumerate(SC) if s[4]}
+
+def cover(img):
+    ih, iw = img.shape[:2]; s = max(W / iw, H / ih)
+    r = cv2.resize(img, (int(iw * s + .5), int(ih * s + .5)), interpolation=cv2.INTER_CUBIC)
+    y, x = (r.shape[0] - H) // 2, (r.shape[1] - W) // 2; return r[y:y + H, x:x + W].astype(np.float32)
+def clip_frames(path):
+    p = subprocess.Popen(['ffmpeg', '-v', 'error', '-i', path, '-vf', f'scale={W}:{H}:force_original_aspect_ratio=increase,crop={W}:{H}',
+                          '-f', 'rawvideo', '-pix_fmt', 'bgr24', '-'], stdout=subprocess.PIPE)
+    fr = []
+    while (b := p.stdout.read(W * H * 3)) and len(b) == W * H * 3: fr.append(np.frombuffer(b, np.uint8).reshape(H, W, 3))
+    return fr
+ss = lambda x: (lambda c: c * c * (3 - 2 * c))(min(1, max(0, x)))
+rng = np.random.default_rng(11)
+PART = rng.uniform(0, 1, (90, 4))
+yy, xx = np.mgrid[0:H // 8, 0:W // 8].astype(np.float32)
+
+def frame(img, t, d, motion, eff, i):
+    u = t / d
+    z = 1.06 + 0.10 * u if motion == 'in' else 1.16 - 0.10 * u if motion == 'out' else 1.12
+    ox = {'left': 1, 'right': -1}.get(motion, 0) * (u - .5) * 70
+    oy = (u - .5) * 70 if motion == 'up' else 0
+    rot = 0
+    if eff == 'bob': oy += 9 * math.sin(t * 1.3); rot = 0.5 * math.sin(t * 0.9)
+    if eff == 'shake':
+        a = 34 * max(0, 1 - t / 1.4) + 4; ox += a * math.sin(t * 57); oy += a * math.sin(t * 43 + 1); z += 0.05 * max(0, 1 - t / 0.5)
+    M = cv2.getRotationMatrix2D((W / 2 - ox, H / 2 - oy), rot, z)
+    fr = cv2.warpAffine(img, M, (W, H), flags=cv2.INTER_LINEAR, borderMode=cv2.BORDER_REFLECT).astype(np.float32)
+    if eff == 'water':   # moving caustic light + drifting particles
+        c = (np.sin(xx * .09 + t * 1.7 + np.sin(yy * .05 + t)) * np.sin(yy * .07 - t * 1.3 + np.sin(xx * .04 - t * .7))) ** 2
+        c = cv2.resize(c * np.clip(1 - yy / (H // 8) * 1.3, 0, 1), (W, H), interpolation=cv2.INTER_CUBIC)[..., None]
+        fr += c * np.array([60, 45, 20], np.float32)
+        for x, y, sp, sz in PART[:60]:
+            px, py = int((x * W + 20 * math.sin(t * .6 + y * 7)) % W), int((y * H - sp * 60 * t) % H)
+            cv2.circle(fr, (px, py), int(1 + sz * 3), (235, 225, 200), 1 if sz > .7 else -1, cv2.LINE_AA)
+    if eff == 'dust':
+        for x, y, sp, sz in PART:
+            px, py = int((x * W + 30 * t * (sp - .5)) % W), int((y * H + 12 * t * sp) % H)
+            g = fr[py, px] * .5 + 110; cv2.circle(fr, (px, py), int(1 + sz * 2.2), g.tolist(), -1, cv2.LINE_AA)
+    if eff == 'sun':     # slow warm light sweep
+        fr *= 1 + 0.05 * np.exp(-((np.arange(W) - (0.2 + 0.6 * u) * W) / 300) ** 2)[None, :, None]
+    fr += rng.normal(0, 3.5, (H // 4, W // 4, 1)).astype(np.float32).repeat(4, 0).repeat(4, 1)   # film grain
+    v = 1 - 0.35 * ((xx / (W // 8) - .5) ** 2 + (yy / (H // 8) - .5) ** 2)                         # vignette
+    fr *= cv2.resize(v, (W, H))[..., None]
+    return fr
+
+def render(i):
+    s, still, motion, eff, lab, _ = SC[i]
+    e = SC[i + 1][0] if i + 1 < len(SC) else T
+    d = e - s; n = int(round(e * FPS)) - int(round(s * FPS))
+    clip = f'clips/{still}.mp4'
+    src = clip_frames(clip) if os.path.exists(clip) else None
+    img = None if src else cover(cv2.imread(f'stills/{still}.jpg'))
+    out = f'build/s{i:02d}.mp4'
+    p = subprocess.Popen(['ffmpeg', '-v', 'error', '-y', '-f', 'rawvideo', '-pix_fmt', 'bgr24', '-s', f'{W}x{H}', '-r', str(FPS), '-i', '-',
+                          '-c:v', 'libx264', '-crf', '17', '-preset', 'fast', '-pix_fmt', 'yuv420p', out], stdin=subprocess.PIPE)
+    for f in range(n):
+        t = f / FPS; tg = s + t
+        base = img if src is None else cover(src[min(len(src) - 1, int(f * len(src) / n))])   # stretch clip over the scene
+        fr = frame(base, t, d, motion, eff, i)
+        if s == 14.5 and tg > 18.6: fr *= max(0.15, 1 - (tg - 18.6) / 0.6)                  # darken into the silence before "Then."
+        if lab:
+            a = ss((t - 0.25) / 0.35) * ss((d - t) / 0.3); pre, al = LAB[still + str(i)]
+            pop = 1 + 0.12 * (1 - ss((t - 0.25) / 0.25))
+            if pop > 1.001:
+                M = cv2.getRotationMatrix2D((W / 2, H * 0.17), 0, pop)
+                pre = cv2.warpAffine(pre, M, (W, H)); al = cv2.warpAffine(al, M, (W, H))[..., None]
+            fr = fr * (1 - al * a) + pre * a
+        k = caption_at(tg)
+        if k is not None: pre, al = CAP[k]; fr = fr * (1 - al) + pre
+        if i > 0 and t < 0.12 and s == BANG: fr = fr * (t / 0.12) + 255 * (1 - t / 0.12)                # white flash
+        p.stdin.write(np.clip(fr, 0, 255).astype(np.uint8).tobytes())
+        if f == n // 2: cv2.imwrite(f'build/chk{i:02d}.jpg', cv2.resize(np.clip(fr, 0, 255).astype(np.uint8), (270, 480)))
+    p.stdin.close(); p.wait(); print('scene', i, still, f'{d:.1f}s', flush=True)
+
+if __name__ == '__main__':
+    os.makedirs('build', exist_ok=True)
+    from multiprocessing import Pool
+    with Pool(4) as pool: pool.map(render, [int(a) for a in sys.argv[1:]] or range(len(SC)))
