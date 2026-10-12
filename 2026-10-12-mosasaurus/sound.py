@@ -2,10 +2,8 @@
 """Mosasaurus: synthesized music (build/music.wav, ducked under the voice) and ambience/SFX (build/amb.wav).
 Free, numpy only. Scene times match scenes.py."""
 import numpy as np, subprocess, wave
-from scenes import SC, T, BANG
+from scenes import SC, T, BANG, CUT, END, S
 sr = 48000; n = int(T * sr); tn = np.arange(n) / sr; rng = np.random.default_rng(4)
-CUT = 18.85                       # everything goes silent before "Then."
-END = 68.7                        # final sting after "Would you still go swimming?"
 def band(m, lo, hi):              # band-limited noise via FFT
     s = np.fft.rfft(rng.standard_normal(m)); f = np.fft.rfftfreq(m, 1 / sr)
     s *= ((f > lo) & (f < hi)) / np.maximum(1, f / max(hi, 1)) ** 0.5
@@ -33,52 +31,52 @@ def kick(d=0.6, f0=110, f1=40, dec=6):
 
 # ---------------- music
 mu = Bus(); B = 60 / 96
-# 0-5: dark opening — boom + low drone + shimmer
+# opening: dark opening — boom + low drone + shimmer
 mu.add(kick(3.0, 90, 30, 1.2), 0.0, 0.9)
-mu.bed(sum(np.sin(2 * np.pi * f * tn) for f in (36.7, 36.9, 55.0)) * env(0, 5.3, 0.3, 0.8), 0.14)
-mu.bed(band(n, 3000, 7000) * env(0.5, 5.2, 2, 0.6), 0.02, 900)
-# 5.0-14.5: warm summer groove in D major
+mu.bed(sum(np.sin(2 * np.pi * f * tn) for f in (36.7, 36.9, 55.0)) * env(0, S[1] + .3, 0.3, 0.8), 0.14)
+mu.bed(band(n, 3000, 7000) * env(0.5, S[1] + .2, 2, 0.6), 0.02, 900)
+# beach: warm summer groove in D major
 CH = [(62, 66, 69), (59, 62, 66), (55, 59, 62), (57, 61, 64)]
-t0 = 5.0
-for b in range(4):
+t0 = S[1]
+for b in range(9):
     ts = t0 + b * 4 * B * 0.98
-    if ts > 14.3: break
+    if ts > S[3] - .2: break
     c = CH[b % 4]; mu.add(pad([hz(m) for m in c], 4 * B + 0.8, 0.4, 0.8), ts, 0.10)
     mu.add(tone(hz(c[0] - 24), 4 * B, 1.0, ((1, 1), (2, .3))), ts, 0.22)
     for k in range(8):
         tt = ts + k * B / 2
-        if tt < 14.4: mu.add(tone(hz(c[k % 3] + 12 * (k % 2)), 0.5, 7, ((1, 1), (2, .25), (3, .1))), tt, 0.10, (-.4, .4)[k % 2])
-        if tt < 14.4: mu.add(band(int(.05 * sr), 6000, 12000) * np.exp(-np.arange(int(.05 * sr)) / sr * 60), tt + B / 4, 0.05)
-# 14.5-18.85: tension — drone, riser, heartbeat speeding up
+        if tt < S[3] - .1: mu.add(tone(hz(c[k % 3] + 12 * (k % 2)), 0.5, 7, ((1, 1), (2, .25), (3, .1))), tt, 0.10, (-.4, .4)[k % 2])
+        if tt < S[3] - .1: mu.add(band(int(.05 * sr), 6000, 12000) * np.exp(-np.arange(int(.05 * sr)) / sr * 60), tt + B / 4, 0.05)
+# shadow: tension — drone, riser, heartbeat speeding up
 dr = sum(np.sin(2 * np.pi * f * tn + np.sin(tn * .7 * k)) for k, f in enumerate((36.7, 37.1, 51.9, 73.4)))
-mu.bed(dr * env(14.4, CUT, 1.5, 0.05) * np.clip((tn - 14.4) / 4.4, 0.2, 1), 0.10)
-mu.bed(band(n, 400, 5000) * env(15.5, CUT, 3.3, 0.03) * np.clip((tn - 15.5) / 3.3, 0, 1) ** 3, 0.10, 1500)
-t = 15.0
+mu.bed(dr * env(S[3] - .1, CUT, 1.5, 0.05) * np.clip((tn - S[3]) / (CUT - S[3]), 0.2, 1), 0.10)
+mu.bed(band(n, 400, 5000) * env(S[3] + 1, CUT, 3.3, 0.03) * np.clip((tn - S[3] - 1) / (CUT - S[3] - 1), 0, 1) ** 3, 0.10, 1500)
+t = S[3] + .5
 while t < CUT - 0.2:
-    mu.add(kick(.3, 70, 40, 14), t, 0.5); mu.add(kick(.3, 65, 38, 14), t + .2, 0.3); t += 60 / (70 + 45 * (t - 15) / 3.8)
-# BANG at 20.0
+    mu.add(kick(.3, 70, 40, 14), t, 0.5); mu.add(kick(.3, 65, 38, 14), t + .2, 0.3); t += 60 / (70 + 45 * (t - S[3]) / (CUT - S[3]))
+# BANG
 mu.add(kick(3.5, 120, 28, 1.0), BANG, 1.0)
 mu.add(band(int(3 * sr), 30, 9000) * np.exp(-np.arange(int(3 * sr)) / sr * 2.2), BANG, 0.5)
-# 20.0-46.6: dark epic in D minor — bass ostinato, toms, pad
+# after the bang: dark epic in D minor — bass ostinato, toms, pad
 CM = [(62, 65, 69), (58, 62, 65), (55, 58, 62), (57, 61, 64)]
 t, b = BANG + 0.6, 0
-while t < 46.4:
+while t < S[10] - 1.3:
     c = CM[b % 4]; mu.add(pad([hz(m - 12) for m in c] + [hz(c[0])], 4 * B + 0.6, 0.6, 0.6), t, 0.10)
     for k in range(8):
         tt = t + k * B / 2
-        if tt < 46.5: mu.add(tone(hz(c[0] - 24 + (12 if k in (3, 7) else 0)), 0.3, 9, ((1, 1), (2, .5), (3, .25))), tt, 0.22)
+        if tt < S[10] - 1.2: mu.add(tone(hz(c[0] - 24 + (12 if k in (3, 7) else 0)), 0.3, 9, ((1, 1), (2, .5), (3, .25))), tt, 0.22)
     for k in (0, 2, 2.5): mu.add(kick(.8, 95, 45, 5), t + k * B, 0.45 if k == 0 else 0.3)
     if b % 2: mu.add(band(int(.4 * sr), 200, 3000) * np.exp(-np.arange(int(.4 * sr)) / sr * 10), t + 3 * B, 0.12)
     t += 4 * B; b += 1
-mu.add(kick(2.5, 100, 30, 1.6), 46.6, 0.8)
-# 47.7-62.3: "But…" — mysterious, soft pad + music-box bells
+mu.add(kick(2.5, 100, 30, 1.6), S[10] - 1.1, 0.8)
+# twist: "But…" — mysterious, soft pad + music-box bells
 for k, c in enumerate([(50, 57, 64, 65), (46, 53, 62, 69), (43, 50, 58, 65), (45, 52, 61, 64)]):
-    mu.add(pad([hz(m) for m in c], 4.2, 1.2, 1.4), 47.7 + k * 3.7, 0.08)
+    mu.add(pad([hz(m) for m in c], (S[13] - S[10]) / 4 + .5, 1.2, 1.4), S[10] + k * (S[13] - S[10]) / 4, 0.08)
 for k, m in enumerate([74, 77, 81, 79, 77, 74, 76, 73, 74, 69, 72, 74, 77, 76, 74, 72]):
-    mu.add(tone(hz(m), 2.0, 2.2, ((1, 1), (2.76, .3), (5.4, .1))), 48.2 + k * 0.9, 0.06, (k % 3 - 1) * .3)
-# 62.6-end: tension returns, heartbeat, final sting
-mu.bed(dr * env(62.4, T, 2.0, 1.0) * np.clip((tn - 62.4) / 6, 0.2, 1), 0.08)
-t = 63.0
+    mu.add(tone(hz(m), 2.0, 2.2, ((1, 1), (2.76, .3), (5.4, .1))), S[10] + .5 + k * (S[13] - S[10] - .8) / 16, 0.06, (k % 3 - 1) * .3)
+# ending: tension returns, heartbeat, final sting
+mu.bed(dr * env(S[13] - .2, T, 2.0, 1.0) * np.clip((tn - S[13]) / (END - S[13]), 0.2, 1), 0.08)
+t = S[13] + .4
 while t < END - 0.3:
     mu.add(kick(.3, 70, 40, 14), t, 0.45); mu.add(kick(.3, 65, 38, 14), t + .2, 0.27); t += 0.85
 mu.add(kick(3.0, 110, 28, 1.2), END, 1.0)
@@ -118,22 +116,22 @@ for a, b in spans({'bob'}):
 am.add(band(int(2.2 * sr), 200, 12000) * np.exp(-np.arange(int(2.2 * sr)) / sr * 2.0), BANG, 0.6)
 for t in rng.uniform(BANG + .3, BANG + 1.9, 40):
     m = int(.03 * sr); tt = np.arange(m) / sr; am.add(np.sin(2 * np.pi * rng.uniform(900, 2500) * tt) * np.exp(-tt * 120), t, .05, rng.uniform(-.8, .8))
-am.add(band(int(1.0 * sr), 250, 1800) * np.sin(np.pi * np.arange(int(1.0 * sr)) / sr) ** 2, 33.6, 0.18)   # breath at the surface
+am.add(band(int(1.0 * sr), 250, 1800) * np.sin(np.pi * np.arange(int(1.0 * sr)) / sr) ** 2, S[8] + .2, 0.18)   # breath at the surface
 # cave: drips + pick clinks
-for t in np.arange(48.0, 55.0, 0.9) + rng.uniform(0, .3, 8):
+for t in np.arange(S[10] + .3, S[11] - .4, 0.9):
     m = int(.08 * sr); tt = np.arange(m) / sr; d = np.sin(2 * np.pi * np.cumsum(1200 + 9000 * tt) / sr) * np.exp(-tt * 50)
     for e in range(4): am.add(d, t + e * .11, .07 * .45 ** e, (-.3, .3)[e % 2])
-for t in np.arange(48.4, 55.0, 1.4):
+for t in np.arange(S[10] + .7, S[11] - .4, 1.4):
     am.add(tone(2650, .5, 14, ((1, 1), (1.53, .6), (2.4, .3))) + band(int(.5 * sr), 1500, 8000) * np.exp(-np.arange(int(.5 * sr)) / sr * 40), t, .06, -.3)
-am.bed(band(n, 60, 300) * env(47.7, 55.4, 0.4), 0.06)
+am.bed(band(n, 60, 300) * env(S[10], S[11], 0.4), 0.06)
 # street: hooves + cart creak
-for t in np.arange(55.6, 60.2, 0.42):
+for t in np.arange(S[11] + .2, S[12] - .1, 0.42):
     for e in (0, .11): am.add(band(int(.06 * sr), 300, 3000) * np.exp(-np.arange(int(.06 * sr)) / sr * 80), t + e, .14)
-for t in (56.2, 57.9, 59.4):
+for t in np.arange(S[11] + .8, S[12] - .6, 1.6):
     m = int(.6 * sr); tt = np.arange(m) / sr; am.add(np.sign(np.sin(2 * np.pi * (260 + 60 * np.sin(tt * 9)) * tt)) * np.sin(np.pi * tt / .6) ** 2, t, .012, .4)
 # museum: room tone + footsteps
-am.bed(band(n, 80, 1500) * env(60.3, 62.6, 0.3), 0.04)
-for t in np.arange(60.5, 62.5, 0.55):
+am.bed(band(n, 80, 1500) * env(S[12], S[13], 0.3), 0.04)
+for t in np.arange(S[12] + .2, S[13] - .1, 0.55):
     for e in range(3): am.add(band(int(.05 * sr), 400, 4000) * np.exp(-np.arange(int(.05 * sr)) / sr * 90), t + e * .09, .08 * .4 ** e)
 # whoosh into every cut (not into the bang, not into the silence)
 for s in SC[1:]:

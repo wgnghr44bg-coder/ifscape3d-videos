@@ -25,7 +25,7 @@ L = [{"id": "timeline.place", "params": {"items": [m[k] for k in sc], "track": "
 open('build/place.jsonl', 'w').write(''.join(json.dumps(x) + '\n' for x in L))
 EOF
 filmcraft-cli --project $P --save run build/place.jsonl >/dev/null
-filmcraft-cli --project $P export build/edit.mp4 --format h264 --settings '{"crf":18,"loudnessLufs":-14}'
+filmcraft-cli --project $P export build/edit.mp4 --format h264 --settings '{"bitrateMode":"crf","crf":18,"effects":{"loudness":{"enabled":true,"target_lufs":-14.0,"true_peak_dbtp":-1.5}}}'
 cp build/edit.mp4 mosasaurus.mp4
 ffmpeg -v error -y -i mosasaurus.mp4 -c:v libx264 -crf 27 -preset slow -c:a aac -b:a 128k -movflags +faststart mosasaurus-telefoon.mp4
 echo ok

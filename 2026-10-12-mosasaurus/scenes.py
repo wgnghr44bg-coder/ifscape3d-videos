@@ -6,30 +6,33 @@ from PIL import Image, ImageDraw, ImageFont
 W, H, FPS = 1080, 1920, 30
 FB = '/usr/share/fonts/opentype/inter/Inter-ExtraBold.otf'
 FS = '/usr/share/fonts/opentype/inter/Inter-SemiBold.otf'
-BANG = 20.0
-# (start, still, motion, effect, label, sub-label)
-SC = [(0.0, 'm01', 'in', 'water', None, None),
-      (5.0, 'm03', 'up', 'sun', None, None),
-      (10.6, 'm07', 'in', 'bob', None, None),
-      (14.5, 'm09', 'in', 'water', None, None),
-      (BANG, 'm12', 'out', 'shake', None, None),
-      (21.9, 'm13', 'right', 'sun', '15 m', 'LONGER THAN A BUS'),
-      (25.0, 'm14', 'in', 'water', '2 ROWS', 'OF TEETH'),
-      (30.4, 'm15', 'in', 'water', None, None),
-      (33.4, 'm17', 'up', 'bob', 'AIR', 'BREATHING SEA LIZARD'),
-      (40.1, 'm19', 'left', 'water', None, None),
-      (47.7, 'm22', 'in', 'dust', 'MAASTRICHT', 'THE NETHERLANDS'),
-      (55.4, 'm24', 'right', 'dust', '1795', 'WAR LOOT'),
-      (60.3, 'm25', 'in', 'dust', 'PARIS', 'STILL THERE TODAY'),
-      (62.6, 'm07', 'out', 'bob', None, None),
-      (67.3, 'm09', 'in', 'water', None, None)]
-T = 70.2
-# voice lines for captions
+# voice lines (start, end, text) from voice-times.tsv; all scene times follow the voice
 LINES = []
 for r in open('voice-times.tsv').read().splitlines()[1:]:
     c = r.split('\t'); ts = lambda s: sum(float(x) * m for x, m in zip(s.split(':')[::-1], (1, 60, 3600)))
     LINES.append((ts(c[1]), ts(c[2]), c[4]))
-
+st = lambda k: max(0.0, LINES[k - 1][0] - 0.2)         # cut just before voice line k (1-based)
+BANG = st(12)                                          # flash + bang right before "The surface explodes."
+CUT = LINES[10][0] - 0.05                              # silence starts just before "Then."
+END = LINES[-1][1] + 0.1                               # final sting after the last line
+T = END + 1.5
+# (start, still, motion, effect, label, sub-label)
+SC = [(0.0, 'm01', 'in', 'water', None, None),
+      (st(3), 'm03', 'up', 'sun', None, None),
+      (st(7), 'm07', 'in', 'bob', None, None),
+      (st(9), 'm09', 'in', 'water', None, None),
+      (BANG, 'm12', 'out', 'shake', None, None),
+      (st(13), 'm13', 'right', 'sun', '15 m', 'LONGER THAN A BUS'),
+      (st(14), 'm14', 'in', 'water', '2 ROWS', 'OF TEETH'),
+      (st(15), 'm15', 'in', 'water', None, None),
+      (st(17), 'm17', 'up', 'bob', 'AIR', 'BREATHING SEA LIZARD'),
+      (st(19), 'm19', 'left', 'water', None, None),
+      (st(22), 'm22', 'in', 'dust', 'MAASTRICHT', 'THE NETHERLANDS'),
+      (st(24), 'm24', 'right', 'dust', '1795', 'WAR LOOT'),
+      (st(25), 'm25', 'in', 'dust', 'PARIS', 'STILL THERE TODAY'),
+      (st(26), 'm07', 'out', 'bob', None, None),
+      (st(28), 'm09', 'in', 'water', None, None)]
+S = {i: s[0] for i, s in enumerate(SC)}
 _fc = {}
 def font(p, s):
     if (p, s) not in _fc: _fc[p, s] = ImageFont.truetype(p, s)
@@ -117,7 +120,7 @@ def render(i):
         t = f / FPS; tg = s + t
         base = img if src is None else cover(src[min(len(src) - 1, int(f * len(src) / n))])   # stretch clip over the scene
         fr = frame(base, t, d, motion, eff, i)
-        if s == 14.5 and tg > 18.6: fr *= max(0.15, 1 - (tg - 18.6) / 0.6)                  # darken into the silence before "Then."
+        if i == 3 and tg > CUT - 0.3: fr *= max(0.15, 1 - (tg - CUT + 0.3) / 0.6)                  # darken into the silence before "Then."
         if lab:
             a = ss((t - 0.25) / 0.35) * ss((d - t) / 0.3); pre, al = LAB[still + str(i)]
             pop = 1 + 0.12 * (1 - ss((t - 0.25) / 0.25))
