@@ -24,7 +24,40 @@ L = [{"id": "timeline.place", "params": {"items": [m[k] for k in sc], "track": "
      {"id": "timeline.setTrack", "params": {"track": "A3", "name": "Geluid", "volumeDb": -11}}]
 open('build/place.jsonl', 'w').write(''.join(json.dumps(x) + '\n' for x in L))
 EOF
-filmcraft-cli --project $P --save run build/place.jsonl >/dev/null
+filmcraft-cli --project $P --save run build/place.jsonl > build/place.out
+# FilmCraft effects per scene (index = scene in scenes.py): colour presets, light, transitions
+python3 - <<'EOF2'
+import json
+r = [json.loads(l) for l in open('build/place.out') if l.strip().startswith('{')]
+clips = r[0]['result']['clips']
+FX = {0: ['rays'], 1: ['flare'], 3: ['rays'], 4: ['bang'], 6: ['rays'], 7: ['rays'], 8: ['flare'], 9: ['rays'],
+      10: ['old', ('film_dissolve', 20)], 11: ['old', ('film_dissolve', 14)], 12: ['old', ('cross_dissolve', 12)],
+      13: ['cold', ('dip_to_black', 16)], 14: ['cold', 'rays', ('cross_dissolve', 14)]}
+L = []
+for i, todo in FX.items():
+    c = clips[i]
+    for f in todo:
+        if f == 'rays':
+            L += [{"id": "effects.apply", "params": {"clips": [c], "effect": "volumetric_rays"}},
+                  {"id": "effects.setParam", "params": {"clip": c, "effect": "volumetric_rays", "param": "center", "value": [540, 0]}},
+                  {"id": "effects.setParam", "params": {"clip": c, "effect": "volumetric_rays", "param": "intensity", "value": 45}}]
+        elif f == 'flare':
+            L += [{"id": "effects.apply", "params": {"clips": [c], "effect": "lens_flare"}},
+                  {"id": "effects.setParam", "params": {"clip": c, "effect": "lens_flare", "param": "center", "value": [880, 240]}},
+                  {"id": "effects.setParam", "params": {"clip": c, "effect": "lens_flare", "param": "brightness", "value": 70}}]
+        elif f == 'bang':
+            L += [{"id": "sequence.applyVideoTransition", "params": {"clip": c, "effect": "flash", "frames": 8, "edge": "in"}},
+                  {"id": "effects.apply", "params": {"clips": [c], "effect": "rgb_split"}},
+                  {"id": "effects.setParam", "params": {"clip": c, "effect": "rgb_split", "param": "amount", "value": 6}}]
+        elif f == 'old':
+            L += [{"id": "lumetri.applyPreset", "params": {"name": "Warm Negative", "clips": [c]}}]
+        elif f == 'cold':
+            L += [{"id": "lumetri.applyPreset", "params": {"name": "Steel Blue", "clips": [c]}}]
+        else:
+            L += [{"id": "sequence.applyVideoTransition", "params": {"clip": c, "effect": f[0], "frames": f[1], "edge": "in"}}]
+open('build/fx.jsonl', 'w').write(''.join(json.dumps(x) + '\n' for x in L))
+EOF2
+filmcraft-cli --project $P --save run build/fx.jsonl | grep -v '"ok":true' || true
 filmcraft-cli --project $P export build/edit.mp4 --format h264 --settings '{"bitrateMode":"crf","crf":18,"effects":{"loudness":{"enabled":true,"target_lufs":-14.0,"true_peak_dbtp":-1.5}}}'
 cp build/edit.mp4 mosasaurus.mp4
 ffmpeg -v error -y -i mosasaurus.mp4 -c:v libx264 -crf 27 -preset slow -c:a aac -b:a 128k -movflags +faststart mosasaurus-telefoon.mp4

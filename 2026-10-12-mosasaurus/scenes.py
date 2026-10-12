@@ -153,7 +153,6 @@ def render(i):
         if lab: fr = draw_lt(fr, i, t)
         k = caption_at(tg)
         if k is not None: pre, al = CAP[k]; fr = fr * (1 - al) + pre
-        if i > 0 and t < 0.12 and s == BANG: fr = fr * (t / 0.12) + 255 * (1 - t / 0.12)                # white flash
         p.stdin.write(np.clip(fr, 0, 255).astype(np.uint8).tobytes())
         if f == n // 2: cv2.imwrite(f'build/chk{i:02d}.jpg', cv2.resize(np.clip(fr, 0, 255).astype(np.uint8), (270, 480)))
     p.stdin.close(); p.wait(); print('scene', i, still, f'{d:.1f}s', flush=True)
