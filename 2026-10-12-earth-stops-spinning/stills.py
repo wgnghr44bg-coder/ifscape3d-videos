@@ -22,7 +22,11 @@ def gen(prompt):
             if e.code < 500 and e.code != 429: raise SystemExit(f"HTTP {e.code}: {e.read().decode()[:300]}")
             time.sleep(2 ** (a + 1))
     raise SystemExit('mislukt')
+STYLE_3D = (", stylized 3D animated character and set, clearly computer-generated 3D, smooth simplified shapes, "
+            "slightly stylized proportions, soft subsurface skin, clean 3D modelled leaves and flowers, Blender Cycles render, "
+            "same rich warm autumn colours, warm morning sunlight, crisp shadows, like a modern 3D animated film, no photo realism, no text, vertical composition")
 for k in sys.argv[1:]:
     f = Path(f'stills/scene{k}.jpg')
     if f.exists(): continue
-    f.write_bytes(gen(P[k] + STYLE)); print('ok', f)
+    key, st = (k[:-2], STYLE_3D) if k.endswith('3d') else (k, STYLE)
+    f.write_bytes(gen(P[key] + st)); print('ok', f)
