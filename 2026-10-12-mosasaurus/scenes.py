@@ -99,6 +99,10 @@ def cover(img):
     y, x = (r.shape[0] - H) // 2, (r.shape[1] - W) // 2; return r[y:y + H, x:x + W].astype(np.float32)
 # seconds of each Comfy clip that are clean (Wan sometimes morphs at the end); None = whole clip, 0 = use the still
 USE = {}
+if os.path.exists('clips/CHECKED.txt'):            # result of the obligatory visual check (tools/check_clips.py)
+    for r in open('clips/CHECKED.txt').read().split('\n'):
+        w = r.split()
+        if len(w) >= 2: USE[w[0]] = None if w[1] == 'OK' else 0 if w[1] == 'STILL' else float(w[2])
 def clip_frames(path, n, use=None):
     """Exactly n frames at FPS: the Comfy clip slowed down to fill the scene (motion-interpolated), upscaled + sharpened."""
     d0 = float(subprocess.check_output(['ffprobe', '-v', 'error', '-show_entries', 'format=duration', '-of', 'csv=p=0', path]))

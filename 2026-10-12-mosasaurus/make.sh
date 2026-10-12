@@ -2,6 +2,8 @@
 # Mosasaurus: full edit. scenes.py (beeld) + ecraft.py (EffectCraft) + sound.py (muziek/geluid) -> FilmCraft-project -> mosasaurus.mp4 (+ telefoonversie)
 set -e
 cd "$(dirname "$0")"
+# obligatory clip check (see ../CLAUDE.md): every clip must be listed in clips/CHECKED.txt
+for c in clips/*.mp4; do n=$(basename "$c" .mp4); grep -q "^$n " clips/CHECKED.txt 2>/dev/null || { echo "clip $n is niet gecontroleerd (tools/check_clips.py + clips/CHECKED.txt)"; exit 1; }; done
 [ -f build/s14.mp4 ] || python3 scenes.py
 [ -f build/e14.mp4 ] || python3 ecraft.py
 python3 sound.py
