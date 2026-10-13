@@ -10,10 +10,10 @@ python3 sound.py
 P=build/mosasaurus.fcproj; rm -f $P
 filmcraft-cli --save-as $P exec file.newProject name=Mosasaurus >/dev/null
 filmcraft-cli --project $P --save exec file.newSequence '{"name":"Mosasaurus","width":1080,"height":1920,"fps":30,"video":1,"audio":3}' >/dev/null
-filmcraft-cli --project $P --save import build/e*.mp4 voice.mp3 build/music.wav build/amb.wav > build/import.json
+filmcraft-cli --project $P --save import build/e[0-9]*.mp4 voice.mp3 build/music.wav build/amb.wav > build/import.json
 python3 - <<'EOF'
 import json, glob
-files = sorted(glob.glob('build/e*.mp4')) + ['voice.mp3', 'build/music.wav', 'build/amb.wav']
+files = sorted(glob.glob('build/e[0-9]*.mp4')) + ['voice.mp3', 'build/music.wav', 'build/amb.wav']
 r = json.load(open('build/import.json'))
 if r['errors'] or len(r['items']) != len(files): raise SystemExit(r)
 m = {f.split('/')[-1]: i for f, i in zip(files, r['items'])}
