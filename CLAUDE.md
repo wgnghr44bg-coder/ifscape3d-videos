@@ -5,5 +5,6 @@
 - **"comfy"** → beelden, clips en lokale stem via ComfyUI op de pc van de eigenaar, nooit via xAI.
   Scripts + uitleg staan in repo `vox-lux`: `tools/comfy/README.md` (`comfy_batch.py`, `voice_test_local.py`).
   Clipcontrole hier: `python3 tools/check_clips.py <map>/clips` → noteer `<map>/clips/CHECKED.txt` (`naam OK` / `USE <s>` / `STILL`).
+- Standaardstem: Chatterbox als bm_george, rustig (gratis, pc): `vox-lux/tools/comfy/make_voice_local.py <map>`. xAI-stem alleen op verzoek.
 - Craft-apps (FilmCraft, EffectCraft, …) worden bij elke sessie geïnstalleerd (`tools/install-craft.sh`);
   uitleg en voorbeelden: `vox-lux/tools/craft/README.md`.
