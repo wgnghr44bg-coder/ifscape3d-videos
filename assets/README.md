@@ -3,6 +3,8 @@
 Alles in `assets/kenney/` komt van **Kenney** (https://kenney.nl/assets) en is **CC0**: gratis, ook voor YouTube,
 zonder naamsvermelding. Per pakket staat de licentie in `License.txt`.
 
+> **Licentieregels (vast, ook voor DeepSeek): zie [`LICENTIE-REGELS.md`](LICENTIE-REGELS.md).** Poly Pizza: altijd naamsvermelding in de YouTube-beschrijving, en de verzameling nooit in git.
+
 ![showroom](showroom/SHOWROOM.jpg)
 
 | Map | Pakket (bron) | Wat erin zit |
