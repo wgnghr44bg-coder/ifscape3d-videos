@@ -13,7 +13,7 @@ manier een nieuwe what if maakt met een ander scenario en een andere plek.
 1. Wat staat er in deze map
 2. Deel 1 – De opbouw van de video (seconde voor seconde)
 3. Deel 2 – Hoe hij in elkaar is gezet
-4. Deel 3 – Een nieuwe what if op dezelfde manier
+4. Deel 3 – Een nieuwe what if op dezelfde manier (met het bericht om te kopiëren)
 
 ## Wat staat er in deze map
 
@@ -206,6 +206,25 @@ node gravity-doubled/render.mjs stills 5 30 58 70
 ---
 
 # Deel 3 – Een nieuwe what if op dezelfde manier
+
+## Een nieuwe what if vragen (dit bericht kopiëren)
+
+Kopieer dit bericht naar Claude en pas alleen de eerste regel aan:
+
+> Maak een nieuwe What if-video: **"What if ……?"**
+> Doe het op dezelfde manier als de gravity-video. Lees eerst `ifscape3d-videos/2026-10-04-gravity-doubled/GRAVITY-VIDEO.md`.
+> Kies een plek en een kracht uit de engine (`vox-lux`, branch `claude/whatif-machine`). Laat me eerst alleen de testbeelden zien.
+
+**Wat je zelf geeft:**
+1. **Je what if**, bijvoorbeeld "What if the sea froze in one night?".
+2. **Eventueel een plek** die je graag wilt, zoals een haven, een bergdorp of een stad aan een rivier. Geef je geen plek, dan kiest Claude er een die past.
+3. **Eventueel de stem.** Zeg je niets, dan wordt de gratis stem op je pc gebruikt. Wil je de xAI-stem, zeg dat dan erbij, want die kost geld.
+
+**Wat er daarna gebeurt:**
+1. Claude schrijft het verhaal volgens de 11 stappen van de gravity-video.
+2. Je krijgt eerst testbeelden te zien. Die zijn gratis.
+3. Na jouw "ja" maakt Claude de stem, het beeld, het geluid en de video.
+4. Alles komt in een nieuwe map in `ifscape3d-videos` (`<datum>-<slug>/`), op dezelfde manier als de gravity-video.
 
 ## Gaat het vanzelf als ik een nieuwe what if verzin?
 
