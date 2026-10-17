@@ -6,6 +6,8 @@
 - De eigenaar gebruikt deze video als **voorbeeld voor het verhaal en de stem** van alle IfScape3D-video's.
   Zie `vox-lux` → `whatif-demo/regels/standaard-video.md` op branch `claude/whatif-machine`.
 
+De precieze opbouw (seconde voor seconde: stem, beeld, tekst en geluid) staat in **`OPBOUW.md`**.
+
 ## Wat staat er in deze map
 
 | Bestand | Wat het is |
@@ -19,6 +21,8 @@
 | `timeline.json` | de tijdlijn (TL) + alles wat valt of breekt; `make_audio.py` maakt hiermee het geluid |
 | `thumbnail.jpg` | eerste beeld met de titel |
 | `upload.json` | titel en YouTube-link |
+| `OPBOUW.md` | de opbouw seconde voor seconde + wat er in de scène zit |
+| `OVERZICHT.jpg` | 16 beelden uit de video op een rij |
 | `ENGINE.txt` | de commit in `vox-lux` waarmee hij gemaakt is |
 
 ## Zo is hij gemaakt (stap voor stap)
@@ -47,7 +51,7 @@ Alles is gratis behalve de stem. Er is geen AI-beeld gebruikt: alles is zelf geb
 7. **Geluid**: `python3 whatif-demo/make_audio.py whatif-demo/gravity-doubled` → `mix.wav`.
    Alle geluiden zijn zelf gemaakt met ruis (stad, wind, dreun, glas, kabel, vliegtuig…), dus gratis.
    De stem staat voorop, de geluiden zijn eronder zachter (-14 LUFS).
-8. **Eindvideo**:
+8. **Eindvideo** (de precieze opdracht is niet bewaard; dit geeft hetzelfde resultaat):
    ```
    ffmpeg -i silent.mp4 -i mix.wav -vf scale=1080:1920:flags=lanczos -c:v libx264 -crf 18 -pix_fmt yuv420p \
           -c:a aac -b:a 192k -shortest gravity-doubled.mp4
