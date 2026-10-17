@@ -11,6 +11,15 @@ Ze gebruiken de gratis modellen uit `assets/kenney/` (zie `assets/README.md`) en
 | `winter-village.js` | winterdorp: huizen rond een plein, dennen, sneeuwpop, slee, lantaarns, besneeuwde bergen | street, square, aerial | kou, zon gaat uit, ijstijd, sneeuwstorm |
 | `forest-camp.js` | bos met kamp bij een meer: tenten, kampvuur, boomstammen, steiger, kano, heuvels | camp, lake, aerial | dieren, bosbrand, storm, overleven, aliens |
 | `moon-base.js` | maanbasis: grijze kratervlakte, hangars, schotels, rover, astronauten, de aarde aan de hemel | base, earth, aerial | ruimte, de maan, lage zwaartekracht, meteorieten |
+| `desert.js` | woestijnweg: zand, duinen, rode mesa's, cactussen, elektriciteitspalen, vrachtwagen | road, mesa, aerial | hitte, zon dichterbij, droogte, zandstorm |
+| `old-town.js` | oud stadje aan een gracht: smalle huizen, stenen brug, plein met fontein, marktkramen, bootjes, molen | canal, square, aerial | overstroming, gracht bevriest, aardbeving, vroeger, stroomstoring |
+| `harbor.js` | containerhaven: kade, vrachtschip, 2 containerkranen (zelf gebouwd), containers, loodsen, sleepboot, vuurtoren | quay, pier, aerial | tsunami, zeespiegel, storm, getij, zee valt droog |
+| `amusement-park.js` | pretpark: ingang, reuzenrad, draaimolen en achtbaan (zelf gebouwd, **bewegen** met `update(t)`), kramen | entrance, wheel, aerial | zwaartekracht, wind, stroomstoring, aardbeving |
+| `factory.js` | industrieterrein: fabriekshallen, schoorstenen, tanks, watertoren, zonnepanelen, windmolens, vrachtwagens | gate, tanks, aerial | stroomstoring, hitte, robots/AI, aardbeving |
+| `mars.js` | Mars: rode rotsvlakte, NASA-rover Perseverance, helikopter Ingenuity, landers, koepelbasis | rover, base, aerial | leven op Mars, stofstorm, terraforming |
+
+Bewegende delen: als `build()` een `update` teruggeeft (pretpark), roep dan in `renderAt(t)` `info.update(t)` aan.
+Plan voor 100 omgevingen met wat er al is: [`PLAN-100.md`](PLAN-100.md).
 
 Luchten (`assets/kenney/skyboxes/`): day, morning, night, alien, space, space-day, space-galaxy, space-nebula, space-band, space-dark.
 

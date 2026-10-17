@@ -12,15 +12,18 @@
 // flat = true (default) replaces materials by MeshLambertMaterial with flatShading (keeps the Kenney colour map).
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+import { DRACOLoader } from 'three/addons/loaders/DRACOLoader.js';
 
-const loader = new GLTFLoader();
+// NASA models are Draco-compressed; the decoder ships with three (node_modules in the repo root)
+const draco = new DRACOLoader().setDecoderPath(new URL('../node_modules/three/examples/jsm/libs/draco/gltf/', import.meta.url).href);
+const loader = new GLTFLoader().setDRACOLoader(draco);
 const cache = new Map();
 
 export async function loadModel(url, { height, length, anim, flat = true, shadows = true } = {}) {
   if (!cache.has(url)) cache.set(url, loader.loadAsync(url));
   const gltf = await cache.get(url);
   // SkeletonUtils-free clone: animated (skinned) models are loaded fresh, static ones are cloned
-  const skinned = gltf.scene.getObjectByProperty('isSkinnedMesh', true);
+  let skinned = false; gltf.scene.traverse(o => { if (o.isSkinnedMesh) skinned = true; });
   const src = skinned ? (await loader.loadAsync(url)).scene : gltf.scene.clone(true);
   const root = new THREE.Group(); root.add(src);
   src.traverse(o => {

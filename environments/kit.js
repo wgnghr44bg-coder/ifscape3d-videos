@@ -9,7 +9,8 @@ export const rng = (seed) => () => { seed |= 0; seed = seed + 0x6D2B79F5 | 0; le
 // place a Kenney model: put(ctx, 'pirate-kit', 'palm-bend', { height: 8 }, [x, y, z], rotY)
 export async function put(ctx, pack, name, size, pos = [0, 0, 0], ry = 0) {
   let m;
-  try { m = await ctx.loadModel(`${ctx.base}/${pack}/${name}.glb`, size); }
+  const url = pack === 'nasa' ? `${ctx.base}/../nasa/${name}.glb` : `${ctx.base}/${pack}/${name}.glb`;   // assets/nasa sits next to assets/kenney
+  try { m = await ctx.loadModel(url, size); }
   catch (e) { console.warn('missing model', pack, name); return null; }
   m.root.position.set(...pos); m.root.rotation.y = ry; ctx.scene.add(m.root); return m;
 }

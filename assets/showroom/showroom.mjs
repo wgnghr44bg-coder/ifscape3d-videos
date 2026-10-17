@@ -13,7 +13,7 @@ await page.goto(`http://localhost:${server.address().port}/assets/showroom/showr
 const out = path.join(HERE, 'show'); fs.rmSync(out, { recursive: true, force: true }); fs.mkdirSync(out, { recursive: true });
 let i = 0;
 for (const [pack, name, label, anim, t] of L) {
-  const url = `/assets/kenney/${pack}/${name}.glb`;
+  const url = pack === 'nasa' ? `/assets/nasa/${name}.glb` : `/assets/kenney/${pack}/${name}.glb`;
   if (!fs.existsSync(path.join(ROOT, url))) { console.log('missing', url); continue; }
   await page.evaluate(([u, l, a, t]) => window.show(u, l, a, t), [url, label, anim, t ?? .6]);
   await page.screenshot({ path: path.join(out, `s${String(i++).padStart(2, '0')}.jpg`), type: 'jpeg', quality: 88 });
