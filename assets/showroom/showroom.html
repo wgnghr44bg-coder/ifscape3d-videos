@@ -1,0 +1,46 @@
+<!doctype html>
+<html><head><meta charset="utf-8">
+<style>html,body{margin:0;width:480px;height:480px;overflow:hidden;background:#000}canvas{display:block}
+#lab{position:absolute;left:10px;bottom:8px;color:#f3ede2;font:600 15px Georgia,serif;text-shadow:0 1px 4px #000}</style></head>
+<body><div id="lab"></div>
+<script type="importmap">{ "imports": { "three": "../../node_modules/three/build/three.module.js",
+  "three/addons/": "../../node_modules/three/examples/jsm/" } }</script>
+<script type="module">
+import * as THREE from 'three';
+import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+const renderer = new THREE.WebGLRenderer({ antialias: true, preserveDrawingBuffer: true });
+renderer.setSize(480, 480); renderer.outputColorSpace = THREE.SRGBColorSpace;
+renderer.shadowMap.enabled = true; renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+document.body.prepend(renderer.domElement);
+const scene = new THREE.Scene(); scene.background = new THREE.Color(0x7fa6cf);
+const camera = new THREE.PerspectiveCamera(35, 1, .01, 5000);
+scene.add(new THREE.HemisphereLight(0xe3ecf4, 0x5a5448, 1.5));
+const sun = new THREE.DirectionalLight(0xffeedd, 2.4); sun.castShadow = true; sun.shadow.mapSize.set(2048, 2048); sun.shadow.bias = -.0005;
+scene.add(sun, sun.target);
+const ground = new THREE.Mesh(new THREE.PlaneGeometry(2000, 2000), new THREE.MeshLambertMaterial({ color: 0x9b968c }));
+ground.rotation.x = -Math.PI / 2; ground.receiveShadow = true; scene.add(ground);
+const loader = new GLTFLoader();
+let current = null, mixer = null;
+// same look as scene.html: flat Lambert, keep the Kenney colour map
+function flatten(root) {
+  root.traverse(o => { if (!o.isMesh) return; o.castShadow = o.receiveShadow = true;
+    const m = o.material; o.material = new THREE.MeshLambertMaterial({ map: m.map || null, color: m.map ? 0xffffff : m.color, flatShading: true, skinning: undefined }); });
+}
+window.show = async (url, label, anim, t = .6, yaw = -.6) => {
+  if (current) scene.remove(current);
+  const g = await loader.loadAsync(url); current = g.scene; flatten(current); current.rotation.y = yaw; scene.add(current);
+  mixer = null;
+  if (anim && g.animations.length) { mixer = new THREE.AnimationMixer(current); const clip = THREE.AnimationClip.findByName(g.animations, anim);
+    if (clip) { const a = mixer.clipAction(clip); a.play(); mixer.setTime(t * clip.duration); } }
+  current.updateMatrixWorld(true);
+  const box = new THREE.Box3().setFromObject(current), size = box.getSize(new THREE.Vector3()), c = box.getCenter(new THREE.Vector3());
+  current.position.y -= box.min.y; c.y -= box.min.y;
+  const r = Math.max(size.x, size.y, size.z);
+  camera.position.set(c.x + r * 1.25, c.y + r * .75, c.z + r * 1.6); camera.lookAt(c.x, c.y * .9, c.z);
+  sun.position.set(c.x - r * 2, r * 4, c.z + r * 3); sun.target.position.copy(c);
+  Object.assign(sun.shadow.camera, { left: -r * 2, right: r * 2, top: r * 2, bottom: -r * 2, near: .1, far: r * 12 }); sun.shadow.camera.updateProjectionMatrix();
+  document.getElementById('lab').textContent = label;
+  renderer.render(scene, camera); return true;
+};
+window.ready = true;
+</script></body></html>
