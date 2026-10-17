@@ -16,8 +16,9 @@ Write-Host "$($packs.Count) pakketten gevonden" -ForegroundColor Cyan
 function Get-Pack($p, $id, $out) {
   # -c (continue): bestanden die er al helemaal zijn worden niet opnieuw gedownload
   $log = python -m gdown --folder "https://drive.google.com/drive/folders/$id" -O $out --remaining-ok -c 2>&1 | Out-String
-  $bad = [regex]::Matches($log, '(?m)^- (.+)$') | ForEach-Object { $_.Groups[1].Value.Trim() } | Where-Object { $log -match 'Failed to download the following files' }
-  return @($bad)
+  $k = $log.IndexOf('Failed to download the following files')
+  if ($k -lt 0) { return @() }
+  return @([regex]::Matches($log.Substring($k), '(?m)^- (.+)$') | ForEach-Object { $_.Groups[1].Value.Trim() })
 }
 
 $report = @(); $i = 0
