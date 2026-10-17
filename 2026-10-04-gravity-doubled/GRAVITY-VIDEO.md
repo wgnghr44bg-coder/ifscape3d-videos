@@ -271,7 +271,7 @@ Voorbeelden: `river-city` + `quake` = "What if an earthquake hit…", `harbor` +
    - `lines`: het verhaal, met **dezelfde 11 stappen als hierboven** (nooit zinnen letterlijk overnemen),
      ± 130–200 woorden, Engels, "you", Europese eenheden; het hoogtepunt krijgt een getal (± 3–4 s stilte)
    - `counter` + `hud`: het getal in beeld (bij gravity: GRAVITY 1 g → 2 g; bij sinkhole: DEPTH 0 → 90 m)
-   - `camPath`: één rustige, doorlopende camerabeweging (`[tijd, camerapositie, kijkpunt]`)
+   - camera: **3 shots met harde overgangen** zoals de gravity-video (in de engine: `TL.shots` / `tripod`, niet één `camPath`)
    - `beats`: wanneer wat gebeurt (mensen gaan veilig weg met `shelter` / `flee`)
    - `captions` en `upload` (beschrijving zonder het einde te verklappen)
 3. Zet het onderwerp in `whatif-demo/onderwerpen.md` (nummer, vraag, plek, kracht).
@@ -297,6 +297,6 @@ of een nieuwe kracht is de engine wel veel minder werk.
 
 De eigenaar houdt het **verhaal en de opbouw** van deze video aan, maar voor nieuwe video's geldt nu (`regels/standaard-video.md`):
 - géén eindkaart en géén zwart eindscherm: het laatste beeld blijft staan;
-- één doorlopende camerabeweging in plaats van 3 harde shots;
+- **camera: 3 shots met harde overgangen, precies zoals deze gravity-video** (besluit eigenaar 17 okt 2026; de oudere regel "één doorlopende camerabeweging" uit `standaard-video.md` geldt **niet** meer), plus max. 2 korte close-ups;
 - Europese eenheden (kg in plaats van pond);
 - stem: standaard Chatterbox (gratis, pc); xAI alleen op verzoek.
