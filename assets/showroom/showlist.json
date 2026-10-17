@@ -1,0 +1,225 @@
+[
+[
+"mini-characters",
+"character-female-a",
+"Woman \u2013 walk",
+"walk",
+0.3
+],
+[
+"mini-characters",
+"character-female-b",
+"Woman \u2013 sit",
+"sit",
+0.5
+],
+[
+"mini-characters",
+"character-female-c",
+"Woman \u2013 pick up",
+"pick-up",
+0.5
+],
+[
+"mini-characters",
+"character-female-d",
+"Woman \u2013 crouch",
+"crouch",
+0.5
+],
+[
+"mini-characters",
+"character-male-a",
+"Man \u2013 idle",
+"idle",
+0.3
+],
+[
+"mini-characters",
+"character-male-c",
+"Man \u2013 sprint",
+"sprint",
+0.3
+],
+[
+"blocky-characters",
+"character-a",
+"Blocky \u2013 walk",
+"walk",
+0.3
+],
+[
+"mini-characters",
+"wheelchair",
+"Wheelchair",
+null
+],
+[
+"car-kit",
+"sedan",
+"Car \u2013 sedan",
+null
+],
+[
+"car-kit",
+"taxi",
+"Taxi",
+null
+],
+[
+"car-kit",
+"police",
+"Police car",
+null
+],
+[
+"car-kit",
+"ambulance",
+"Ambulance",
+null
+],
+[
+"car-kit",
+"firetruck",
+"Fire truck",
+null
+],
+[
+"car-kit",
+"garbage-truck",
+"Garbage truck",
+null
+],
+[
+"train-kit",
+"train-tram-modern",
+"Tram",
+null
+],
+[
+"train-kit",
+"train-electric-bullet-a",
+"High-speed train",
+null
+],
+[
+"train-kit",
+"train-locomotive-passenger-a",
+"Locomotive",
+null
+],
+[
+"watercraft-kit",
+"ship-ocean-liner",
+"Ocean liner",
+null
+],
+[
+"watercraft-kit",
+"ship-cargo-a",
+"Cargo ship",
+null
+],
+[
+"watercraft-kit",
+"boat-sail-a",
+"Sailing boat",
+null
+],
+[
+"watercraft-kit",
+"boat-fishing-small",
+"Fishing boat",
+null
+],
+[
+"city-kit-commercial",
+"building-skyscraper-a",
+"Skyscraper",
+null
+],
+[
+"city-kit-commercial",
+"building-c",
+"Shop building",
+null
+],
+[
+"city-kit-suburban",
+"building-type-a",
+"House",
+null
+],
+[
+"city-kit-industrial",
+"windmill",
+"Wind turbine",
+null
+],
+[
+"city-kit-industrial",
+"water-tower",
+"Water tower",
+null
+],
+[
+"city-kit-roads",
+"light-square-double",
+"Street light",
+null
+],
+[
+"city-kit-roads",
+"construction-barrier",
+"Barrier",
+null
+],
+[
+"nature-kit",
+"tree_oak_dark",
+"Oak tree",
+null
+],
+[
+"nature-kit",
+"tree_palmBend",
+"Palm",
+null
+],
+[
+"nature-kit",
+"tree_pineTallB_detailed",
+"Pine",
+null
+],
+[
+"nature-kit",
+"rock_largeB",
+"Rock",
+null
+],
+[
+"space-kit",
+"astronautA",
+"Astronaut",
+null
+],
+[
+"space-kit",
+"rover",
+"Rover",
+null
+],
+[
+"space-kit",
+"alien",
+"Alien",
+null
+],
+[
+"space-kit",
+"satelliteDish_large",
+"Satellite dish",
+null
+]
+]

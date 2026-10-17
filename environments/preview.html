@@ -1,0 +1,23 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><style>html,body{margin:0;width:720px;height:1280px;overflow:hidden;background:#000}canvas{display:block}
+#lab{position:absolute;left:16px;top:14px;color:#f3ede2;font:600 26px Georgia,serif;text-shadow:0 2px 6px #000}</style></head>
+<body><div id="lab"></div>
+<script type="importmap">{ "imports": { "three": "../node_modules/three/build/three.module.js", "three/addons/": "../node_modules/three/examples/jsm/" } }</script>
+<script type="module">
+// preview.html?env=island  -> window.view('beach') renders that camera. Used by preview.mjs.
+import * as THREE from 'three';
+import { loadModel } from '../assets/load.js';
+const env = new URLSearchParams(location.search).get('env') || 'island';
+const renderer = new THREE.WebGLRenderer({ antialias: true, preserveDrawingBuffer: true });
+renderer.setSize(720, 1280); renderer.outputColorSpace = THREE.SRGBColorSpace;
+renderer.shadowMap.enabled = true; renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+document.body.prepend(renderer.domElement);
+const scene = new THREE.Scene();
+const camera = new THREE.PerspectiveCamera(60, 720 / 1280, .1, 8000);
+const mod = await import(`./${env}.js`);
+const info = await mod.build({ THREE, scene, loadModel, base: '../assets/kenney' });
+window.cameras = Object.keys(info.cameras);
+window.view = (k) => { const c = info.cameras[k]; camera.position.set(...c.pos); camera.lookAt(...c.look);
+  document.getElementById('lab').textContent = `${env} – ${k}`; renderer.render(scene, camera); };
+window.ready = true;
+</script></body></html>
