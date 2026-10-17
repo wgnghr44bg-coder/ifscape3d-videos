@@ -7,7 +7,7 @@
   "three/addons/": "../../node_modules/three/examples/jsm/" } }</script>
 <script type="module">
 import * as THREE from 'three';
-import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+import { loadModel } from '../load.js';
 const renderer = new THREE.WebGLRenderer({ antialias: true, preserveDrawingBuffer: true });
 renderer.setSize(480, 480); renderer.outputColorSpace = THREE.SRGBColorSpace;
 renderer.shadowMap.enabled = true; renderer.shadowMap.type = THREE.PCFSoftShadowMap;
@@ -19,24 +19,17 @@ const sun = new THREE.DirectionalLight(0xffeedd, 2.4); sun.castShadow = true; su
 scene.add(sun, sun.target);
 const ground = new THREE.Mesh(new THREE.PlaneGeometry(2000, 2000), new THREE.MeshLambertMaterial({ color: 0x9b968c }));
 ground.rotation.x = -Math.PI / 2; ground.receiveShadow = true; scene.add(ground);
-const loader = new GLTFLoader();
 let current = null, mixer = null;
-// same look as scene.html: flat Lambert, keep the Kenney colour map
-function flatten(root) {
-  root.traverse(o => { if (!o.isMesh) return; o.castShadow = o.receiveShadow = true;
-    const m = o.material; o.material = new THREE.MeshLambertMaterial({ map: m.map || null, color: m.map ? 0xffffff : m.color, flatShading: true, skinning: undefined }); });
-}
+// uses assets/load.js (same flat look as the videos, Draco support for the NASA models)
 window.show = async (url, label, anim, t = .6, yaw = -.6) => {
   if (current) scene.remove(current);
-  const g = await loader.loadAsync(url); current = g.scene; flatten(current); current.rotation.y = yaw; scene.add(current);
-  mixer = null;
-  if (anim && g.animations.length) { mixer = new THREE.AnimationMixer(current); const clip = THREE.AnimationClip.findByName(g.animations, anim);
-    if (clip) { const a = mixer.clipAction(clip); a.play(); mixer.setTime(t * clip.duration); } }
+  const m = await loadModel(url, { anim: anim || undefined }); current = m.root; current.rotation.y = yaw; scene.add(current);
+  if (anim && m.mixer) { const clip = m.mixer._actions[0]?.getClip(); m.setTime(t * (clip ? clip.duration : 1)); }
   current.updateMatrixWorld(true);
   const box = new THREE.Box3().setFromObject(current), size = box.getSize(new THREE.Vector3()), c = box.getCenter(new THREE.Vector3());
-  current.position.y -= box.min.y; c.y -= box.min.y;
   const r = Math.max(size.x, size.y, size.z);
   camera.position.set(c.x + r * 1.25, c.y + r * .75, c.z + r * 1.6); camera.lookAt(c.x, c.y * .9, c.z);
+  camera.near = r / 200; camera.far = r * 50; camera.updateProjectionMatrix();
   sun.position.set(c.x - r * 2, r * 4, c.z + r * 3); sun.target.position.copy(c);
   Object.assign(sun.shadow.camera, { left: -r * 2, right: r * 2, top: r * 2, bottom: -r * 2, near: .1, far: r * 12 }); sun.shadow.camera.updateProjectionMatrix();
   document.getElementById('lab').textContent = label;

@@ -221,5 +221,125 @@ null
 "satelliteDish_large",
 "Satellite dish",
 null
+],
+[
+"nasa",
+"1999-rq36-asteroid",
+"1999 rq36 asteroid",
+null
+],
+[
+"nasa",
+"apollo-lunar-module",
+"apollo lunar module",
+null
+],
+[
+"nasa",
+"astronaut",
+"astronaut",
+null
+],
+[
+"nasa",
+"chandra-x-ray-observatory",
+"chandra x ray observatory",
+null
+],
+[
+"nasa",
+"crawler",
+"crawler",
+null
+],
+[
+"nasa",
+"gemini",
+"gemini",
+null
+],
+[
+"nasa",
+"hubble-space-telescope-a",
+"hubble space telescope a",
+null
+],
+[
+"nasa",
+"ingenuity-mars-helicopter",
+"ingenuity mars helicopter",
+null
+],
+[
+"nasa",
+"insight-cruise-lander-panels-deployed",
+"insight cruise lander panels",
+null
+],
+[
+"nasa",
+"international-space-station-iss-a",
+"international space station ",
+null
+],
+[
+"nasa",
+"james-webb-space-telescope-a",
+"james webb space telescope a",
+null
+],
+[
+"nasa",
+"juno-a",
+"juno a",
+null
+],
+[
+"nasa",
+"mars-2020-perseverance-rover",
+"mars 2020 perseverance rover",
+null
+],
+[
+"nasa",
+"mars-exploration-rover-opportunity-mer-b",
+"mars exploration rover oppor",
+null
+],
+[
+"nasa",
+"mobile-launcher-assembled",
+"mobile launcher assembled",
+null
+],
+[
+"nasa",
+"saturn-v",
+"saturn v",
+null
+],
+[
+"nasa",
+"skylab",
+"skylab",
+null
+],
+[
+"nasa",
+"space-shuttle-a",
+"space shuttle a",
+null
+],
+[
+"nasa",
+"viking-lander",
+"viking lander",
+null
+],
+[
+"nasa",
+"voyager-probe-a",
+"voyager probe a",
+null
 ]
 ]

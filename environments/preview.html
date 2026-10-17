@@ -17,7 +17,7 @@ const camera = new THREE.PerspectiveCamera(60, 720 / 1280, .1, 8000);
 const mod = await import(`./${env}.js`);
 const info = await mod.build({ THREE, scene, loadModel, base: '../assets/kenney' });
 window.cameras = Object.keys(info.cameras);
-window.view = (k) => { const c = info.cameras[k]; camera.position.set(...c.pos); camera.lookAt(...c.look);
+window.view = (k, t = 12) => { if (info.update) info.update(t); const c = info.cameras[k]; camera.position.set(...c.pos); camera.lookAt(...c.look);
   document.getElementById('lab').textContent = `${env} – ${k}`; renderer.render(scene, camera); };
 window.ready = true;
 </script></body></html>
