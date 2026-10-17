@@ -12,5 +12,5 @@ Daarin:
 Geen mp4 (te groot voor GitHub, staat al op YouTube), geen stills, geen wav's.
 Hiermee kan elke video later opnieuw gemaakt of gerepareerd worden.
 
-Uitzondering: `2026-10-04-gravity-doubled/` heeft wél de mp4, plus `HOE-GEMAAKT.md`: hoe de gravity-video gemaakt is
+Uitzondering: `2026-10-04-gravity-doubled/` heeft wél de mp4, plus `GRAVITY-VIDEO.md`: alles bij elkaar over hoe de gravity-video is opgebouwd en gemaakt,
 en hoe je op dezelfde manier een nieuwe video maakt met een ander scenario en een andere plek.
