@@ -25,6 +25,7 @@ manier een nieuwe what if maakt met een ander scenario en een andere plek.
 | `voice-times.tsv` | begin- en eindtijd van elke zin in `voice.mp3` |
 | `scene.html` | de hele 3D-scène (three.js): straat, mensen, auto's, kraan, brug, torens, tekst in beeld |
 | `render.mjs` | maakt stilstaande beelden, de thumbnail, `timeline.json` en de video zonder geluid |
+| `make_audio.py` | maakt al het geluid (zelf, van ruis) en mixt het met de stem → `mix.wav` |
 | `timeline.json` | de tijdlijn (TL) + alles wat valt of breekt; `make_audio.py` maakt hiermee het geluid |
 | `thumbnail.jpg` | eerste beeld met de titel |
 | `upload.json` | titel en YouTube-link |
@@ -184,7 +185,8 @@ Alles is gratis behalve de stem. Er is geen AI-beeld gebruikt: alles is zelf geb
 4. **Testbeelden**: `node render.mjs stills 5 20 40 55 66 80` → `stills/` (eerst naar de eigenaar).
 5. **Tijdlijn voor het geluid**: `node render.mjs timeline` → `timeline.json`.
 6. **Video zonder geluid**: `node render.mjs video silent.mp4 3` (720x1280, 30 fps; met 3 tegelijk duurt het ± een half uur).
-7. **Geluid**: `python3 whatif-demo/make_audio.py whatif-demo/gravity-doubled` → `mix.wav`.
+7. **Geluid**: `python3 make_audio.py .` (in deze map; nodig: `pip install numpy scipy` + ffmpeg) → `sfx-bed.wav` + `mix.wav`.
+   Het script maakt alle geluidjes zelf (in `sfx/`), er zijn geen losse geluidsbestanden nodig.
    Alle geluiden zijn zelf gemaakt met ruis (stad, wind, dreun, glas, kabel, vliegtuig…), dus gratis.
    De stem staat voorop, de geluiden zijn eronder zachter (-14 LUFS).
 8. **Eindvideo** (de precieze opdracht is niet bewaard; dit geeft hetzelfde resultaat):
