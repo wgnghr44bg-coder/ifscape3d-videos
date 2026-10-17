@@ -37,7 +37,7 @@ manier een nieuwe what if maakt met een ander scenario en een andere plek.
 # Deel 1 – De opbouw van de video
 
 Alles hieronder komt uit `scene.html` (beeld), `timeline.json` (tijdlijn), `voice-times.tsv` (stem) en
-`make_audio.py` in `vox-lux` (geluid). Tijden zijn **videoseconden**: de stem begint op 0,5 s, dus
+`make_audio.py` (geluid). Tijden zijn **videoseconden**: de stem begint op 0,5 s, dus
 videotijd = tijd in `voice-times.tsv` + 0,5.
 
 ![overzicht](OVERZICHT.jpg)
