@@ -65,6 +65,9 @@ Route: **FIRST RULE** in AGENTS.md — storyboard alleen via `tools/whatif/whati
       breed: naast een lichaam van 2,4 m valt hij óf buiten het kader óf hij verstopt je), dus step 5 vergelijkt nu
       mensen: "Their heads come up to your chest" — met de voorbijganger op dezelfde diepte als jij klopt dat op de
       plaat. De kar blijft als decor op het plein staan (niet meer genoemd).
+      → daarna `node tools/whatif/scenecheck.mjs` → ✅ **ALL PICTURE CHECKS PASSED**, met de nieuwe, eerlijke
+      getallen: step 5 "their heads come up to your chest ✓ 74 %", step 9 "your head is above the lanterns ✓ 84 %",
+      step 7 deur 227 px, step 8 fonteinrand 27 %, en 3 harde cutten op 42, 54 en 59 s.
 
 ## Staat nu
 
@@ -73,8 +76,8 @@ Route: **FIRST RULE** in AGENTS.md — storyboard alleen via `tools/whatif/whati
 - Plek: `environments/old-town.js` (bestaat, 3 camera's) + custom camera's voor shot 1, shot 2, de twee close-ups en de lage climax-shot.
 - Teller: `HEIGHT · FIRST 8 YEARS` 1,8 → 3,8 m, tweede regel `MASS · SAME SHAPE` 75 → 705 kg.
 - Shots: square (0–21 s) → close-up schoenen (21–25 s, 4 s) → square (25–42 s) → escalatie vanaf de vloer (42–54 s)
-  → close-up fonteinrand (54–59 s) → lage camera op de keien die naar je opkijkt (59 s → eind). 4 harde overgangen
-  = 3 shots + 2 close-ups.
+  → close-up fonteinrand (54–59 s) → lage camera op de keien die naar je opkijkt (59 s → eind). De checker telt
+  3 harde overgangen (42, 54 en 59 s) = 3 shots + 2 close-ups.
 - Nieuw in code (1 ding): het groeiende personage (Kenney mini-character ×1 → ×2,11). Geen nieuwe modelbestanden,
   geen nieuwe licenties (Kenney CC0 + bestaande omgeving).
 - Scene-details die niet in `plan.json` horen maar wel eerlijk zijn: de `square`-tag zit op een brede versleten
