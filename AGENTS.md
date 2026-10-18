@@ -13,7 +13,11 @@ Whenever the owner gives you a "What if …" (in any words, also in Dutch: "wat 
 4. Fill in every TODO in `<folder>/plan.json` (new sentences, never copied).
 5. `python tools/whatif/whatif.py check <folder>` → fix every FAIL in `plan.json` → run again, until **ALL CHECKS PASSED**.
    Never write `STORYBOARD.md` or `script.txt` by hand, and never work around a check.
-6. Show the owner the generated `STORYBOARD.md` and STOP. Build nothing before the owner says "ga door".
+6. Ask the subagent `@physics-review` (`.opencode/agent/physics-review.md`) to review `STORYBOARD.md`. Fix every real
+   problem in `plan.json` and run `check` again.
+7. Show the owner the generated `STORYBOARD.md` (+ the physics review) and STOP. Build nothing before the owner says "ga door".
+
+Shortcut in OpenCode: `/whatif <question>` does all of this (`.opencode/command/whatif.md`).
 
 ## PART A — standing rules (every video, now and in the future)
 

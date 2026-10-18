@@ -1,0 +1,25 @@
+{
+ "_help": "Real-world maximums. whatif.py check FAILs when a number in the table (not marked premise) matches 'unit' and 'meaning' (case-insensitive regex), does not match 'unless', and is above 'max'. Add a limit whenever a review finds an impossible number.",
+ "limits": [
+  {"unit": "°C|degrees|deg", "meaning": "\\bair\\b|weather|temperature|hot|heat", "unless": "ground|surface|sand|rock|road|asphalt|tar|metal|car|space|venus|mars|mercury|sun|core|lava|magma|fire|oven|engine|planet|star",
+   "max": 56.7, "why": "the highest air temperature ever measured on Earth is 56.7 °C (Death Valley, 1913, WMO). Only the premise may go higher."},
+  {"unit": "°C|degrees|deg", "meaning": "ground|surface|sand|rock|road|asphalt|tar", "unless": "lava|magma|fire|space|venus|mars|mercury|sun|core|planet",
+   "max": 75, "why": "sunlight heats the ground on Earth to at most about 70–75 °C (satellite record, Lut desert)."},
+  {"unit": "w", "meaning": "sun|solar|light", "unless": "above|space|top of|outside the atmosphere|orbit|venus|mercury|closer",
+   "max": 1100, "why": "sunlight at the ground is at most about 1 000–1 100 W/m² (sun overhead, clear sky); 1 361 W/m² is above the atmosphere."},
+  {"unit": "mm.*(day|24)", "meaning": "rain", "unless": "",
+   "max": 1825, "why": "the world record for rain in one day is 1 825 mm (Foc-Foc, Réunion, 1966, WMO)."},
+  {"unit": "mm.*(h|hour)", "meaning": "rain", "unless": "",
+   "max": 310, "why": "the record for rain in about an hour is about 305 mm (Holt, Missouri, 1947, WMO)."},
+  {"unit": "km/h|kmh", "meaning": "wind|gust", "unless": "jupiter|neptune|saturn|planet|tornado",
+   "max": 410, "why": "the strongest wind gust measured (outside tornadoes) is 408 km/h (Barrow Island, 1996, WMO)."},
+  {"unit": "mm.*(year|yr)", "meaning": "sea", "unless": "",
+   "max": 10, "why": "the sea is rising about 4–5 mm a year today; more than 10 mm a year is not measured."},
+  {"unit": "mm", "meaning": "vapou?r|water (in|of) the (air|sky|atmosphere)|precipitable", "unless": "",
+   "max": 80, "why": "all water vapour above a place is at most about 70–80 mm of rain (tropics); about 25 mm on average."},
+  {"unit": "^m$|metres|meters", "meaning": "snow.*(winter|year|season)", "unless": "",
+   "max": 30, "why": "the snowiest season ever measured was about 29 m of fresh snow (Mount Baker, 1998–99)."},
+  {"unit": "km/h|kmh", "meaning": "run|sprint|human|person", "unless": "car|train|plane",
+   "max": 45, "why": "the fastest human sprint is about 44.7 km/h (Usain Bolt)."}
+ ]
+}
