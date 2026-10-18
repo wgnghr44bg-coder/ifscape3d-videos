@@ -3,6 +3,18 @@
 These are the owner's standing rules (PART A). Read them before starting any new "What if".
 The template to copy is `2026-10-04-gravity-doubled/` — read its `GRAVITY-VIDEO.md` first.
 
+## ⚠️ FIRST RULE — when the owner says "What if …"
+
+Whenever the owner gives you a "What if …" (in any words, also in Dutch: "wat als …"), do exactly this, nothing else first:
+
+1. `git pull`, then read `tools/whatif/README.md` and the example `tools/whatif/examples/sea-rose-10m.plan.json`.
+2. Pick the place: `python tools/whatif/whatif.py envs` (and `environments/PLAN-100.md`).
+3. `python tools/whatif/whatif.py new <yyyy-mm-dd>-<slug> --question "What if …?" --env <place>`
+4. Fill in every TODO in `<folder>/plan.json` (new sentences, never copied).
+5. `python tools/whatif/whatif.py check <folder>` → fix every FAIL in `plan.json` → run again, until **ALL CHECKS PASSED**.
+   Never write `STORYBOARD.md` or `script.txt` by hand, and never work around a check.
+6. Show the owner the generated `STORYBOARD.md` and STOP. Build nothing before the owner says "ga door".
+
 ## PART A — standing rules (every video, now and in the future)
 
 Whenever the owner asks for a new "What if", make it the same way as the gravity video, adapted to the new scenario:
