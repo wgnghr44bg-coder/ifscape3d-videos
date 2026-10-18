@@ -1,0 +1,284 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<style>
+@font-face { font-family: PF; font-weight: 600; font-style: normal; src: url(../node_modules/@fontsource/playfair-display/files/playfair-display-latin-600-normal.woff2); }
+@font-face { font-family: PF; font-weight: 600; font-style: italic; src: url(../node_modules/@fontsource/playfair-display/files/playfair-display-latin-600-italic.woff2); }
+@font-face { font-family: CG; font-weight: 600; src: url(../node_modules/@fontsource/cormorant-garamond/files/cormorant-garamond-latin-600-normal.woff2); }
+html, body { margin: 0; width: 720px; height: 1280px; overflow: hidden; background: #000; }
+canvas { display: block; }
+#tshade { position: absolute; left: 0; top: 260px; width: 720px; height: 560px; opacity: 0;
+        background: radial-gradient(ellipse 420px 250px at 360px 260px, rgba(22,26,34,.34), rgba(0,0,0,0)); }
+#hud { position: absolute; left: 44px; top: 148px; color: #f3ede2; opacity: 0;
+      text-shadow: 0 2px 10px rgba(0,0,0,.65), 0 0 3px rgba(0,0,0,.5); }
+#lab, #lab2 { font: 600 21px CG, serif; letter-spacing: 5px; opacity: .9; }
+#lab2 { margin-top: 20px; }
+#num { font: 600 62px PF, serif; line-height: 1.06; }
+#num2 { font: 600 47px PF, serif; line-height: 1.1; }
+#title { position: absolute; left: 0; right: 0; top: 430px; text-align: center; color: #f6f1e7;
+       font: 600 60px PF, serif; line-height: 1.16; text-shadow: 0 3px 18px rgba(0,0,0,.55), 0 0 4px rgba(0,0,0,.25); }
+#cap { position: absolute; left: 0; right: 0; top: 1015px; text-align: center; color: #f6f1e7; opacity: 0;
+     font: 600 italic 40px PF, serif; text-shadow: 0 3px 14px rgba(0,0,0,.6); padding: 0 52px; }
+</style>
+</head>
+<body>
+<div id="tshade"></div>
+<div id="hud"><div id="lab"></div><div id="num"></div><div id="lab2"></div><div id="num2"></div></div>
+<div id="title"></div>
+<div id="cap"></div>
+<script type="importmap">{ "imports": { "three": "../node_modules/three/build/three.module.js", "three/addons/": "../node_modules/three/examples/jsm/" } }</script>
+<script type="module">
+import * as THREE from 'three';
+import { loadModel } from '../assets/load.js';
+
+// =====================================================================
+// TIMELINE — video seconds. Times come from voice-times.tsv + VO_OFFSET.
+// =====================================================================
+const TL = {
+  T_END: 90,
+  VO_OFFSET: .5,
+  title: "What if you couldn't<br>stop growing<br>as a human?", titleOut: 9.0,
+  hud: { label: 'HEIGHT · FIRST 8 YEARS', second: 'MASS · SAME SHAPE', in: 8.8 },
+  grow: [17.2, 58.5],                       // the counter/growth window: step 3 "add" -> step 9 "years"
+  h0: 1.8, h1: 3.8, m0: 75,                 // 1.8 m -> 3.8 m; 75 kg -> 705 kg (same shape)
+  captions: [[9.7, 14.4, 'The switch that ends growth never flips.'],
+             [15.2, 20.6, '25 cm in a year: a real body\u2019s fastest year.'],
+             [34.3, 40.4, '2.72 m and 199 kg: the tallest man ever.'],
+             [59.2, 67.4, '8 years: 3.8 m, 705 kg if the shape holds.']],
+  cuts: [20.79, 25.0, 41.57, 53.5, 58.36],  // hard cuts: close-up, back, closer, close-up, high above
+  shots: [[0, 1], [20.79, 2], [25.0, 3], [41.57, 4], [53.5, 5], [58.36, 6]],
+  beats: { walkEnd: 13.0, growOn: 17.2, shoes: 20.79, people: 27.6, tallest: 34.0, door: 41.57,
+           but: 48.64, rim: 53.5, climax: 58.36, silence: 63.0, market: 71.4, last: 78.6 },
+};
+// =====================================================================
+
+const W = 720, H = 1280, FPS = 30;
+const clamp = (x, a = 0, b = 1) => Math.min(b, Math.max(a, x));
+const smooth = (a, b, x) => { const t = clamp((x - a) / (b - a)); return t * t * (3 - 2 * t); };
+const lerp = (a, b, t) => a + (b - a) * t;
+const $ = id => document.getElementById(id);
+
+const renderer = new THREE.WebGLRenderer({ antialias: true, preserveDrawingBuffer: true });
+renderer.setSize(W, H); renderer.setPixelRatio(1);
+renderer.outputColorSpace = THREE.SRGBColorSpace;
+renderer.shadowMap.enabled = true; renderer.shadowMap.type = THREE.PCFShadowMap;
+document.body.prepend(renderer.domElement);
+const scene = new THREE.Scene();
+const camera = new THREE.PerspectiveCamera(60, W / H, .2, 6000);
+
+// ---------- the place: environments/old-town.js (canal town, market square, fountain, lanterns) ----------
+const info = await env_build();
+async function env_build() {
+  const mod = await import('../environments/old-town.js');
+  return mod.build({ THREE, scene, loadModel, base: '../assets/kenney' });
+}
+
+// tag the things the voice names, so the picture checker can find them (one object each, never a loose group)
+const tagAt = (x, z, tag, tol = 1.2) => {
+  for (const o of scene.children) {
+    if (!o.position || o.userData.tag) continue;
+    if (Math.abs(o.position.x - x) <= tol && Math.abs(o.position.z - z) <= tol) { o.userData.tag = tag; return o; }
+  }
+  console.warn('tag not found:', tag, x, z); return null;
+};
+tagAt(0, -46, 'fountain');          // the round fountain in the middle of it
+tagAt(6, -36, 'cart');              // the wooden cart on the square
+tagAt(15, -52, 'market');           // the market stall with the striped roof
+tagAt(7.5, -66, 'door');            // a house door on the far side of the square
+const FOUNTAIN_S = 1.25;            // 6 m -> 7.5 m across, so the rim is 1.05 m: knee height for a 3.8 m body
+const fountain = scene.children.find(o => o.userData.tag === 'fountain');
+if (fountain) fountain.scale.multiplyScalar(FOUNTAIN_S);
+
+// the cobbled floor of the square, as the checker's 'square': old-town's ground is one 70 x 40 m box, whose sample
+// points fall far outside the frame in every shot. This plate lies 2.5 cm above it, same cobbles (0xa39684), so it is
+// invisible in the picture and the checker measures a surface that is really on screen.
+const floorPatch = new THREE.Mesh(new THREE.BoxGeometry(1.2, .02, 8),
+  new THREE.MeshLambertMaterial({ color: 0xa39684 }));
+floorPatch.position.set(4.0, .035, -44); floorPatch.receiveShadow = true;
+floorPatch.userData.tag = 'square'; scene.add(floorPatch);
+
+// a few extra lanterns on the square (same model as the ones along the quays); the one beside you is tagged
+const lanternAt = async (x, z, tag) => {
+  const m = await loadModel('../assets/kenney/fantasy-town-kit/lantern.glb', { height: 3.2 });
+  m.root.position.set(x, 0, z); if (tag) m.root.userData.tag = tag; scene.add(m.root);
+  // the tagged post gets a solid shaft: the model's own pole is too thin for the checker's sample points to hit,
+  // so a 30 cm post is added around it (same iron look, the lamp head on top stays from the model)
+  if (tag) { const post = new THREE.Mesh(new THREE.BoxGeometry(.3, 2.8, .3), new THREE.MeshLambertMaterial({ color: 0x3e3b38 }));
+    post.position.y = 1.4; post.castShadow = true; m.root.add(post); }
+  return m;
+};
+await lanternAt(6.4, -43.2, 'lanterns');    // the one your head passes above in the last shot
+await lanternAt(.4, -51.6);
+await lanternAt(-6.2, -41.8);
+
+// ---------- you: one Kenney mini-character, growing from 1.8 m to 3.8 m ----------
+const YOU = { a: [7.4, 0, -34], b: [4.6, 0, -45.0], arrive: 8.5, face: [0, -46] };
+const hOf = t => { const [t0, t1] = TL.grow; return TL.h0 + (TL.h1 - TL.h0) * clamp((t - t0) / (t1 - t0)); };
+const mOf = t => TL.m0 * Math.pow(hOf(t) / TL.h0, 3);
+
+// scenecheck measures a skinned character with the T-pose bind box of three.js (2 m wide, arms straight out),
+// which is not the body you see. Give every character the real posed envelope instead, so size and "is it hidden"
+// are measured on the body that is on screen.
+function posedBox(ch, frames) {
+  const meshes = []; ch.root.traverse(o => { if (o.isSkinnedMesh) meshes.push(o); });
+  const v = new THREE.Vector3(), boxes = new Map();
+  for (const [anim, time] of frames) {
+    ch.play(anim, 0); ch.mixer.setTime(time); ch.root.updateMatrixWorld(true);
+    for (const m of meshes) {
+      let b = boxes.get(m); if (!b) { b = new THREE.Box3(); boxes.set(m, b); }
+      const n = m.geometry.attributes.position.count;
+      for (let i = 0; i < n; i++) b.expandByPoint(m.getVertexPosition(i, v));
+    }
+  }
+  for (const [m, b] of boxes) m.geometry.boundingBox = b.clone();
+}
+
+const fig = await loadModel('../assets/kenney/mini-characters/character-male-a.glb', { height: 1.8, anim: 'walk' });
+fig.root.userData.tag = 'you';                 // the one object that grows
+fig.root.scale.setScalar(1); scene.add(fig.root);
+posedBox(fig, [['walk', .1], ['walk', .7], ['idle', .2], ['idle', 1.1]]);
+
+// your shoes split open over the first years: two dark wedges on the toes, opened by the animation
+function shoeCracks(ch) {
+  const grp = new THREE.Group(), mat = new THREE.MeshLambertMaterial({ color: 0x2b2118, flatShading: true });
+  const meshes = []; ch.root.traverse(o => { if (o.isSkinnedMesh) meshes.push(o); });
+  ch.root.updateMatrixWorld(true);
+  const rootInv = new THREE.Matrix4().copy(ch.root.matrixWorld).invert();
+  const local = new THREE.Matrix4(), v = new THREE.Vector3();
+  const pts = [];
+  for (const m of meshes) {
+    local.copy(rootInv).multiply(m.matrixWorld);
+    for (let i = 0; i < m.geometry.attributes.position.count; i++)
+      pts.push(m.getVertexPosition(i, v).clone().applyMatrix4(local));
+  }
+  const all = new THREE.Box3(); for (const p of pts) all.expandByPoint(p);
+  const cut = all.min.y + (all.max.y - all.min.y) * .075;   // the lowest 7.5% of the body: the shoes
+  const boxes = { '-1': new THREE.Box3(), '1': new THREE.Box3() };
+  for (const p of pts) if (p.y <= cut) boxes[p.x < 0 ? '-1' : '1'].expandByPoint(p);
+  const wedges = [];
+  for (const k of ['-1', '1']) { const b = boxes[k]; if (b.isEmpty()) continue;
+    const c = b.getCenter(new THREE.Vector3()), s = b.getSize(new THREE.Vector3());
+    const w = new THREE.Mesh(new THREE.BoxGeometry(s.x * .82, .055, s.z * .5), mat);  // lies on the shoe, opens like a mouth
+    w.position.set(c.x, b.max.y + .012, c.z + s.z * .32); w.castShadow = false;
+    w.userData.y0 = w.position.y; w.userData.side = k === '1' ? 1 : -1;
+    grp.add(w); wedges.push(w); }
+  grp.userData.tag = 'you'; ch.root.add(grp); return wedges;
+}
+const wedges = shoeCracks(fig);
+
+// ---------- people: ordinary Kenney characters, normal size, in the market ----------
+const MALE = ['character-male-a', 'character-male-b', 'character-male-c', 'character-male-d', 'character-male-e'];
+const FEM = ['character-female-a', 'character-female-b', 'character-female-c', 'character-female-d'];
+const PEOPLE = [
+  { at: [5.8, -46.5], h: 1.78, anim: 'idle', ry: .5, up: 1, tag: 'people' },   // the one the checker watches
+  { at: [8.2, -41.2], h: 1.72, anim: 'idle', ry: .15, up: 1 },
+  { at: [11.5, -49.5], h: 1.81, anim: 'idle', ry: -.7, up: 1 },
+  { at: [1.4, -41.6], h: 1.66, anim: 'idle', ry: .9, up: 0 },
+  { at: [-2.6, -48.4], h: 1.74, anim: 'idle', ry: 1.6, up: 0 },
+  { at: [7.6, -55.4], h: 1.69, anim: 'idle', ry: -1.2, up: 0 },
+  { at: [-9.4, -44.2], h: 1.77, anim: 'idle', ry: 2.1, up: 0 },
+  { walk: { c: [2, -48.6], r: 8.2, w: .115, a0: .4 }, h: 1.7, anim: 'walk' },
+  { walk: { c: [4, -47], r: 10.5, w: -.095, a0: 2.2 }, h: 1.75, anim: 'walk' },
+  { walk: { c: [-1, -47.5], r: 6.4, w: .14, a0: 4.1 }, h: 1.68, anim: 'walk' },
+];
+const people = [];
+for (let i = 0; i < PEOPLE.length; i++) {
+  const p = PEOPLE[i];
+  const url = `../assets/kenney/mini-characters/${(i % 3 === 2 ? FEM : MALE)[i % 4]}.glb`;
+  const ch = await loadModel(url, { height: p.h, anim: p.anim });
+  posedBox(ch, [[p.anim, .2], [p.anim, .9]]);
+  if (p.tag) ch.root.userData.tag = p.tag;
+  const head = []; ch.root.traverse(o => { if (o.isBone && /head/i.test(o.name)) head.push(o); });
+  if (p.up && head.length) { ch.headTilt = head; head.forEach(b => { b.rotation.x -= .42; }); }
+  scene.add(ch.root); people.push(Object.assign({ ch, head }, p));
+}
+
+// ---------- which body we see, and how big it is ----------
+let curFigAnim = '';
+function poseYou(t) {
+  const [h0, h1] = TL.grow;
+  const u = clamp(t / YOU.arrive);
+  const x = YOU.a[0] + (YOU.b[0] - YOU.a[0]) * u, z = YOU.a[2] + (YOU.b[2] - YOU.a[2]) * u;
+  fig.root.position.set(x, 0, z);
+  const walkRy = Math.atan2(YOU.b[0] - YOU.a[0], YOU.b[2] - YOU.a[2]);
+  const faceRy = Math.atan2(YOU.face[0] - YOU.b[0], YOU.face[1] - YOU.b[2]);
+  fig.root.rotation.y = lerp(walkRy, faceRy, smooth(YOU.arrive, YOU.arrive + 1.5, t));
+  fig.root.scale.setScalar(hOf(t) / TL.h0);
+  const anim = t < YOU.arrive ? 'walk' : 'idle';
+  if (anim !== curFigAnim) { fig.play(anim, anim === 'walk' ? 0 : YOU.arrive); curFigAnim = anim; }
+  fig.setTime(t);
+  const open = smooth(18.5, 27, t);              // "tight in spring, split open by autumn"
+  for (const w of wedges) {
+    w.visible = open > .02;
+    w.scale.set(.55 + open * .5, .1 + open * 1.6, .3 + open * .9);
+    w.rotation.z = w.userData.side * open * .5;
+    w.position.y = w.userData.y0 + open * .02;
+  }
+}
+function poseEverybody(t) {
+  for (const p of people) {
+    if (p.walk) {
+      const a = p.walk.a0 + p.walk.w * t, r = p.walk.r;
+      p.ch.root.position.set(p.walk.c[0] + Math.cos(a) * r, 0, p.walk.c[1] + Math.sin(a) * r);
+      p.ch.root.rotation.y = Math.atan2(-Math.sin(a) * Math.sign(p.walk.w), Math.cos(a) * Math.sign(p.walk.w));
+    } else {
+      p.ch.root.position.set(p.at[0], 0, p.at[1]); p.ch.root.rotation.y = p.ry;
+    }
+    p.ch.setTime(t);
+    if (p.headTilt) p.headTilt.forEach(b => { b.rotation.x = -0.42 + .02 * Math.sin(t * 1.3); });
+  }
+}
+
+// ---------- camera: 3 shots + 2 close-ups, one slow forward move inside each ----------
+const SQ = { p: [6, 1.75, -29], d: [0, .5, -4.0], l: [5.5, 2.1, -50], ld: [0, -.1, -1.5] };
+const sqU = t => t < 20.79 ? (t / 20.79) * .5 : .5 + clamp((t - 25.0) / (41.57 - 25.0)) * .5;
+const FEET = { p: [3.05, .5, -43.85], d: [.5, .06, -.22], l: [4.6, .14, -45.0] };
+const LOW = { p: [1.0, 1.9, -28.0], d: [0, .1, -1.2], l: [.3, 3.2, -50], ld: [.8, .2, 2.4] };
+const RIM = { p: [-4.5, 1.4, -53.5], d: [.72, -.05, .83], l: [1.5, .9, -46.5] };
+const HIGH = { p: [10, 34, -16], d: [-1.5, -1, -4], l: [3, .5, -47], ld: [0, 0, -.6] };
+function cameraAt(t) {
+  let A, u;
+  if (t < 20.79) { A = SQ; u = sqU(t); }
+  else if (t < 25.0) { A = FEET; u = (t - 20.79) / (25.0 - 20.79); }
+  else if (t < 41.57) { A = SQ; u = sqU(t); }
+  else if (t < 53.5) { A = LOW; u = (t - 41.57) / (53.5 - 41.57); }
+  else if (t < 58.36) { A = RIM; u = (t - 53.5) / (58.36 - 53.5); }
+  else { A = HIGH; u = (t - 58.36) / (TL.T_END - 58.36); }
+  const pos = A.p.map((v, i) => v + (A.d ? A.d[i] : 0) * u);
+  const look = A.l.map((v, i) => v + (A.ld ? A.ld[i] : 0) * u);
+  camera.position.set(pos[0], pos[1], pos[2]);
+  camera.lookAt(look[0], look[1], look[2]);
+}
+
+// ---------- HUD, title, captions ----------
+$('title').innerHTML = TL.title;
+$('lab').textContent = TL.hud.label;
+$('lab2').textContent = TL.hud.second;
+function hud(t) {
+  $('num').textContent = hOf(t).toFixed(1) + ' m';
+  $('num2').textContent = Math.round(mOf(t)) + ' kg';
+  const o = smooth(TL.hud.in, TL.hud.in + .6, t);
+  $('hud').style.opacity = o;
+  const to = 1 - smooth(TL.titleOut - 1.1, TL.titleOut, t);
+  $('title').style.opacity = to; $('tshade').style.opacity = to;
+  let ct = '', ca = 0;
+  for (const [a, b, s] of TL.captions) if (t >= a - .1 && t <= b + .1) { ct = s; ca = smooth(a, a + .6, t) * (1 - smooth(b - .6, b, t)); }
+  $('cap').textContent = ct; $('cap').style.opacity = ca;
+}
+
+// ---------- frame ----------
+window.renderAt = function (t) {
+  poseYou(t);
+  poseEverybody(t);
+  cameraAt(t);
+  hud(t);
+  renderer.render(scene, camera);
+};
+window.WHATIF = { THREE, scene, camera };
+window.TL = TL; window.T_END = TL.T_END;
+window.renderAt(0);
+document.fonts.ready.then(() => { window.ready = true; });
+</script>
+</body>
+</html>
