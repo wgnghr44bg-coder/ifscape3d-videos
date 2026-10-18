@@ -178,7 +178,10 @@ function measure({ words, scale, mayFloat, t, titleEnd, counterFrom, match }) {
         const b = boxOf(norm(match.object));
         const unitK = { m: 1, cm: 100, mm: 1000, km: .001 }[match.unit || 'm'] || 1;
         const ref = match.from_ground ? 0 : b.min.y;
-        const real = b.isEmpty() ? null : ((match.measure === 'top' ? b.max.y - ref : b.max.y - b.min.y) * unitK);
+        const sz = b.getSize(new THREE.Vector3());
+        const real = b.isEmpty() ? null : (match.measure === 'top' ? b.max.y - ref
+          : match.measure === 'length' ? Math.max(sz.x, sz.y, sz.z)       // standing = height, lying = length
+          : sz.y) * unitK;
         out.match = { shown: nums[match.hud_number || 0], real, all: nums };
       }
     }
