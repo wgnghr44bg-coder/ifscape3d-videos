@@ -1,0 +1,21 @@
+{
+ "title": "What if the sea rose 10 metres overnight? #shorts",
+ "question": "What if the sea rose 10 metres overnight?",
+ "slug": "sea-rose-10m",
+ "description": "What if the sea rose 10 metres overnight?\n\nSources:\n- The sea is rising about 4 mm a year: IPCC AR6 WG1, Summary for Policymakers A.1.7 https://www.ipcc.ch/report/ar6/wg1/chapter/summary-for-policymakers/\n- 1 in 10 people live on coasts less than 10 m above the sea: McGranahan, Balk & Anderson (2007), Environment & Urbanization 19(1) https://doi.org/10.1177/0956247807076960\n\n3D models: Kenney / Quaternius (CC0)\n3D models: \"Statue\" by Zsky (Poly Pizza, CC-BY 3.0) https://poly.pizza/m/JXmywADgSk",
+ "credits": [
+  "3D models: \"Statue\" by Zsky (Poly Pizza, CC-BY 3.0) https://poly.pizza/m/JXmywADgSk"
+ ],
+ "sources": [
+  {
+   "claim": "The sea is rising about 4 mm a year",
+   "source": "IPCC AR6 WG1, Summary for Policymakers A.1.7",
+   "url": "https://www.ipcc.ch/report/ar6/wg1/chapter/summary-for-policymakers/"
+  },
+  {
+   "claim": "1 in 10 people live on coasts less than 10 m above the sea",
+   "source": "McGranahan, Balk & Anderson (2007), Environment & Urbanization 19(1)",
+   "url": "https://doi.org/10.1177/0956247807076960"
+  }
+ ]
+}
