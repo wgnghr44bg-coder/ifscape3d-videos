@@ -37,6 +37,8 @@ Rules:
 | `shots` | 3 × `shot` (+ max 2 × `closeup`, 3–5 s): `from_step`, `camera`, `shows` | shot 1 at step 1, shot 3 at or before step 9; camera exists in `environments/<env>.js`, or `custom` + `where` |
 | `climax` | `visual`, `why_it_fits_the_closing_line` | must fit `pace` |
 | `models` | `name`, `source`, `path`, `new`, `licence`, `credit` | max 2 new; path in `assets/<source>/` (or `environments/`); file exists; never `assets/downloads/`; Poly Pizza credit in the exact format of `assets/LICENTIE-REGELS.md` |
+| `numbers[].premise` | `true` for the "what if" number itself (e.g. the sea rises 10 m) | – |
+| `derivations` | for every counter end value: `result` (number id), `formula` with number ids (e.g. `rise - quay`), `explain` | the checker CALCULATES the formula; it must match the table within 15 %. Each counter end value needs a derivation, a fact with a source, or `premise` |
 | `reality` | for steps 7, 9 and 10: why it would really happen (physics/biology) | filled in (≥ 40 characters); if you cannot explain it, change the step |
 | `critic` | 3 weak points you found reading it as a critic + the fix you made | at least 3 |
 | `questions` | only what the template does not decide, each with `my_choice` | max 3 |
@@ -45,6 +47,13 @@ Timing: `check` estimates the length (2.8 words/s, `[pause]` 0.5 s, `[long pause
 last frame held 3.5 s) and fails outside 78–92 s. The final times always come from `voice-times.tsv`.
 
 `--skip-files` skips the model-file check (only for testing in the cloud, where `assets/downloads/` copies are missing).
+
+## Physics checks
+- **Counter end values must add up**: every end value is the premise, comes from a sourced fact, or is calculated
+  in `derivations`. Never invent a number just to make the sum work – every number in the table is reviewed with its `meaning`.
+- **After the counter stops, nothing is "still rising / getting hotter / more and more"** in later steps.
+- **Known mistakes** in `physics-myths.json` (glowing rock, 1 361 W/m² at the ground, sound in space, …).
+  Every new mistake a review finds is added there (pattern + why + fix), so the list grows with every video.
 
 ## What it does NOT check (the owner/Claude still reviews)
 - whether the science of the story is right (the `reality` field forces you to think, but nobody checks the physics);
