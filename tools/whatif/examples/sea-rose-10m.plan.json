@@ -6,47 +6,241 @@
  "environment": "old-town",
  "pace": "slow",
  "numbers": [
-  {"id": "rise", "value": 10, "unit": "m", "said_as": [], "meaning": "how much the sea rises in one night"},
-  {"id": "over_quay", "value": 8.8, "unit": "m", "said_as": [9], "meaning": "water above the quay at the end (quay is 1.2 m above the canal)"},
-  {"id": "rate", "value": 3.7, "unit": "mm/year", "said_as": [4], "meaning": "sea-level rise per year today (IPCC: 3.7 mm/yr, 2006–2018)"},
-  {"id": "years", "value": 2500, "unit": "years", "said_as": [], "meaning": "10 m at 4 mm a year"},
-  {"id": "share", "value": 1, "unit": "in 10 people", "said_as": [], "meaning": "people living on coasts less than 10 m above the sea"}
+  {
+   "id": "rise",
+   "value": 10,
+   "unit": "m",
+   "said_as": [],
+   "meaning": "how much the sea rises in one night"
+  },
+  {
+   "id": "over_quay",
+   "value": 8.8,
+   "unit": "m",
+   "said_as": [
+    9
+   ],
+   "meaning": "water above the quay at the end (quay is 1.2 m above the canal)"
+  },
+  {
+   "id": "rate",
+   "value": 3.7,
+   "unit": "mm/year",
+   "said_as": [
+    4
+   ],
+   "meaning": "sea-level rise per year today (IPCC: 3.7 mm/yr, 2006–2018)"
+  },
+  {
+   "id": "years",
+   "value": 2500,
+   "unit": "years",
+   "said_as": [],
+   "meaning": "10 m at 4 mm a year"
+  },
+  {
+   "id": "share",
+   "value": 1,
+   "unit": "in 10 people",
+   "said_as": [],
+   "meaning": "people living on coasts less than 10 m above the sea"
+  }
  ],
  "steps": [
-  {"step": 1, "role": "Imagine… it happens + what that means", "lines": ["Imagine: in a single night, the sea rises ten metres.", "No storm. No warning. It just keeps rising."], "pause_after": "long"},
-  {"step": 2, "role": "Where you are", "lines": ["You are standing on the quay of an old canal town."], "pause_after": "pause"},
-  {"step": 3, "role": "Normal number → new number", "lines": ["Tonight the water climbs ten metres.", "That is almost nine metres over your feet."], "pause_after": "long"},
-  {"step": 4, "role": "What you notice yourself", "lines": ["First you notice the sound.", "The canal stops lapping, and begins to push."], "pause_after": "long"},
-  {"step": 5, "role": "How people react; things in the street", "lines": ["Traders carry their crates up to the bridge.", "A horse is led to higher ground.", "The boats rise with the water, until they float past the windows."], "pause_after": "long"},
-  {"step": 6, "role": "One real fact with a number", "lines": ["Today the sea is rising about four millimetres a year.", "Ten metres would take two and a half thousand years."], "pause_after": "long"},
-  {"step": 7, "role": "It escalates; one big image", "lines": ["The quay disappears.", "Water walks into the square, past the statue, to the cellar doors."], "pause_after": "pause"},
-  {"step": 8, "role": "Why it goes wrong: … But …", "lines": ["Every doorstep here was built just above the sea it knew.", "But nobody ever built for ten metres more."], "pause_after": "long"},
-  {"step": 9, "role": "Climax", "lines": ["By midnight, the water is above the front doors.", "Then it stops, and it does not go back down."], "pause_after": "long"},
-  {"step": 10, "role": "Aftermath", "lines": ["When the light comes, the square is a lake.", "Only rooftops and the mill are left."], "pause_after": "long"},
-  {"step": 11, "role": "Closing line", "lines": ["The sea never attacked this town.", "It only arrived."], "pause_after": "long"}
+  {
+   "step": 1,
+   "role": "Imagine… it happens + what that means",
+   "lines": [
+    "Imagine: in a single night, the sea rises ten metres.",
+    "No storm. No warning. It just keeps rising."
+   ],
+   "pause_after": "long"
+  },
+  {
+   "step": 2,
+   "role": "Where you are",
+   "lines": [
+    "You are standing on the quay of an old canal town."
+   ],
+   "pause_after": "pause"
+  },
+  {
+   "step": 3,
+   "role": "Normal number → new number",
+   "lines": [
+    "Tonight the water climbs ten metres.",
+    "That is almost nine metres over your feet."
+   ],
+   "pause_after": "long"
+  },
+  {
+   "step": 4,
+   "role": "What you notice yourself",
+   "lines": [
+    "First you notice the sound.",
+    "The canal stops lapping, and begins to push."
+   ],
+   "pause_after": "long"
+  },
+  {
+   "step": 5,
+   "role": "How people react; things in the street",
+   "lines": [
+    "Traders carry their crates up to the bridge.",
+    "A horse is led to higher ground.",
+    "The boats rise with the water, until they float past the windows."
+   ],
+   "pause_after": "long"
+  },
+  {
+   "step": 6,
+   "role": "One real fact with a number",
+   "lines": [
+    "Today the sea is rising about four millimetres a year.",
+    "Ten metres would take two and a half thousand years."
+   ],
+   "pause_after": "long"
+  },
+  {
+   "step": 7,
+   "role": "It escalates; one big image",
+   "lines": [
+    "The quay disappears.",
+    "Water walks into the square, past the statue, to the cellar doors."
+   ],
+   "pause_after": "pause"
+  },
+  {
+   "step": 8,
+   "role": "Why it goes wrong: … But …",
+   "lines": [
+    "Every doorstep here was built just above the sea it knew.",
+    "But nobody ever built for ten metres more."
+   ],
+   "pause_after": "long"
+  },
+  {
+   "step": 9,
+   "role": "Climax",
+   "lines": [
+    "By midnight, the water is above the front doors.",
+    "Then it stops, and it does not go back down."
+   ],
+   "pause_after": "long"
+  },
+  {
+   "step": 10,
+   "role": "Aftermath",
+   "lines": [
+    "When the light comes, the square is a lake.",
+    "Only rooftops and the mill are left."
+   ],
+   "pause_after": "long"
+  },
+  {
+   "step": 11,
+   "role": "Closing line",
+   "lines": [
+    "The sea never attacked this town.",
+    "It only arrived."
+   ],
+   "pause_after": "long"
+  }
  ],
  "on_screen": [
-  {"word": "quay", "model": "old-town.js quays (cobbles, 1.2 m above the canal)", "looks": "cobbled quay along the canal, slowly goes under"},
-  {"word": "town", "model": "old-town.js houses + 5–6 taller houses added", "looks": "narrow old houses, 2–4 storeys"},
-  {"word": "traders", "model": "Kenney mini-characters (pick-up, walk)", "looks": "market people lifting crates and walking to the bridge"},
-  {"word": "crates", "model": "pirate-kit crate (in old-town.js)", "looks": "wooden crates carried, some float away"},
-  {"word": "bridge", "model": "old-town.js stone bridge", "looks": "arched stone bridge; people stand on top"},
-  {"word": "horse", "model": "Quaternius Horse.glb (Walk)", "looks": "horse led by a person up the hill"},
-  {"word": "boats", "model": "pirate-kit boat-row-small (in old-town.js)", "looks": "small rowing boats, no mast, rising to window height"},
-  {"word": "windows", "model": "house windows (modular-buildings)", "looks": "boats float past the first-floor windows"},
-  {"word": "square", "model": "old-town.js square with stalls", "looks": "market square fills with water, becomes a lake"},
-  {"word": "statue", "model": "Poly Pizza Statue (Zsky) on a plinth in the square", "looks": "human statue; water climbs up the plinth and the legs"},
-  {"word": "cellar", "model": "dark cellar doors at street level on the square houses", "looks": "water reaches the low doors"},
-  {"word": "doors", "model": "house doors (modular-buildings)", "looks": "front doors go under by step 9"},
-  {"word": "doorstep", "model": "house doorsteps", "looks": "one step above the street"},
-  {"word": "lake", "model": "flood water plane over the square", "looks": "flat water, only rooftops stick out"},
-  {"word": "rooftops", "model": "roofs of the (taller) houses", "looks": "roofs above the water in the high shot"},
-  {"word": "mill", "model": "old-town.js windmill + rebuilt body (was broken)", "looks": "whole mill with sails, on the hill, stays dry"}
+  {
+   "word": "quay",
+   "model": "old-town.js quays (cobbles, 1.2 m above the canal)",
+   "looks": "cobbled quay along the canal, slowly goes under"
+  },
+  {
+   "word": "town",
+   "model": "old-town.js houses + 5–6 taller houses added",
+   "looks": "narrow old houses, 2–4 storeys"
+  },
+  {
+   "word": "traders",
+   "model": "Kenney mini-characters (pick-up, walk)",
+   "looks": "market people lifting crates and walking to the bridge"
+  },
+  {
+   "word": "crates",
+   "model": "pirate-kit crate (in old-town.js)",
+   "looks": "wooden crates carried, some float away"
+  },
+  {
+   "word": "bridge",
+   "model": "old-town.js stone bridge",
+   "looks": "arched stone bridge; people stand on top"
+  },
+  {
+   "word": "horse",
+   "model": "Quaternius Horse.glb (Walk)",
+   "looks": "horse led by a person up the hill"
+  },
+  {
+   "word": "boats",
+   "model": "pirate-kit boat-row-small (in old-town.js)",
+   "looks": "small rowing boats, no mast, rising to window height"
+  },
+  {
+   "word": "windows",
+   "model": "house windows (modular-buildings)",
+   "looks": "boats float past the first-floor windows"
+  },
+  {
+   "word": "square",
+   "model": "old-town.js square with stalls",
+   "looks": "market square fills with water, becomes a lake"
+  },
+  {
+   "word": "statue",
+   "model": "Poly Pizza Statue (Zsky) on a plinth in the square",
+   "looks": "human statue; water climbs up the plinth and the legs"
+  },
+  {
+   "word": "cellar",
+   "model": "dark cellar doors at street level on the square houses",
+   "looks": "water reaches the low doors"
+  },
+  {
+   "word": "doors",
+   "model": "house doors (modular-buildings)",
+   "looks": "front doors go under by step 9"
+  },
+  {
+   "word": "doorstep",
+   "model": "house doorsteps",
+   "looks": "one step above the street"
+  },
+  {
+   "word": "lake",
+   "model": "flood water plane over the square",
+   "looks": "flat water, only rooftops stick out"
+  },
+  {
+   "word": "rooftops",
+   "model": "roofs of the (taller) houses",
+   "looks": "roofs above the water in the high shot"
+  },
+  {
+   "word": "mill",
+   "model": "old-town.js windmill + rebuilt body (was broken)",
+   "looks": "whole mill with sails, on the hill, stays dry"
+  }
  ],
  "counter": {
-  "label": "SEA LEVEL", "from": 0, "to": 10, "unit": "m",
-  "second_label": "OVER THE QUAY", "second_from": 0, "second_to": 8.8, "second_unit": "m",
-  "motion": "steady", "starts_on_word": "climbs", "stops_on_word": "9:stops"
+  "label": "SEA LEVEL",
+  "from": 0,
+  "to": 10,
+  "unit": "m",
+  "second_label": "OVER THE QUAY",
+  "second_from": 0,
+  "second_to": 8.8,
+  "second_unit": "m",
+  "motion": "steady",
+  "starts_on_word": "climbs",
+  "stops_on_word": "9:stops"
  },
  "captions": [
   "No storm. It just keeps rising.",
@@ -55,30 +249,129 @@
   "It does not go back down."
  ],
  "facts": [
-  {"claim": "The sea is rising about 4 mm a year", "number_ids": ["rate", "years"], "source": "IPCC AR6 WG1, Summary for Policymakers A.1.7", "url": "https://www.ipcc.ch/report/ar6/wg1/chapter/summary-for-policymakers/", "source_says": "The average rate of sea level rise was ... 3.7 [3.2 to 4.2] mm yr–1 between 2006 and 2018."},
-  {"claim": "1 in 10 people live on coasts less than 10 m above the sea", "number_ids": ["share", "rise"], "source": "McGranahan, Balk & Anderson (2007), Environment & Urbanization 19(1)", "url": "https://doi.org/10.1177/0956247807076960", "source_says": "The zone ... covers 2 per cent of the world's land area but contains 10 per cent of the world's population."}
+  {
+   "claim": "The sea is rising about 4 mm a year",
+   "number_ids": [
+    "rate",
+    "years"
+   ],
+   "source": "IPCC AR6 WG1, Summary for Policymakers A.1.7",
+   "url": "https://www.ipcc.ch/report/ar6/wg1/chapter/summary-for-policymakers/",
+   "source_says": "The average rate of sea level rise was ... 3.7 [3.2 to 4.2] mm yr–1 between 2006 and 2018."
+  },
+  {
+   "claim": "1 in 10 people live on coasts less than 10 m above the sea",
+   "number_ids": [
+    "share",
+    "rise"
+   ],
+   "source": "McGranahan, Balk & Anderson (2007), Environment & Urbanization 19(1)",
+   "url": "https://doi.org/10.1177/0956247807076960",
+   "source_says": "The zone ... covers 2 per cent of the world's land area but contains 10 per cent of the world's population."
+  }
  ],
  "shots": [
-  {"type": "shot", "from_step": 1, "camera": "canal", "shows": "normal canal, rowing boats, market, horse and cart; camera moved so no tree is in front during the title"},
-  {"type": "closeup", "from_step": 7, "camera": "custom", "where": "2 m high, 3 m from the quay edge, looking along the quay", "seconds": 4, "shows": "water over the cobbles, a crate and a barrel float past"},
-  {"type": "shot", "from_step": 7, "camera": "custom", "where": "on the bridge steps, 4 m high, looking at the square", "shows": "boats at window height, water at the doors, people on the steps climbing away, horse far up the hill"},
-  {"type": "closeup", "from_step": 8, "camera": "custom", "where": "5.5 m high, 6 m from the statue", "seconds": 4, "shows": "water climbs up the plinth and the legs of the statue"},
-  {"type": "shot", "from_step": 9, "camera": "aerial", "shows": "the whole town turns into a lake; only roofs and the mill stay above water; still frame at the end"}
+  {
+   "type": "shot",
+   "from_step": 1,
+   "camera": "canal",
+   "shows": "normal canal, rowing boats, market, horse and cart; camera moved so no tree is in front during the title"
+  },
+  {
+   "type": "closeup",
+   "from_step": 7,
+   "camera": "custom",
+   "where": "2 m high, 3 m from the quay edge, looking along the quay",
+   "seconds": 4,
+   "shows": "water over the cobbles, a crate and a barrel float past"
+  },
+  {
+   "type": "shot",
+   "from_step": 7,
+   "camera": "custom",
+   "where": "on the bridge steps, 4 m high, looking at the square",
+   "shows": "boats at window height, water at the doors, people on the steps climbing away, horse far up the hill"
+  },
+  {
+   "type": "closeup",
+   "from_step": 8,
+   "camera": "custom",
+   "where": "5.5 m high, 6 m from the statue",
+   "seconds": 4,
+   "shows": "water climbs up the plinth and the legs of the statue"
+  },
+  {
+   "type": "shot",
+   "from_step": 9,
+   "camera": "aerial",
+   "shows": "the whole town turns into a lake; only roofs and the mill stay above water; still frame at the end"
+  }
  ],
  "climax": {
   "visual": "high shot: the water keeps rising evenly over the whole town, then stands still on 'stops'; 5 s silence over the flat lake",
   "why_it_fits_the_closing_line": "The closing line says the sea did not attack, it arrived – so no wave, the climax is the quiet moment the water stops and stays."
  },
  "models": [
-  {"name": "old-town environment", "source": "environment", "path": "environments/old-town.js", "new": false, "licence": "CC0", "credit": ""},
-  {"name": "Mini characters", "source": "kenney", "path": "assets/kenney/mini-characters", "new": false, "licence": "CC0", "credit": ""},
-  {"name": "Horse", "source": "quaternius", "path": "assets/quaternius/horse/Horse.glb", "new": true, "licence": "CC0", "credit": ""},
-  {"name": "Statue", "source": "polypizza", "path": "assets/polypizza/statue/Statue-JXmywADgSk.glb", "new": true, "licence": "CC-BY 3.0", "credit": "3D models: \"Statue\" by Zsky (Poly Pizza, CC-BY 3.0) https://poly.pizza/m/JXmywADgSk"}
+  {
+   "name": "old-town environment",
+   "source": "environment",
+   "path": "environments/old-town.js",
+   "new": false,
+   "licence": "CC0",
+   "credit": ""
+  },
+  {
+   "name": "Mini characters",
+   "source": "kenney",
+   "path": "assets/kenney/mini-characters",
+   "new": false,
+   "licence": "CC0",
+   "credit": ""
+  },
+  {
+   "name": "Horse",
+   "source": "quaternius",
+   "path": "assets/quaternius/horse/Horse.glb",
+   "new": true,
+   "licence": "CC0",
+   "credit": ""
+  },
+  {
+   "name": "Statue",
+   "source": "polypizza",
+   "path": "assets/polypizza/statue/Statue-JXmywADgSk.glb",
+   "new": true,
+   "licence": "CC-BY 3.0",
+   "credit": "3D models: \"Statue\" by Zsky (Poly Pizza, CC-BY 3.0) https://poly.pizza/m/JXmywADgSk"
+  }
+ ],
+ "reality": [
+  {
+   "step": 7,
+   "why_it_really_happens": "The quay is 1.2 m above the canal, so after the first 1.2 m of rise the water flows over it and into the lower square."
+  },
+  {
+   "step": 9,
+   "why_it_really_happens": "The houses' front doors are 0.2–0.5 m above the street; at +8.8 m over the quay all ground floors are under. The rise stops because the scenario adds exactly 10 m."
+  },
+  {
+   "step": 10,
+   "why_it_really_happens": "Nothing removes the extra water, so the level stays; houses of 2–3 storeys (7–9 m) go under and only the taller roofs and the mill on the hill stay dry."
+  }
  ],
  "critic": [
-  {"weak_point": "Numbers disagreed (9 m, 8.8 m, 8 m)", "fix": "one numbers table; voice says 'almost nine', counter 8.8, line 10 has no number"},
-  {"weak_point": "'masts' on rowing boats that have no mast", "fix": "boats 'float past the windows' instead"},
-  {"weak_point": "A surge at the end fought the closing line 'It only arrived'", "fix": "steady rise, the climax is the stop + silence"}
+  {
+   "weak_point": "Numbers disagreed (9 m, 8.8 m, 8 m)",
+   "fix": "one numbers table; voice says 'almost nine', counter 8.8, line 10 has no number"
+  },
+  {
+   "weak_point": "'masts' on rowing boats that have no mast",
+   "fix": "boats 'float past the windows' instead"
+  },
+  {
+   "weak_point": "A surge at the end fought the closing line 'It only arrived'",
+   "fix": "steady rise, the climax is the stop + silence"
+  }
  ],
  "questions": []
 }

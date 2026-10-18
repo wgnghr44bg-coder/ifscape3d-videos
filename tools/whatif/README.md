@@ -36,7 +36,8 @@ Rules:
 | `facts` | `claim`, `number_ids`, `source`, `url`, `source_says` (the exact words of the source) | all filled in, url is a link |
 | `shots` | 3 × `shot` (+ max 2 × `closeup`, 3–5 s): `from_step`, `camera`, `shows` | shot 1 at step 1, shot 3 at or before step 9; camera exists in `environments/<env>.js`, or `custom` + `where` |
 | `climax` | `visual`, `why_it_fits_the_closing_line` | must fit `pace` |
-| `models` | `name`, `source`, `path`, `new`, `licence`, `credit` | max 2 new; file exists; never `assets/downloads/`; Poly Pizza credit in the exact format of `assets/LICENTIE-REGELS.md` |
+| `models` | `name`, `source`, `path`, `new`, `licence`, `credit` | max 2 new; path in `assets/<source>/` (or `environments/`); file exists; never `assets/downloads/`; Poly Pizza credit in the exact format of `assets/LICENTIE-REGELS.md` |
+| `reality` | for steps 7, 9 and 10: why it would really happen (physics/biology) | filled in (≥ 40 characters); if you cannot explain it, change the step |
 | `critic` | 3 weak points you found reading it as a critic + the fix you made | at least 3 |
 | `questions` | only what the template does not decide, each with `my_choice` | max 3 |
 
@@ -44,3 +45,8 @@ Timing: `check` estimates the length (2.8 words/s, `[pause]` 0.5 s, `[long pause
 last frame held 3.5 s) and fails outside 78–92 s. The final times always come from `voice-times.tsv`.
 
 `--skip-files` skips the model-file check (only for testing in the cloud, where `assets/downloads/` copies are missing).
+
+## What it does NOT check (the owner/Claude still reviews)
+- whether the science of the story is right (the `reality` field forces you to think, but nobody checks the physics);
+- whether a sentence is good, or the fact matches the source word for word;
+- whether the scene really shows what `on_screen` promises (that is the still-image review).
