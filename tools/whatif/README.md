@@ -51,9 +51,23 @@ last frame held 3.5 s) and fails outside 78–92 s. The final times always come 
 ## Physics checks
 - **Counter end values must add up**: every end value is the premise, comes from a sourced fact, or is calculated
   in `derivations`. Never invent a number just to make the sum work – every number in the table is reviewed with its `meaning`.
+- **The sum must contain every effect the story mentions**: if the script or `reality` mentions compaction
+  ("presses", "turned to ice"), melting, evaporation or draining away, the derivation must include it.
+  (Lesson from the snow video: 1.5 m × 20 winters = 30 m was a correct sum, but snow compacts to about half.)
 - **After the counter stops, nothing is "still rising / getting hotter / more and more"** in later steps.
 - **Known mistakes** in `physics-myths.json` (glowing rock, 1 361 W/m² at the ground, sound in space, …).
   Every new mistake a review finds is added there (pattern + why + fix), so the list grows with every video.
+
+- **Real-world limits** in `physics-limits.json` (hottest air 56.7 °C, sunlight at the ground ≈1 000 W/m², most rain in a day
+  1 825 mm, strongest wind 408 km/h, …): a number above it FAILs unless it is the `premise`.
+- **Sources**: each fact's numbers must be in its `source_says`; `check` also opens the `url` and looks for that number on the
+  page (no internet or a blocked site → only a WARN; `--offline` skips it).
+
+## Second reviewer (OpenCode)
+After ALL CHECKS PASSED, ask `@physics-review` to read `STORYBOARD.md`. It only reads and lists science problems.
+To let a different free model do it (two models see more than one), add a line `model: <provider>/<model>` to the top
+of `.opencode/agent/physics-review.md` (for example the Nemotron model you use in OpenCode).
+Shortcut: `/whatif <question>` runs the whole first rule.
 
 ## What it does NOT check (the owner/Claude still reviews)
 - whether the science of the story is right (the `reality` field forces you to think, but nobody checks the physics);

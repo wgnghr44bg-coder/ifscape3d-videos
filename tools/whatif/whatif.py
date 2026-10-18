@@ -12,7 +12,7 @@
 The agent only edits plan.json and runs `check` until it says ALL CHECKS PASSED.
 Never write STORYBOARD.md or script.txt by hand. See tools/whatif/README.md.
 """
-import argparse, ast, json, math, operator, os, re, sys
+import argparse, ast, html, json, math, operator, os, re, sys, urllib.request
 
 ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..'))
 ENV_DIR = os.path.join(ROOT, 'environments')
@@ -198,12 +198,23 @@ class Report:
         self.warns.append(f'WARN [{area}] {msg}')
 
 
+LIMITS_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'physics-limits.json')
 MYTHS_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'physics-myths.json')
 
 # words that say something is still changing – not allowed after the counter has stopped
 STILL_CHANGING = (r"\b(still|keeps?|keep on|goes on|continues? to)\s+(\w+ing|rising|climbing|growing|falling|getting|going up|going down)\b"
                   r"|\b(getting|grows?|growing)\s+(hotter|colder|higher|deeper|lower|worse|bigger|stronger|faster)\b"
                   r"|\bmore and more\b|\bhigher and higher\b|\bhotter and hotter\b")
+
+# effects the story can mention -> words the derivation must then contain (formula or explain)
+EFFECTS = [
+    ('compaction', r'\b(press(es|ed|ing)?|compact\w*|squeez\w*|settl\w*|firn|turn(s|ed)? (in)?to ice)\b',
+     r'compact|press|density|dense|firn|settl'),
+    ('melting', r'\bmelt\w*', r'melt'),
+    ('evaporation', r'\bevaporat\w*|\bdr(y|ies) up\b', r'evaporat'),
+    ('draining away', r'\b(drain\w*|flows? away|runs? off|soaks? (in|away)|absorb\w*|seeps? away)\b',
+     r'drain|flow|runoff|run off|soak|absorb|seep'),
+]
 
 OPS = {ast.Add: operator.add, ast.Sub: operator.sub, ast.Mult: operator.mul, ast.Div: operator.truediv,
        ast.Pow: operator.pow, ast.USub: operator.neg}
@@ -278,7 +289,33 @@ def find_word(words_at, spec):
     return hits
 
 
-def check(plan, folder, skip_files=False):
+def page_text(url):
+    req = urllib.request.Request(url, headers={'User-Agent': 'Mozilla/5.0 (whatif-checker)'})
+    raw = urllib.request.urlopen(req, timeout=20).read(3_000_000).decode('utf-8', 'replace')
+    raw = re.sub(r'(?is)<(script|style)[^>]*>.*?</\1>', ' ', raw)
+    txt = html.unescape(re.sub(r'<[^>]+>', ' ', raw))
+    return re.sub(r'\s+', ' ', txt.replace('\u00a0', ' ').replace('\u202f', ' ').replace('\u2009', ' ')).lower()
+
+
+def check_online(R, f):
+    """Open the source and look for the quoted numbers and words. Cannot open it -> only a warning."""
+    try:
+        page = page_text(f['url'])
+    except Exception as e:  # noqa: BLE001 – any network problem is only a warning
+        R.warn('facts', f'could not open {f["url"]} ({type(e).__name__}); check the quote by hand.')
+        return
+    flat = re.sub(r'(?<=\d)[ ,](?=\d{3}\b)', '', page)
+    nums = [raw for _, raw in numbers_in(f['source_says']) if re.match(r'\d', raw)]
+    missing = [x for x in nums if re.sub(r'(?<=\d)[ ,](?=\d{3}\b)', '', x) not in flat]
+    if nums and len(missing) == len(nums):
+        R.fail('facts', f'{f["url"]} does not contain the number(s) {", ".join(nums)} from "source_says". '
+                        'Use a source that really says it, and copy its sentence exactly.')
+    words = [w for w in re.findall(r'[a-z]{4,}', f['source_says'].lower())]
+    if words and sum(w in page for w in words) / len(words) < 0.6:
+        R.warn('facts', f'most words of "source_says" are not on {f["url"]} – is it copied exactly?')
+
+
+def check(plan, folder, skip_files=False, online=True):
     R = Report()
     if has_todo(plan):
         R.fail('todo', 'plan.json still has TODO fields – fill in everything.')
@@ -420,6 +457,12 @@ def check(plan, folder, skip_files=False):
             R.fail('physics', f'derivation of "{rid}": {d["formula"]} = {got:g}, but the table says {want:g}. '
                               'The numbers do not add up – fix the story or the number, never fudge the sum.')
         derived[rid] = d
+        said = ' '.join([script_text, ' '.join(r.get('why_it_really_happens', '') for r in plan.get('reality', []))])
+        for name, in_story, in_sum in EFFECTS:
+            m = re.search(in_story, said, re.I)
+            if m and not re.search(in_sum, d.get('formula', '') + ' ' + d.get('explain', ''), re.I):
+                R.fail('physics', f'the story mentions {name} ("{m.group()}"), but the derivation of "{rid}" ignores it. '
+                                  f'Put that effect in the sum (with a sourced number), or take it out of the story.')
     for k in ('to', 'second_to'):
         v = c.get(k)
         if not isinstance(v, (int, float)) or v == 0:
@@ -470,6 +513,26 @@ def check(plan, folder, skip_files=False):
         for nid in f.get('number_ids', []):
             if nid not in ids:
                 R.fail('facts', f'number id "{nid}" is not in the numbers table.')
+        # the fact's numbers must really be in the quote of the source
+        quoted = [v for v, _ in numbers_in(f.get('source_says', ''))]
+        mine = [x for n in table if n['id'] in f.get('number_ids', []) for x in [n['value']] + n.get('said_as', [])]
+        scales = (1, 1000, 0.001, 100, 0.01, 10 ** 6, 10 ** -6)          # kW ↔ W, per cent, million …
+        if f.get('number_ids') and not any(math.isclose(a, b * k, rel_tol=0.02) for a in mine for b in quoted for k in scales):
+            R.fail('facts', f'fact {f.get("claim")!r}: none of its numbers ({", ".join(f"{x:g}" for x in mine)}) is in '
+                            f'"source_says". Copy the exact sentence with the number from the source.')
+        if online and f.get('url', '').startswith('http'):
+            check_online(R, f)
+
+    # real-world limits (tools/whatif/physics-limits.json): only the premise may break them
+    if os.path.exists(LIMITS_FILE):
+        for lim in json.load(open(LIMITS_FILE, encoding='utf-8'))['limits']:
+            for n in table:
+                if n.get('premise'):
+                    continue
+                if re.search(lim['unit'], str(n.get('unit', '')), re.I) and re.search(lim['meaning'], str(n.get('meaning', '')), re.I) \
+                        and not re.search(lim.get('unless', '$^'), str(n.get('meaning', '')), re.I):
+                    if n['value'] > lim['max']:
+                        R.fail('physics', f'"{n["id"]}" = {n["value"]:g} {n.get("unit", "")} is more than {lim["max"]:g}: {lim["why"]}')
 
     # shots: 3 main shots + max 2 close-ups (3–5 s)
     cams = env_cameras(plan.get('environment', ''))
@@ -631,6 +694,7 @@ def main():
     sub.add_parser('envs')
     n = sub.add_parser('new'); n.add_argument('folder'); n.add_argument('--question', required=True); n.add_argument('--env', required=True)
     c = sub.add_parser('check'); c.add_argument('folder'); c.add_argument('--skip-files', action='store_true', help='do not check model paths')
+    c.add_argument('--offline', action='store_true', help='do not open the source links')
     a = ap.parse_args()
 
     if a.cmd == 'envs':
@@ -654,7 +718,7 @@ def main():
         plan = json.load(open(p, encoding='utf-8'))
     except (OSError, json.JSONDecodeError) as e:
         sys.exit(f'FAIL [json] cannot read {p}: {e}')
-    R, tim = check(plan, folder, a.skip_files)
+    R, tim = check(plan, folder, a.skip_files, online=not a.offline)
     for line in R.fails + R.warns:
         print(line)
     if R.fails:
