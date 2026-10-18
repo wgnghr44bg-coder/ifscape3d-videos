@@ -45,8 +45,11 @@ Whenever the owner asks for a new "What if", make it the same way as the gravity
     "Poly Pizza" + link in `upload.json` (credits list + end of description) from `CREDITS.csv`. Never commit
     `assets/downloads/`; copy only models used in a video to `assets/<source>/<slug>/`. NASA: no NASA logo, no endorsement.
 11. **Work order.**
-    1. `STORYBOARD.md` first — one row per sentence: time, voice, shot, camera, what is in frame, distance of the
-       main subject, sound. → STOP and show the owner.
+    1. `STORYBOARD.md` first, **always via the generator** (`tools/whatif/README.md`):
+       `python tools/whatif/whatif.py new <folder> --question "What if …?" --env <env>` → fill in `<folder>/plan.json`
+       → `python tools/whatif/whatif.py check <folder>` → fix every FAIL and run it again until **ALL CHECKS PASSED**.
+       It then writes `STORYBOARD.md`, `script.txt` and `upload.draft.json`. Never write them by hand.
+       Worked example: `tools/whatif/examples/sea-rose-10m.plan.json`. → STOP and show the owner.
     2. Build scene + Chatterbox voice.
     3. Self-review: one still per sentence, check against the checklist, fix, max 3 rounds → STOP, show 6–8 stills
        and what you fixed.
