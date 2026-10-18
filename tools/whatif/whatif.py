@@ -70,6 +70,7 @@ NUM = {w: i for i, w in enumerate('zero one two three four five six seven eight 
                                     'fourteen fifteen sixteen seventeen eighteen nineteen'.split())}
 NUM.update({w: 10 * (i + 2) for i, w in enumerate('twenty thirty forty fifty sixty seventy eighty ninety'.split())})
 SCALE = {'hundred': 100, 'thousand': 1000, 'million': 10 ** 6, 'billion': 10 ** 9}
+FRACTION = {'third': 3, 'thirds': 3, 'quarter': 4, 'quarters': 4, 'fifth': 5, 'fifths': 5, 'tenth': 10, 'tenths': 10}
 
 
 def numbers_in(text):
@@ -117,6 +118,8 @@ def numbers_in(text):
         val = total + cur
         if dec:
             val = float(f'{int(val)}.{dec}')
+        if i < len(toks) and toks[i] in FRACTION:      # "two thirds" = 0.667
+            val = round(val / FRACTION[toks[i]], 2)
         out.append((val, ' '.join(group)))
     return out
 
@@ -170,6 +173,8 @@ def template(question, env, folder):
             {'name': 'TODO', 'source': 'kenney | quaternius | polypizza | nasa | environment', 'path': 'TODO',
              'new': False, 'licence': 'CC0', 'credit': ''},
         ],
+        'reality': [{'step': n, 'why_it_really_happens': 'TODO physics/biology in one or two sentences; '
+                     'if it would not really happen, change the step'} for n in (7, 9, 10)],
         'critic': [{'weak_point': 'TODO', 'fix': 'TODO'} for _ in range(3)],
         'questions': [],
     }
@@ -317,6 +322,9 @@ def check(plan, folder, skip_files=False):
                                 f'and what it looks like, or take it out of the text.')
 
     # counter
+    for k in ('label', 'unit', 'second_label', 'second_unit'):
+        if not str(c.get(k, '')).strip():
+            R.fail('counter', f'counter "{k}" is empty.')
     if c.get('motion') not in ('steady', 'jump'):
         R.fail('counter', 'motion must be "steady" or "jump".')
     starts, words_at, end = timing(plan)
@@ -404,6 +412,9 @@ def check(plan, folder, skip_files=False):
         p, src = m.get('path', ''), m.get('source')
         if src not in ('kenney', 'quaternius', 'polypizza', 'nasa', 'environment'):
             R.fail('models', f'{m.get("name")}: source must be kenney, quaternius, polypizza, nasa or environment.')
+        want = 'environments/' if src == 'environment' else f'assets/{src}/'
+        if src and p and not p.replace('\\', '/').startswith(want) and 'assets/downloads' not in p:
+            R.fail('models', f'{m.get("name")}: a {src} model must be in {want}… (path is {p}).')
         if 'assets/downloads' in p.replace('\\', '/'):
             R.fail('models', f'{m.get("name")}: copy the .glb to assets/{src}/<slug>/ first; never use assets/downloads/ in a video.')
         elif not skip_files and p and not os.path.exists(os.path.join(ROOT, p)):
@@ -414,6 +425,13 @@ def check(plan, folder, skip_files=False):
                                  '3D models: "<Title>" by <Creator> (Poly Pizza, <licence>) https://poly.pizza/m/<id>')
         elif m.get('licence') not in ('CC0', 'CC0 1.0', 'public domain'):
             R.fail('models', f'{m.get("name")}: licence {m.get("licence")!r} – only CC0/public domain here (Poly Pizza may be CC-BY).')
+
+    # reality: escalation, climax and aftermath must be physically right
+    done = {r.get('step') for r in plan.get('reality', []) if len(r.get('why_it_really_happens', '')) >= 40}
+    for n in (7, 9, 10):
+        if n not in done:
+            R.fail('reality', f'step {n}: explain in "reality" why this would really happen (≥ 40 characters). '
+                              'If you cannot, the step is wrong – change it.')
 
     # self-critique + questions
     crit = [x for x in plan.get('critic', []) if x.get('weak_point') and x.get('fix')]
@@ -485,6 +503,8 @@ def storyboard_md(plan, tim, warns):
     L += [f'- **{f["claim"]}** – {f["source"]} ({f["url"]}): "{f["source_says"]}"' for f in plan['facts']]
     L += ['', '## Models', '', '| model | source | path | new | credit |', '|---|---|---|---|---|']
     L += [f'| {m["name"]} | {m["source"]} | `{m["path"]}` | {"⭐" if m.get("new") else ""} | {m.get("credit") or "–"} |' for m in plan['models']]
+    L += ['', '## Reality check', '']
+    L += [f'- step {r["step"]}: {r["why_it_really_happens"]}' for r in plan['reality']]
     L += ['', '## Critic (weak points already fixed)', '']
     L += [f'- {x["weak_point"]} → {x["fix"]}' for x in plan['critic']]
     if plan.get('questions'):

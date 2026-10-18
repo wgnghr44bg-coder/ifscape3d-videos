@@ -90,6 +90,12 @@ _Why it fits the closing line:_ The closing line says the sea did not attack, it
 | Horse | quaternius | `assets/quaternius/horse/Horse.glb` | ⭐ | – |
 | Statue | polypizza | `assets/polypizza/statue/Statue-JXmywADgSk.glb` | ⭐ | 3D models: "Statue" by Zsky (Poly Pizza, CC-BY 3.0) https://poly.pizza/m/JXmywADgSk |
 
+## Reality check
+
+- step 7: The quay is 1.2 m above the canal, so after the first 1.2 m of rise the water flows over it and into the lower square.
+- step 9: The houses' front doors are 0.2–0.5 m above the street; at +8.8 m over the quay all ground floors are under. The rise stops because the scenario adds exactly 10 m.
+- step 10: Nothing removes the extra water, so the level stays; houses of 2–3 storeys (7–9 m) go under and only the taller roofs and the mill on the hill stay dry.
+
 ## Critic (weak points already fixed)
 
 - Numbers disagreed (9 m, 8.8 m, 8 m) → one numbers table; voice says 'almost nine', counter 8.8, line 10 has no number
