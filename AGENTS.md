@@ -67,7 +67,7 @@ Whenever the owner asks for a new "What if", make it the same way as the gravity
        It then writes `STORYBOARD.md`, `script.txt` and `upload.draft.json`. Never write them by hand.
        Worked example: `tools/whatif/examples/sea-rose-10m.plan.json`. → STOP and show the owner.
     2. Build scene + Chatterbox voice. The scene must have the hooks for the picture checker: `window.renderAt(t)`,
-       `window.ready`, `window.WHATIF = { THREE, scene, camera }`, `obj.userData.tag = '<on_screen word>'` on everything
+       `window.ready`, `window.WHATIF = { THREE, scene, camera, renderer }`, `obj.userData.tag = '<on_screen word>'` on everything
        the voice names, the counter in `<div id="hud">` (example: `tools/whatif/examples/scene-hooks/scene.html`).
     3. Picture check: `node tools/whatif/scenecheck.mjs <folder>` → fix every FAIL in the scene and run it again until
        **ALL PICTURE CHECKS PASSED**. Then look at `CHECK.jpg` yourself against the VISUAL QUALITY CHECKLIST, fix, max 3
