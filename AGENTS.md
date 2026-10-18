@@ -66,9 +66,12 @@ Whenever the owner asks for a new "What if", make it the same way as the gravity
        → `python tools/whatif/whatif.py check <folder>` → fix every FAIL and run it again until **ALL CHECKS PASSED**.
        It then writes `STORYBOARD.md`, `script.txt` and `upload.draft.json`. Never write them by hand.
        Worked example: `tools/whatif/examples/sea-rose-10m.plan.json`. → STOP and show the owner.
-    2. Build scene + Chatterbox voice.
-    3. Self-review: one still per sentence, check against the checklist, fix, max 3 rounds → STOP, show 6–8 stills
-       and what you fixed.
+    2. Build scene + Chatterbox voice. The scene must have the hooks for the picture checker: `window.renderAt(t)`,
+       `window.ready`, `window.WHATIF = { THREE, scene, camera }`, `obj.userData.tag = '<on_screen word>'` on everything
+       the voice names, the counter in `<div id="hud">` (example: `tools/whatif/examples/scene-hooks/scene.html`).
+    3. Picture check: `node tools/whatif/scenecheck.mjs <folder>` → fix every FAIL in the scene and run it again until
+       **ALL PICTURE CHECKS PASSED**. Then look at `CHECK.jpg` yourself against the VISUAL QUALITY CHECKLIST, fix, max 3
+       rounds. Commit + push `CHECK.md` and `CHECK.jpg` (not `check/`) → STOP, show the owner `CHECK.jpg` and what you fixed.
     4. After "ga door": sound, full render, checks, contact sheet, `upload.json`.
 12. **PROGRESS.md** in every video folder (what is done, approved, asked); read it first after a compressed or
     new session. Start every new What if in a new session.

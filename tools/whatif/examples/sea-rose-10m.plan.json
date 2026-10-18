@@ -360,6 +360,22 @@
    "explain": "The sea rises 10 m, the quay is 1.2 m above the water, so 8.8 m stands over the quay."
   }
  ],
+ "scale_checks": [
+  {
+   "step": 8,
+   "object": "statue",
+   "compare": "windows",
+   "top_between": [
+    0.5,
+    3.0
+   ],
+   "says": "the statue on its plinth stands about as high as the first-floor windows"
+  }
+ ],
+ "may_float": [
+  "boats",
+  "crates"
+ ],
  "reality": [
   {
    "step": 7,

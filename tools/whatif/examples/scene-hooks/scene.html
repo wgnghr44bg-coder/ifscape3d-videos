@@ -1,0 +1,31 @@
+<!doctype html><html><head><meta charset="utf-8"><style>html,body{margin:0;width:720px;height:1280px;overflow:hidden;background:#000}
+#hud{position:absolute;left:24px;top:24px;color:#fff;font:700 40px sans-serif;text-shadow:0 2px 6px #000}</style></head>
+<body><div id="hud">SEA LEVEL +0.0 m</div>
+<script type="importmap">{ "imports": { "three": "../../../../node_modules/three/build/three.module.js", "three/addons/": "../../../../node_modules/three/examples/jsm/" } }</script>
+<script type="module">
+// Minimal example of the hooks scenecheck.mjs needs: window.renderAt, window.WHATIF, userData.tag, <div id="hud">.
+// Test: node tools/whatif/scenecheck.mjs tools/whatif/examples/scene-hooks
+import * as THREE from 'three';
+import { loadModel } from '../../../../assets/load.js';
+const renderer = new THREE.WebGLRenderer({ antialias: true }); renderer.setSize(720, 1280); document.body.prepend(renderer.domElement);
+const scene = new THREE.Scene(), camera = new THREE.PerspectiveCamera(60, 720 / 1280, .1, 8000);
+const mod = await import('../../../../environments/old-town.js');
+const info = await mod.build({ THREE, scene, loadModel, base: '../../../../assets/kenney' });
+const box = (tag, size, pos, color) => { const m = new THREE.Mesh(new THREE.BoxGeometry(...size), new THREE.MeshLambertMaterial({ color }));
+  m.position.set(...pos); m.userData.tag = tag; scene.add(m); return m; };
+box('boats', [2, 1, 5], [-3.5, -0.7, 28], 0x8a5a2b);         // on the canal water
+box('horse', [0.6, 1.6, 2], [-8, 0.8, 32], 0x5a3a20);         // on the quay
+box('statue', [1.2, 4, 1.2], [-3, 2, -40], 0xcccccc);        // on the square
+box('crates', [1, 1, 1], [-7, 0.5, 34], 0x9b6b3a);
+box('bridge', [14, 1.5, 4], [0, .25, 10], 0x777777);
+const cams = info.cameras;
+window.renderAt = t => {
+  const c = t < 46 ? cams.canal : t < 60 ? cams.square : cams.aerial, k = t < 46 ? t / 46 : t < 60 ? (t - 46) / 14 : (t - 60) / 30;
+  const dir = new THREE.Vector3(...c.look).sub(new THREE.Vector3(...c.pos)).normalize();
+  camera.position.set(...c.pos).addScaledVector(dir, 4 * k); camera.lookAt(...c.look);   // slow forward move per shot
+  document.getElementById('hud').style.opacity = t < 9 ? 0 : 1;
+  renderer.render(scene, camera);
+};
+window.WHATIF = { THREE, scene, camera };
+window.ready = true;
+</script></body></html>

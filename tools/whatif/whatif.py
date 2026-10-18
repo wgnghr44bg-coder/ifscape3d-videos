@@ -178,6 +178,11 @@ def template(question, env, folder):
             {'result': 'TODO number id of the counter end value', 'formula': 'TODO e.g. rain_mm / 1000 * valley_ratio',
              'explain': 'TODO why this sum gives the end value'},
         ],
+        'scale_checks': [
+            {'step': 0, 'object': 'TODO on_screen word', 'compare': 'TODO on_screen word', 'top_between': [0.4, 0.6],
+             'says': 'TODO the size the voice promises, e.g. "the cart comes up to your thigh" – or remove this entry'},
+        ],
+        'may_float': [],
         'reality': [{'step': n, 'why_it_really_happens': 'TODO physics/biology in one or two sentences; '
                      'if it would not really happen, change the step'} for n in (7, 9, 10)],
         'critic': [{'weak_point': 'TODO', 'fix': 'TODO'} for _ in range(3)],
@@ -584,6 +589,22 @@ def check(plan, folder, skip_files=False, online=True):
         elif m.get('licence') not in ('CC0', 'CC0 1.0', 'public domain'):
             R.fail('models', f'{m.get("name")}: licence {m.get("licence")!r} – only CC0/public domain here (Poly Pizza may be CC-BY).')
 
+    # size promises the picture checker (scenecheck.mjs) will measure
+    words = {(visible_base(o.get('word', '')) or o.get('word', '').lower()) for o in plan.get('on_screen', [])}
+    for sc in plan.get('scale_checks', []):
+        for k in ('object', 'compare'):
+            w = str(sc.get(k, '')).lower()
+            if (visible_base(w) or w) not in words:
+                R.fail('scale', f'scale check "{sc.get("says")}": "{w}" is not an on_screen word.')
+        tb = sc.get('top_between')
+        if not (isinstance(tb, list) and len(tb) == 2 and 0 <= tb[0] < tb[1]):
+            R.fail('scale', f'scale check "{sc.get("says")}": top_between must be [low, high], e.g. [0.4, 0.6].')
+        if not 1 <= sc.get('step', 0) <= 11:
+            R.fail('scale', f'scale check "{sc.get("says")}": step must be 1–11.')
+    for w in plan.get('may_float', []):
+        if (visible_base(str(w).lower()) or str(w).lower()) not in words:
+            R.fail('scale', f'may_float "{w}" is not an on_screen word.')
+
     # reality: escalation, climax and aftermath must be physically right
     done = {r.get('step') for r in plan.get('reality', []) if len(r.get('why_it_really_happens', '')) >= 40}
     for n in (7, 9, 10):
@@ -688,6 +709,51 @@ def upload_draft(plan):
             'sources': [{'claim': f['claim'], 'source': f['source'], 'url': f['url']} for f in plan['facts']]}
 
 
+def tsv_seconds(x):
+    return sum(float(v) * 60 ** i for i, v in enumerate(reversed(x.split(':'))))
+
+
+def step_times(plan, folder):
+    """Start/end (video seconds) per step: from voice-times.tsv when it exists, else the estimate."""
+    tsv = os.path.join(folder, 'voice-times.tsv')
+    out = []
+    if os.path.exists(tsv):
+        rows = [r.split('\t') for r in open(tsv, encoding='utf-8').read().splitlines()[1:] if r.strip()]
+        rows = [(tsv_seconds(r[1]) + VO_OFFSET, tsv_seconds(r[2]) + VO_OFFSET, len(r[-1].split())) for r in rows]
+        k = 0
+        for st in plan['steps']:
+            need, got, first = sum(len(l.split()) for l in st['lines']), 0, None
+            while k < len(rows) and got < need:
+                first = rows[k][0] if first is None else first
+                got += rows[k][2]; last = rows[k][1]; k += 1
+            out.append((first if first is not None else (out[-1][1] if out else 0), last if first is not None else (out[-1][1] if out else 0)))
+        source = 'voice-times.tsv'
+    else:
+        starts, words_at, end = timing(plan)
+        for i, st in enumerate(plan['steps']):
+            ends = [b for a, b, _, n in words_at if n == st['step']]
+            out.append((starts[i], max(ends)))
+        source = 'estimate (no voice-times.tsv yet)'
+    return out, source
+
+
+def times_json(plan, folder):
+    st, source = step_times(plan, folder)
+    declared = {(visible_base(o['word']) or o['word'].lower()): o for o in plan.get('on_screen', [])}
+    steps = []
+    for (a, b), s in zip(st, plan['steps']):
+        said = []
+        for tok in re.findall(r"[a-z]+", ' '.join(s['lines']).lower()):
+            base = visible_base(tok) or tok
+            o = declared.get(base)
+            if o and not re.search(r'not (on|in) screen|spoken only|not shown', o.get('looks', '') + o.get('model', ''), re.I) \
+                    and o['word'] not in said:
+                said.append(o['word'])
+        steps.append({'step': s['step'], 'start': round(a, 2), 'end': round(b, 2), 'text': ' '.join(s['lines']), 'must_see': said})
+    return {'source': source, 'title_end': 9, 'counter_from': 9.5, 'steps': steps,
+            'scale_checks': plan.get('scale_checks', []), 'may_float': plan.get('may_float', [])}
+
+
 def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     sub = ap.add_subparsers(dest='cmd', required=True)
@@ -695,6 +761,8 @@ def main():
     n = sub.add_parser('new'); n.add_argument('folder'); n.add_argument('--question', required=True); n.add_argument('--env', required=True)
     c = sub.add_parser('check'); c.add_argument('folder'); c.add_argument('--skip-files', action='store_true', help='do not check model paths')
     c.add_argument('--offline', action='store_true', help='do not open the source links')
+    t = sub.add_parser('times', help='JSON with the time of every step and what must be on screen (used by scenecheck.mjs)')
+    t.add_argument('folder')
     a = ap.parse_args()
 
     if a.cmd == 'envs':
@@ -712,6 +780,10 @@ def main():
         print(f'made {p} – fill in every TODO, then: python tools/whatif/whatif.py check {a.folder}')
         return 0
 
+    if a.cmd == 'times':
+        plan = json.load(open(os.path.join(a.folder, 'plan.json'), encoding='utf-8'))
+        print(json.dumps(times_json(plan, a.folder), ensure_ascii=False))
+        return 0
     p = a.folder if a.folder.endswith('.json') else os.path.join(a.folder, 'plan.json')
     folder = os.path.dirname(p) or '.'
     try:
