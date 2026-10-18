@@ -4,3 +4,4 @@ stills/
 node_modules/
 assets/showroom/show/
 assets/downloads/
+__pycache__/

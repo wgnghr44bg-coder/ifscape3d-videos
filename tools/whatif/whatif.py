@@ -12,7 +12,7 @@
 The agent only edits plan.json and runs `check` until it says ALL CHECKS PASSED.
 Never write STORYBOARD.md or script.txt by hand. See tools/whatif/README.md.
 """
-import argparse, json, math, os, re, sys
+import argparse, ast, json, math, operator, os, re, sys
 
 ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..'))
 ENV_DIR = os.path.join(ROOT, 'environments')
@@ -148,7 +148,8 @@ def template(question, env, folder):
         'environment': env,
         'pace': 'TODO slow | sudden  (how fast the change happens in the story)',
         'numbers': [
-            {'id': 'TODO', 'value': 0, 'unit': 'TODO', 'said_as': [], 'meaning': 'TODO what this number is'},
+            {'id': 'TODO', 'value': 0, 'unit': 'TODO', 'said_as': [], 'meaning': 'TODO what this number is',
+             'premise': False},
         ],
         'steps': [{'step': i + 1, 'role': r, 'lines': ['TODO'], 'pause_after': 'long'} for i, r in enumerate(STEP_ROLES)],
         'on_screen': [
@@ -173,6 +174,10 @@ def template(question, env, folder):
             {'name': 'TODO', 'source': 'kenney | quaternius | polypizza | nasa | environment', 'path': 'TODO',
              'new': False, 'licence': 'CC0', 'credit': ''},
         ],
+        'derivations': [
+            {'result': 'TODO number id of the counter end value', 'formula': 'TODO e.g. rain_mm / 1000 * valley_ratio',
+             'explain': 'TODO why this sum gives the end value'},
+        ],
         'reality': [{'step': n, 'why_it_really_happens': 'TODO physics/biology in one or two sentences; '
                      'if it would not really happen, change the step'} for n in (7, 9, 10)],
         'critic': [{'weak_point': 'TODO', 'fix': 'TODO'} for _ in range(3)],
@@ -193,6 +198,36 @@ class Report:
         self.warns.append(f'WARN [{area}] {msg}')
 
 
+MYTHS_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'physics-myths.json')
+
+# words that say something is still changing – not allowed after the counter has stopped
+STILL_CHANGING = (r"\b(still|keeps?|keep on|goes on|continues? to)\s+(\w+ing|rising|climbing|growing|falling|getting|going up|going down)\b"
+                  r"|\b(getting|grows?|growing)\s+(hotter|colder|higher|deeper|lower|worse|bigger|stronger|faster)\b"
+                  r"|\bmore and more\b|\bhigher and higher\b|\bhotter and hotter\b")
+
+OPS = {ast.Add: operator.add, ast.Sub: operator.sub, ast.Mult: operator.mul, ast.Div: operator.truediv,
+       ast.Pow: operator.pow, ast.USub: operator.neg}
+
+
+def calc(formula, names):
+    """Evaluate a simple sum with number ids, e.g. 'rain_mm / 1000 * valley_ratio'."""
+    def ev(n):
+        if isinstance(n, ast.Expression):
+            return ev(n.body)
+        if isinstance(n, ast.Constant) and isinstance(n.value, (int, float)):
+            return n.value
+        if isinstance(n, ast.Name):
+            if n.id not in names:
+                raise ValueError(f'"{n.id}" is not a number id in the table')
+            return names[n.id]
+        if isinstance(n, ast.BinOp) and type(n.op) in OPS:
+            return OPS[type(n.op)](ev(n.left), ev(n.right))
+        if isinstance(n, ast.UnaryOp) and type(n.op) in OPS:
+            return OPS[type(n.op)](ev(n.operand))
+        raise ValueError('only numbers, number ids and + - * / ** ( ) are allowed')
+    return ev(ast.parse(formula, mode='eval'))
+
+
 def has_todo(x):
     if isinstance(x, str):
         return 'TODO' in x
@@ -201,6 +236,14 @@ def has_todo(x):
     if isinstance(x, dict):
         return any(has_todo(v) for k, v in x.items() if k != '_help')
     return False
+
+
+def facts_list(plan):
+    return plan.get('facts', []) if isinstance(plan.get('facts'), list) else []
+
+
+def vis_text(plan):
+    return plan.get('climax', {}).get('visual', '')
 
 
 def timing(plan):
@@ -343,6 +386,58 @@ def check(plan, folder, skip_files=False):
         R.fail('counter', 'the counter must stop after it starts.')
     if c.get('motion') == 'jump' and plan.get('pace') == 'slow':
         R.fail('counter', 'pace is "slow" but the counter jumps – make it steady, or make the story sudden.')
+
+    # after the counter stops, the text may not say it is still changing
+    if 'stops_on_word' in hit:
+        stop_step = hit['stops_on_word'][1]
+        for st in plan['steps']:
+            for l in st['lines']:
+                m = re.search(STILL_CHANGING, l, re.I)
+                if st['step'] > stop_step and m:
+                    R.fail('physics', f'the counter stops in step {stop_step}, but step {st["step"]} says "{m.group()}" '
+                                      f'({l!r}). Either it stops, or it keeps changing – not both.')
+
+    # every end value of the counter must be calculated (formula) or come from a source (fact)
+    by_val = {}
+    for n in table:
+        for v in [n['value']] + n.get('said_as', []):
+            by_val.setdefault(round(float(v), 6), n['id'])
+    values = {n['id']: n['value'] for n in table}
+    sourced = {nid for f in facts_list(plan) for nid in f.get('number_ids', [])}
+    derived = {}
+    for d in plan.get('derivations', []):
+        rid = d.get('result')
+        if rid not in values:
+            R.fail('physics', f'derivation result "{rid}" is not a number id in the table.'); continue
+        if len(d.get('explain', '')) < 30:
+            R.fail('physics', f'derivation of "{rid}": explain the sum in a sentence (≥ 30 characters).')
+        try:
+            got = calc(d.get('formula', ''), values)
+        except (ValueError, SyntaxError, ZeroDivisionError) as e:
+            R.fail('physics', f'derivation of "{rid}": cannot calculate {d.get("formula")!r}: {e}'); continue
+        want = values[rid]
+        if not math.isclose(got, want, rel_tol=0.15, abs_tol=1e-9):
+            R.fail('physics', f'derivation of "{rid}": {d["formula"]} = {got:g}, but the table says {want:g}. '
+                              'The numbers do not add up – fix the story or the number, never fudge the sum.')
+        derived[rid] = d
+    for k in ('to', 'second_to'):
+        v = c.get(k)
+        if not isinstance(v, (int, float)) or v == 0:
+            continue
+        nid = by_val.get(round(float(v), 6))
+        premise = {n['id'] for n in table if n.get('premise')}
+        if nid and nid not in derived and nid not in sourced and nid not in premise:
+            R.fail('physics', f'counter {k} = {v:g} ("{nid}") is not explained. Add a "derivations" entry that '
+                              f'calculates it from other numbers, or a fact with a source that gives exactly this number.')
+
+    # known physics mistakes (tools/whatif/physics-myths.json – add every new one the review finds)
+    if os.path.exists(MYTHS_FILE):
+        texts = [('script', script_text), ('climax', vis_text(plan))] + [(f'caption {i+1}', x) for i, x in enumerate(plan.get('captions', []))]
+        for myth in json.load(open(MYTHS_FILE, encoding='utf-8'))['myths']:
+            for where, txt in texts:
+                m = re.search(myth['pattern'], txt, re.I)
+                if m:
+                    R.fail('physics', f'{where}: "{m.group()}" – {myth["why"]} Fix: {myth["fix"]}')
 
     # climax must fit the pace
     vis = plan.get('climax', {}).get('visual', '')
@@ -503,6 +598,12 @@ def storyboard_md(plan, tim, warns):
     L += [f'- **{f["claim"]}** – {f["source"]} ({f["url"]}): "{f["source_says"]}"' for f in plan['facts']]
     L += ['', '## Models', '', '| model | source | path | new | credit |', '|---|---|---|---|---|']
     L += [f'| {m["name"]} | {m["source"]} | `{m["path"]}` | {"⭐" if m.get("new") else ""} | {m.get("credit") or "–"} |' for m in plan['models']]
+    if plan.get('derivations'):
+        L += ['', '## How the end numbers are calculated', '']
+        L += [f'- **{d["result"]}** = `{d["formula"]}` – {d["explain"]}' for d in plan['derivations']]
+    premise = [n['id'] for n in plan['numbers'] if n.get('premise')]
+    if premise:
+        L += ['', f'_Premise (the "what if" itself, not calculated): {", ".join(premise)}_']
     L += ['', '## Reality check', '']
     L += [f'- step {r["step"]}: {r["why_it_really_happens"]}' for r in plan['reality']]
     L += ['', '## Critic (weak points already fixed)', '']
