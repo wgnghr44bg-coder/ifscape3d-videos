@@ -147,6 +147,7 @@ def template(question, env, folder):
         'spelling': 'metres',
         'environment': env,
         'pace': 'TODO slow | sudden  (how fast the change happens in the story)',
+        'realism': 'real',
         'numbers': [
             {'id': 'TODO', 'value': 0, 'unit': 'TODO', 'said_as': [], 'meaning': 'TODO what this number is',
              'premise': False},
@@ -800,6 +801,13 @@ def main():
     except (OSError, json.JSONDecodeError) as e:
         sys.exit(f'FAIL [json] cannot read {p}: {e}')
     R, tim = check(plan, folder, a.skip_files, online=not a.offline)
+    if plan.get('realism') == 'fantasy':
+        # owner's choice: the spectacle may be fantasy. Physics becomes advice; facts, sources, numbers and form stay strict.
+        soft = [x for x in R.fails if re.match(r'FAIL \[(physics|reality|climax)\]', x)]
+        R.fails = [x for x in R.fails if x not in soft]
+        R.warns += [x.replace('FAIL', 'WARN', 1) + ' (fantasy: allowed)' for x in soft]
+    elif plan.get('realism', 'real') != 'real':
+        R.fails.append('FAIL [realism] "realism" must be "real" or "fantasy".')
     for line in R.fails + R.warns:
         print(line)
     if R.fails:

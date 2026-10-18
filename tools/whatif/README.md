@@ -63,6 +63,11 @@ last frame held 3.5 s) and fails outside 78–92 s. The final times always come 
 - **Sources**: each fact's numbers must be in its `source_says`; `check` also opens the `url` and looks for that number on the
   page (no internet or a blocked site → only a WARN; `--offline` skips it).
 
+## Fantasy mode (owner's choice)
+`"realism": "fantasy"` in plan.json: the spectacle may be impossible (a giant walking through houses). Then the physics,
+`reality` and climax checks only WARN. **Still strict:** every fact the voice presents as real (with its source), the
+numbers table, units, form, length, shots and licences. Default is `"realism": "real"`.
+
 ## Second reviewer (OpenCode)
 After ALL CHECKS PASSED, ask `@physics-review` to read `STORYBOARD.md`. It only reads and lists science problems.
 To let a different free model do it (two models see more than one), add a line `model: <provider>/<model>` to the top

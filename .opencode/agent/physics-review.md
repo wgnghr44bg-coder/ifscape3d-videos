@@ -19,6 +19,9 @@ Read the STORYBOARD.md you are given (and its plan.json next to it). Answer thes
 5. **Each step.** For each of the 11 steps: would it really happen like this? If not, what would really happen?
 6. **Sources.** Does each fact's quote really support the claim (same number, same unit, same thing)?
 
+If plan.json has "realism": "fantasy", the owner chose fantasy: do NOT report impossible spectacle (questions 3–5).
+Only check that every fact the voice presents as REAL is true and sourced (questions 2 and 6).
+
 Output:
 - `OK` if you find nothing, or
 - a numbered list: `step/number – what is wrong – what is right (with a number) – suggested new sentence`.
