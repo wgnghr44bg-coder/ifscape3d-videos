@@ -69,7 +69,28 @@ To let a different free model do it (two models see more than one), add a line `
 of `.opencode/agent/physics-review.md` (for example the Nemotron model you use in OpenCode).
 Shortcut: `/whatif <question>` runs the whole first rule.
 
+## Picture checker (`scenecheck.mjs`) – after the scene is built
+```
+node tools/whatif/scenecheck.mjs 2026-10-20-<slug>      # repeat until ALL PICTURE CHECKS PASSED
+```
+It opens `scene.html`, goes to every story step (times from `voice-times.tsv`, else the estimate) and **measures**:
+
+| Check | FAIL when |
+|---|---|
+| everything the voice names in that step (`on_screen`) | no object with that `userData.tag`; out of frame; smaller than 40 px of 1280; hidden behind something |
+| standing on something | a tagged object floats > 0.4 m above the surface below it (allowed only for words in `may_float`, e.g. boats, birds, a bridge) |
+| size promises (`scale_checks` in plan.json) | e.g. `{"step": 5, "object": "cart", "compare": "you", "top_between": [0.4, 0.65], "says": "the cart comes up to your thigh"}` – the top of the cart must be at 40–65 % of your height |
+| title (0–9 s) | more than 15 % of the middle of the picture is closer than 3 m to the camera |
+| counter | no `<div id="hud">`, or not fully on screen from 9.5 s |
+| camera rule | more than 6 or fewer than 2 hard cuts; a WARN when the camera stands still in a shot |
+
+It writes `check/step-NN.jpg` (one labelled still per step), `CHECK.jpg` (all on one sheet) and `CHECK.md` (the report).
+Commit + push `CHECK.md` + `CHECK.jpg` so Claude can look at them on GitHub. Example scene with the hooks:
+`examples/scene-hooks/scene.html` (`node tools/whatif/scenecheck.mjs tools/whatif/examples/scene-hooks` passes).
+Needs (repo root): `npm install three@0.170.0 playwright` and ffmpeg on PATH (same as `environments/preview.mjs`).
+
 ## What it does NOT check (the owner/Claude still reviews)
 - whether the science of the story is right (the `reality` field forces you to think, but nobody checks the physics);
 - whether a sentence is good, or the fact matches the source word for word;
-- whether the scene really shows what `on_screen` promises (that is the still-image review).
+- whether things LOOK right (a model that looks like a dog but is a cat, ugly colours, a strange pose) – the picture
+  checker measures size, place and visibility, not looks; that stays the still review by eye.

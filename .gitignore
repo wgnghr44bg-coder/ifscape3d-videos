@@ -5,3 +5,6 @@ node_modules/
 assets/showroom/show/
 assets/downloads/
 __pycache__/
+20*/check/
+tools/whatif/examples/scene-hooks/check/
+tools/whatif/examples/scene-hooks/CHECK.*
