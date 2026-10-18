@@ -5,13 +5,14 @@
  "spelling": "metres",
  "environment": "old-town",
  "pace": "slow",
+ "realism": "fantasy",
  "numbers": [
   {
    "id": "rate",
    "value": 25,
    "unit": "cm a year",
    "said_as": [],
-   "meaning": "the fastest a human really grows: about 25 cm in the first year (Merck Manual); the impossible part of the what-if is that this rate never slows and never stops",
+   "meaning": "the fastest a human really grows: about 25 cm in the first year (Merck Manual); the impossible part of this what-if is that this rate never slows and never stops",
    "premise": true
   },
   {
@@ -23,24 +24,24 @@
   },
   {
    "id": "years",
-   "value": 8,
+   "value": 60,
    "unit": "years",
    "said_as": [],
    "meaning": "how long the scenario runs - the window the counter counts"
   },
   {
    "id": "grown",
-   "value": 2,
+   "value": 15,
    "unit": "m",
    "said_as": [],
-   "meaning": "the height you add in eight years at 25 cm a year"
+   "meaning": "the height you add in sixty years at 25 cm a year"
   },
   {
    "id": "h_end",
-   "value": 3.8,
+   "value": 16.8,
    "unit": "m",
    "said_as": [],
-   "meaning": "your height after eight years (counter line 1)"
+   "meaning": "your height after sixty years (counter line 1)"
   },
   {
    "id": "m_start",
@@ -51,53 +52,60 @@
   },
   {
    "id": "m_end",
-   "value": 705,
+   "value": 61000,
    "unit": "kg",
-   "said_as": [],
-   "meaning": "your mass after eight years IF every part of you keeps growing in step (weight as the cube of height) - counter line 2. A real giant stays thinner: see reality step 9"
+   "said_as": [
+    61
+   ],
+   "meaning": "your mass after sixty years IF every part of you keeps growing in step (weight as the cube of height) - counter line 2; the caption says the same mass in tonnes (61 t), and the scene drives the second line from the same curve as the first (mass = 75 kg x (height / 1.8) cubed), so it is not a straight ramp. A real giant stays thinner: see reality step 9"
   },
   {
    "id": "weight_ratio",
-   "value": 9.4,
+   "value": 813,
    "unit": "times the weight",
    "said_as": [
-    9
+    800
    ],
-   "meaning": "how many times heavier you are after eight years than at 1.8 m (2.11 cubed); the voice says 'nine times'"
+   "meaning": "how many times heavier you are after sixty years than at 1.8 m (9.33 cubed); the voice says 'past eight hundred times'"
   },
   {
    "id": "bone_ratio",
-   "value": 4.4,
+   "value": 87,
    "unit": "times the bone cross-section",
-   "said_as": [
-    4
-   ],
-   "meaning": "how many times thicker the bone cross-section is after eight years (2.11 squared); the voice says 'four times'"
+   "said_as": [],
+   "meaning": "how many times thicker the bone cross-section is after sixty years (9.33 squared); the voice says 'eighty-seven times'"
   },
   {
    "id": "loads",
-   "value": 2.1,
+   "value": 9.3,
    "unit": "times the load on the bone",
    "said_as": [
-    2
+    9
    ],
-   "meaning": "how much more load every square centimetre of bone carries at 3.8 m than at 1.8 m; the voice says 'about twice'"
+   "meaning": "how much more load every square centimetre of bone carries at 16.8 m than at 1.8 m; the voice does not say it, the reality text does"
   },
   {
    "id": "tallest",
    "value": 2.72,
    "unit": "m",
    "said_as": [],
-   "meaning": "the tallest man ever measured (Robert Wadlow, 1940) - the real ceiling for a human body"
+   "meaning": "the tallest person ever measured (Robert Wadlow, 1940) - the real ceiling for a human body"
   },
   {
    "id": "his_mass",
    "value": 199,
    "unit": "kg",
+   "said_as": [],
+   "meaning": "what that man weighed at 2.72 m"
+  },
+  {
+   "id": "wadlow_year",
+   "value": 3.7,
+   "unit": "years",
    "said_as": [
-    200
+    4
    ],
-   "meaning": "what that man weighed at 2.72 m; the voice says 'almost two hundred kilos'"
+   "meaning": "in which year of the story you pass the tallest person ever measured; the voice says 'year four'"
   }
  ],
  "steps": [
@@ -105,8 +113,8 @@
    "step": 1,
    "role": "Imagine… it happens + what that means",
    "lines": [
-    "Imagine your body starts growing at its first-year rate again.",
-    "Twenty-five centimetres a year, and it never slows."
+    "Imagine the switch that ends your growth never flips.",
+    "Twenty-five centimetres every year, and it never slows."
    ],
    "pause_after": "long"
   },
@@ -114,7 +122,7 @@
    "step": 2,
    "role": "Where you are",
    "lines": [
-    "You are standing in the square of an old canal town."
+    "You are standing on the square of a canal town."
    ],
    "pause_after": "pause"
   },
@@ -123,7 +131,7 @@
    "role": "Normal number → new number",
    "lines": [
     "Today you stand one point eight metres tall.",
-    "At twenty-five centimetres a year, eight years add two metres."
+    "Sixty years of that adds fifteen metres."
    ],
    "pause_after": "long"
   },
@@ -131,8 +139,8 @@
    "step": 4,
    "role": "What you notice yourself",
    "lines": [
-    "The first thing you notice is your shoes.",
-    "Tight in spring, split open by autumn."
+    "You notice it in your shoes first.",
+    "Every pair splits within the year."
    ],
    "pause_after": "long"
   },
@@ -140,8 +148,8 @@
    "step": 5,
    "role": "How people react; things in the street",
    "lines": [
-    "People move back and look up at you.",
-    "Their heads come up to your chest."
+    "People stop, move back, and look up at you.",
+    "Their heads come up to your knee."
    ],
    "pause_after": "pause"
   },
@@ -149,8 +157,8 @@
    "step": 6,
    "role": "One real fact with a number",
    "lines": [
-    "The tallest person ever measured reached two point seven two metres.",
-    "He weighed almost two hundred kilos."
+    "In year four you passed the tallest person in history.",
+    "He reached two point seven two metres, one hundred and ninety-nine kilos."
    ],
    "pause_after": "long"
   },
@@ -158,8 +166,8 @@
    "step": 7,
    "role": "It escalates; one big image",
    "lines": [
-    "You can no longer get through your own door.",
-    "You sleep in the square, beside the fountain."
+    "The town is too small now, so you walk through the houses.",
+    "The last people leave, and the roofs break at your hip."
    ],
    "pause_after": "pause"
   },
@@ -167,8 +175,8 @@
    "step": 8,
    "role": "Why it goes wrong: … But …",
    "lines": [
-    "Everything in you grew in proportion, so your weight rose nine times.",
-    "But the bone that carries it grew only four times stronger."
+    "Every part of you grows together, so at the end you weigh eight hundred times more.",
+    "But your bones end up only eighty-seven times stronger."
    ],
    "pause_after": "long"
   },
@@ -176,8 +184,8 @@
    "step": 9,
    "role": "Climax",
    "lines": [
-    "Eight years on, your legs carry about twice the load they were built for.",
-    "Your head is above the lanterns now."
+    "You stand over the whole town at sixteen point eight metres.",
+    "The windmill comes up to your chest, the roofs to your knee."
    ],
    "pause_after": "long"
   },
@@ -185,8 +193,8 @@
    "step": 10,
    "role": "Aftermath",
    "lines": [
-    "The square is the only room that fits you.",
-    "The market goes on below you."
+    "You lie down across the canal like a bridge.",
+    "Rowing boats drift under your arm."
    ],
    "pause_after": "long"
   },
@@ -194,8 +202,8 @@
    "step": 11,
    "role": "Closing line",
    "lines": [
-    "Nothing in a human body was built to be this big.",
-    "And the growth has not stopped."
+    "Nothing that lived was built to be this long.",
+    "And sixty years were only the beginning."
    ],
    "pause_after": "long"
   }
@@ -203,58 +211,68 @@
  "on_screen": [
   {
    "word": "you",
-   "model": "one Kenney mini-character (character-male-a, idle/walk) scaled up from x1 to x2.11 during the video - the growth itself is the one new thing, built in code",
-   "looks": "your own body seen from outside: the shoes split, the stall roofs come level with your waist with your shoulders far above them, the head passes above the lanterns, and in the last shots you stand still beside the fountain, its rim at your knee"
+   "model": "one Kenney mini-character (character-male-a, idle/walk) scaled up in code from x1 to x9.33 during the video - the growth itself is the one new thing, built in code",
+   "looks": "your own body seen from outside: the shoes split every year, the stall roofs stay at your shin, the roofs of the houses break at your hip, your chest comes level with the windmill, and at the end your whole body lies across the canal with a boat drifting under your arm"
   },
   {
    "word": "people",
-   "model": "Kenney mini-characters (walk, idle) at normal size on the square, heads tipped up to look at you",
-   "looks": "ordinary people around you who keep their size, step back and look up, and come up to your hip by the end"
+   "model": "Kenney mini-characters (walk, idle) at normal size on the square, heads tipped up to look at you, and hurrying out of the lanes before you walk through the houses",
+   "looks": "ordinary people around you who keep their size, step back and look up, come up to your knee, and leave the lanes empty at your feet"
   },
   {
    "word": "square",
-   "model": "old-town's cobbled square (its own 70 x 40 m paving under you) with one broad worn patch of the same stone just beyond your toes",
-   "looks": "cobbles running away on every side: houses and stalls at the edge of the stone, the fountain in the middle, and the worn patch of paving at your feet"
+   "model": "old-town's cobbled square (its own 70 x 40 m paving under you) with the fountain, the stalls and the cart on it",
+   "looks": "cobbles running away on every side, with the fountain, the stalls and the people tiny at your feet in the first shots"
   },
   {
-   "word": "door",
-   "model": "a door frame about 2 m high in the front wall of a small town house east of the fountain, facing the camera of shot 2",
-   "looks": "the front door of your own house, right beside you and clearly shorter than you; at last you cannot pass it at all"
+   "word": "houses",
+   "model": "old-town's own rows of narrow town houses along the quays (modular-buildings, 7 m long) that you walk through in step 7",
+   "looks": "the narrow houses of the quay, reaching only to your hip, opening up as you push through them"
   },
   {
-   "word": "fountain",
-   "model": "fantasy-town-kit fountain-round on a low stone plinth in the middle of the square (old-town.js), rim 0.95 m high",
-   "looks": "the round stone fountain; the rim comes to your knee, and it becomes the thing you hold on to"
+   "word": "roofs",
+   "model": "the roofs of those same houses, plus the separate roof pieces the code knocks off as you pass",
+   "looks": "roof tiles breaking away at your hip height and sliding down into the empty lane behind you"
   },
   {
-   "word": "lanterns",
-   "model": "fantasy-town-kit lanterns on posts (3.2 m: along the quays and one beside you on the square)",
-   "looks": "iron lanterns on posts at 3.2 m; your head passes above them in the last shot"
+   "word": "windmill",
+   "model": "old-town's fantasy-town-kit windmill at the edge of town, scaled down in code from 18 m to 12 m (a normal Dutch mill) so a 16.8 m body really is taller than it",
+   "looks": "the windmill standing out past the last houses, its cap and sails coming up to your chest while the whole town lies below you"
   },
   {
-   "word": "market",
-   "model": "the morning market on the square (the stalls from old-town.js)",
-   "looks": "stalls with striped roofs still standing on the square at the far side, the market going on as if nothing had changed"
+   "word": "bridge",
+   "model": "old-town's stone bridge over the canal (nature-kit bridge_stoneRound, 14 m long)",
+   "looks": "the old stone bridge arching over the canal a little way off, and you lying across the same water beside it - a second, much bigger bridge"
+  },
+  {
+   "word": "canal",
+   "model": "old-town's canal: the water between the two quays (water y -1.2, quay walls at x ±6), with a small tagged patch of the same water where you lie down",
+   "looks": "the canal running north under the stone bridge with rowing boats on the dark water, and at the end your body lying right across it"
+  },
+  {
+   "word": "boats",
+   "model": "old-town's pirate-kit rowing boats (4 m) on the canal, one of them drifting in under your arm at the end",
+   "looks": "small rowing boats on the water, one of them floating in between your arm and the water below as you lie across the canal"
   }
  ],
  "counter": {
-  "label": "HEIGHT · FIRST 8 YEARS",
+  "label": "HEIGHT · SIXTY YEARS",
   "from": 1.8,
-  "to": 3.8,
+  "to": 16.8,
   "unit": "m",
   "second_label": "MASS · SAME SHAPE",
   "second_from": 75,
-  "second_to": 705,
+  "second_to": 61000,
   "second_unit": "kg",
   "motion": "steady",
-  "starts_on_word": "3:add",
-  "stops_on_word": "9:years"
+  "starts_on_word": "3:adds",
+  "stops_on_word": "9:windmill"
  },
  "captions": [
   "The switch that ends growth never flips.",
-  "25 cm in a year: a real body's fastest year.",
-  "2.72 m and 199 kg: the tallest man ever.",
-  "8 years: 3.8 m, 705 kg if the shape holds."
+  "25 cm a year for 60 years: 1.8 m becomes 16.8 m.",
+  "2.72 m and 199 kg: the tallest person ever.",
+  "61 tonnes, if the shape holds."
  ],
  "facts": [
   {
@@ -267,7 +285,7 @@
    "source_says": "Infants grow about 25 cm during the first year, and height at 5 years is about double the birth length"
   },
   {
-   "claim": "The tallest man ever measured reached 2.72 m",
+   "claim": "The tallest person ever measured reached 2.72 m",
    "number_ids": [
     "tallest"
    ],
@@ -290,8 +308,8 @@
    "type": "shot",
    "from_step": 1,
    "camera": "custom",
-   "shows": "you standing in the square at 1.8 m, people of your own size passing you, a market cart standing off your leg, and nothing in front of the lens during the title",
-   "where": "1.6 m high, 5.7 m south-east of you on the square, looking north-west at you; the camera creeps forward to 4.5 m"
+   "shows": "you standing in the square at 1.8 m, people of your own size walking past, the fountain, the stalls and the cart around you - and as the body grows, a market stall whose roof stays at your shin, so there is an object to look at in every second - and nothing in front of the lens during the title",
+   "where": "1.6 m high, 6 m south-east of you on the square, looking north-west at you; the camera creeps forward to 4.5 m as the first words are spoken"
   },
   {
    "type": "closeup",
@@ -299,31 +317,31 @@
    "camera": "custom",
    "where": "0.3 m high, 1.2 m in front of your toes on the cobbles, looking at the split shoes",
    "seconds": 4,
-   "shows": "your shoes on the cobbles, the seams split open at the toes"
+   "shows": "your shoes on the cobbles, the seams split open at the toes again this year"
   },
   {
    "type": "shot",
    "from_step": 7,
    "camera": "custom",
-   "where": "1.6 m high, level with your chest, north-east of you on the square, creeping west in past your shoulder: your own house and its far-too-small door on the left of you, the fountain and the square around you",
-   "seconds": 0,
-   "shows": "the escalation: your open door comes to your chest and is clearly shorter than you, the fountain rim at your knee, and you standing still because walking now costs too much"
+   "shows": "the escalation: you walking north up the quay through the row of houses, their roofs breaking off at your hip and sliding into the empty lane while the last people hurry out of your way",
+   "where": "3 m high, 25 m behind you on the quay, looking along your path as you walk into the houses; the camera follows you north",
+   "seconds": 0
   },
   {
    "type": "closeup",
    "from_step": 8,
    "camera": "custom",
-   "where": "1.0 m high, 2 m from the fountain rim, looking along the rim with your shin right behind it",
+   "where": "0.8 m high on the quay at your foot, looking down past it at the water: a rowing boat floats at your ankle with the canal running away under the stone bridge",
    "seconds": 4,
-   "shows": "the stone rim of the fountain coming only to your knee, with your shin behind it"
+   "shows": "your foot on the quay and the rowing boat floating at your ankle below it, the canal and the old stone bridge beyond"
   },
   {
    "type": "shot",
    "from_step": 9,
    "camera": "custom",
-   "where": "1.0 m high, low on the cobbles 13 m west of you, looking up at you across the square; the camera creeps forward towards you, to 11 m",
+   "where": "45 m high and 60 m back, north-east of you over the canal, looking south-west down at the whole town: you standing over the canal, the windmill beyond, the roofs and quays below; the camera creeps forward very slowly and the last frame stays",
    "seconds": 0,
-   "shows": "you from below at 3.8 m: head above the lanterns and the stall roofs, your own house and its door small at your legs, the market still standing on the square and the stones going on beneath you; the counter freezes on the year and the last frame stays"
+   "shows": "you from above at 16.8 m: the roofs at your knee, the windmill coming up to your chest, the houses and quays small at your feet, the canal and its boats below - and then your body lying right across the canal like a bridge, longer than the water is wide, with a rowing boat drifting in under your arm and the counter frozen on sixteen point eight metres"
   }
  ],
  "scale_checks": [
@@ -332,36 +350,50 @@
    "object": "people",
    "compare": "you",
    "top_between": [
-    0.55,
-    0.85
+    0.2,
+    0.33
    ],
-   "says": "their heads come up to your chest"
+   "says": "their heads come up to your knee"
   },
   {
-   "step": 8,
-   "object": "fountain",
+   "step": 7,
+   "object": "roofs",
    "compare": "you",
    "top_between": [
-    0.2,
-    0.35
+    0.4,
+    0.6
    ],
-   "says": "the fountain rim comes only to your knee"
+   "says": "the roofs break at your hip"
   },
   {
    "step": 9,
-   "object": "lanterns",
+   "object": "windmill",
    "compare": "you",
    "top_between": [
-    0.75,
-    0.95
+    0.62,
+    0.82
    ],
-   "says": "your head is above the lanterns"
+   "says": "the windmill comes up to your chest"
+  },
+  {
+   "step": 9,
+   "object": "roofs",
+   "compare": "you",
+   "top_between": [
+    0.3,
+    0.45
+   ],
+   "says": "the roofs come to your knee"
   }
  ],
- "may_float": [],
+ "may_float": [
+  "boats",
+  "bridge",
+  "you"
+ ],
  "climax": {
-  "visual": "the low shot from the cobbles looking up: you stand still in the middle of the square beside the fountain, its rim at your knee, your head above the lanterns and the stall roofs, your own door small at your shoulder and people at your feet, while the market goes on around your legs; then about 5 s of silence in which nothing moves and the counter holds on the year",
-  "why_it_fits_the_closing_line": "The closing line says nothing in a human body was built to be this big, so the climax is not a fall or a break: it is the quiet image of a body standing still in a space built for people half its height, with the market carrying on around it - and the line that the growth itself has not stopped."
+  "visual": "the biggest picture of the video: a high camera far back over the town, looking down at you as you stand over the canal - the roofs at your knee, the windmill at your chest, the quays and their houses small around your feet - and then you lie down across the canal like a bridge, with a rowing boat drifting in under your arm and the old stone bridge standing just beyond you; about five seconds of silence in which only that one boat drifts, the counter holding on sixteen point eight metres",
+  "why_it_fits_the_closing_line": "The closing line says nothing that lived was built to be this long, and the last image says it without a word: the body that outgrew a whole town ends up stretched across its canal as a bridge, longer than the water is wide - and the closing line makes clear those sixty years were only the beginning."
  },
  "models": [
   {
@@ -385,100 +417,111 @@
   {
    "result": "grown",
    "formula": "years * rate / 100",
-   "explain": "At 25 cm (0.25 m) a year, eight years add 8 x 0.25 = 2 m of height."
+   "explain": "At 25 cm (0.25 m) a year, sixty years add 60 x 0.25 = 15 m of height."
   },
   {
    "result": "h_end",
    "formula": "h_start + grown",
-   "explain": "1.8 m today plus the 2 m you add in eight years gives 3.8 m - the first line of the counter."
+   "explain": "1.8 m today plus the 15 m you add in sixty years gives 16.8 m - the first line of the counter."
   },
   {
    "result": "weight_ratio",
    "formula": "(h_end / h_start) ** 3",
-   "explain": "A body 2.11 times taller, keeping its shape, holds 2.11 cubed = 9.4 times as much flesh, so the weight rises nine times."
+   "explain": "A body 9.33 times taller, keeping its shape, holds 9.33 cubed = 813 times as much flesh, so the weight rises eight hundred times."
   },
   {
    "result": "bone_ratio",
    "formula": "(h_end / h_start) ** 2",
-   "explain": "The cross-section of a bone grows as the square of height, so at 2.11 times the height the bone is only 2.11 squared = 4.4 times stronger."
+   "explain": "The cross-section of a bone grows as the square of height, so at 9.33 times the height the bone is only 9.33 squared = 87 times stronger."
   },
   {
    "result": "m_end",
    "formula": "m_start * weight_ratio",
-   "explain": "75 kg times the ninefold rise in weight (9.4) gives about 705 kg - the second line of the counter."
+   "explain": "75 kg times the 813-fold rise in weight gives 60 975 kg, rounded to 61 000 kg (61 t) - the second line of the counter."
   },
   {
    "result": "loads",
    "formula": "weight_ratio / bone_ratio",
-   "explain": "Weight rises 9.4 times but the bone only 4.4 times, so every square centimetre of bone carries 9.4 / 4.4 = 2.1 times the load: about twice."
+   "explain": "Weight rises 813 times but the bone only 87 times, so every square centimetre of bone carries 813 / 87 = 9.3 times the load."
+  },
+  {
+   "result": "wadlow_year",
+   "formula": "(tallest - h_start) / (rate / 100)",
+   "explain": "To reach 2.72 m from 1.8 m takes (2.72 - 1.8) / 0.25 = 3.7 years, so in year four you pass the tallest person ever measured."
   }
  ],
  "reality": [
   {
    "step": 7,
-   "why_it_really_happens": "Real doors are about two metres high, so a body past three metres cannot use an ordinary house at all: the open square becomes the only room in town that fits you, which is why you end up living and sleeping there."
+   "why_it_really_happens": "A real old town is built for 1.8 m people: the lanes are 3-4 m wide and the doors 2 m high, so a body of more than ten metres has no way down a lane. A brick wall takes only about 0.2 MPa of sideways push, far less than one leg of a 60 tonne body leaning into it, and any floor you stepped on would go first. Fantasy lets you walk through; that is exactly why the town has to be empty before you do."
   },
   {
    "step": 9,
-   "why_it_really_happens": "Everything in this scenario keeps its shape, so weight grows as the cube of height while bone cross-section grows as the square: every square centimetre of bone carries 2.1 times the load and every joint twice the pressure, the muscles must move nine times the mass with only four times the strength, and the heart must lift blood more than twice as high as it does now to reach the brain. Food rises more slowly than weight, because metabolism follows mass to the power 0.75: 9.4 times the mass is only about five times the food, roughly thirteen thousand kilocalories a day. Standing still is all that is left; walking ends first. Real giants come out thinner than this sum, because a real body does not keep its shape: the tallest man ever measured weighed 199 kg at 2.72 m, where the growing cube would give 258 kg."
+   "why_it_really_happens": "A body cannot keep its shape at 16.8 m: mass rises with height cubed (813 times) while bone cross-section rises only with height squared (87 times), so each square centimetre of bone carries 9 times the load, the heart must push blood 16.8 m up to the brain, and metabolism (mass to the power 0.75) needs about 150 times the food. Real giants stay thinner than the cube: the tallest person ever measured weighed 199 kg at 2.72 m, where the cube would say 258 kg."
   },
   {
    "step": 10,
-   "why_it_really_happens": "Nothing in the scenario ever closes the growth plates, so no signal turns the growth down: the body stays and keeps adding. The counter measures only the first eight years of that, which is why the closing line says the growth has not stopped."
+   "why_it_really_happens": "Nothing in this scenario closes the growth plates, so the extra centimetres keep arriving for all sixty years and never stop - that is the whole premise. A real 61 tonne body would crush itself long before this; here the two quay walls and the water carry you, and the canal is 12 m wide against your 16.8 m length, so you span it with about two and a half metres to spare on each bank."
   }
  ],
  "critic": [
   {
-   "weak_point": "The first draft of step 1 said the growth of your first year never slowed, which would have made you 5 m tall by now - it fought step 3 ('today you stand 1.8 m')",
-   "fix": "step 1 now starts the change today: your body grows at its first-year rate again, and 25 cm a year never slows"
+   "weak_point": "The old film grew you to 3.8 m in eight years - at that size you still fit on the square, nobody has to leave and 'walking through houses' cannot happen",
+   "fix": "the window is sixty years at the same 25 cm a year: 16.8 m and 61 tonnes, so every step after 5 really is bigger than the town"
   },
   {
-   "weak_point": "The first draft grew you to 5.45 m in one year at an invented rate of one centimetre a day, and at that size no human frame stands",
-   "fix": "the real fastest rate (about 25 cm in the first year, Merck Manual) over eight years: 1.8 + 2 = 3.8 m and 705 kg, every number of it calculated in the derivations"
+   "weak_point": "The owner's '~70 t' is not what 75 kg gives through the cube law: 9.33 cubed = 813, and 75 kg x 813 = 61 tonnes, not 70",
+   "fix": "counter, voice and caption all say 61 tonnes - the picture checker makes the counter prove what you SEE, so an honest 61 t that adds up beats a rounded 70 t that does not"
   },
   {
-   "weak_point": "705 kg assumes the shape never changes, but the film's own fact shows real giants stay thinner (Wadlow: 199 kg at 2.72 m, where the cube gives 258 kg)",
-   "fix": "the assumption is spoken (step 8: everything grew in proportion), the caption says '705 kg if the shape holds', the counter's second label says it too, and reality step 9 gives the real Wadlow figure next to it"
+   "weak_point": "old-town's windmill stands 18 m tall, taller than the 16.8 m body, so 'taller than the windmill' would have been visibly false on screen",
+   "fix": "the scene scales the windmill down to 12 m (a normal Dutch mill) and step 9 says your chest, which the scale check measures"
   },
   {
-   "weak_point": "The plan had you walking at 705 kg while the reality text said the skeleton fails - the two fought each other",
-   "fix": "the load per square centimetre doubles, so the skeleton itself still holds (static bone stress stays well under the fracture limit) while the joints, the muscles and the heart run out first; the figure now stands still beside the fountain instead of walking"
+   "weak_point": "The first draft ended with you standing still beside the fountain: the quietest picture of the film, and it showed none of the sixty years",
+   "fix": "the ending is now your body lying across the canal like a second bridge with the boats drifting under your arm - the biggest last frame the place allows"
   },
   {
-   "weak_point": "'Your shadow covers the whole market by noon' was backwards - noon gives the shortest shadow of the day, about 2 m for a 3.8 m body",
-   "fix": "the shadow claim is gone; step 10 now says the market goes on around your legs, which is true at any hour"
+   "weak_point": "A counter label with digits would break the picture check: the checker reads the FIRST number inside the counter, so 'HEIGHT - 60 YEARS' would have compared 60 with your height",
+   "fix": "the label is written in words - HEIGHT - SIXTY YEARS - so the first number in the counter really is your height in metres"
   },
   {
-   "weak_point": "The counter freezes at the climax while the last line says the growth has not stopped, and the plan only explained that in the reality text, which nobody sees",
-   "fix": "the counter's own labels now say it: 'HEIGHT · FIRST 8 YEARS' and 'MASS · SAME SHAPE', short enough for a phone, so the frozen number is the eight-year window"
+   "weak_point": "Step 8's first draft said you 'grew in step', and 'step' is a thing a viewer expects to SEE (a stair step): the picture checker would have demanded a staircase on screen in the climax",
+   "fix": "step 8 says 'grew together' instead, and no other line uses a visible word by accident"
   },
   {
-   "weak_point": "Step 5 leaned on a cart for the metre scale, but that cart is 2.8 m wide: beside a 2.4 m body it either leaves the frame or hides you, so the picture could not show a thigh",
-   "fix": "step 5 compares people instead - their heads come up to your chest - and the shot shows the onlooker at your side at that height"
+   "weak_point": "A straight-line counter would fight its own story: a steady ramp from 75 kg to 61 t reads about 30 t at the half-way point, where a same-shaped body of that height is only about 10 t, and the spoken eight hundred times would be false until the very last second",
+   "fix": "the scene drives both lines from one curve - height h = 1.8 + 15 x p^0.7 over the counter window, mass = 75 kg x (h / 1.8) cubed - so at step 5 you are about 7.3 m (people at your knee), at step 7 about 12.4 m (roofs at your hip) and only at the stop 16.8 m and 61 t"
   },
   {
-   "weak_point": "Step 6 said the tallest man never stopped growing, which the source does not say",
-   "fix": "step 6 and the facts now carry what the source really gives - 2.72 m and 199 kg"
+   "weak_point": "The closing line used to say the growth has not stopped while the counter sits frozen on sixteen point eight metres: the picture contradicted the words",
+   "fix": "the closing line now says the sixty years were only the beginning, which is true next to a counter labelled SIXTY YEARS"
   },
   {
-   "weak_point": "The reality text said a 705 kg body needs nine times the food, simply copying the ninefold weight - but metabolism follows mass to the power 0.75, so the real figure is about five times",
-   "fix": "reality step 9 now says about five times the food, roughly thirteen thousand kilocalories a day, with the 0.75 exponent given"
+   "weak_point": "Between the shoes at 19 s and the breaking houses at 43 s the film had only talk and a steady size change: no object to look at for 24 seconds",
+   "fix": "shot 1 passes a market stall at step 6 with its roof at your shin, and the growing body plus the flying counter are the running change, so that stretch has an object as well as words"
   }
  ],
  "questions": [
   {
-   "question": "How do we show 'you' - with the camera standing where you stand, or with a figure that grows on screen?",
-   "my_choice": "a figure that grows: the story IS the body, so we scale one Kenney character from x1 to x2.11, keep everyone else at normal size for the metre scale, and let it stand still beside the fountain at the end"
+   "question": "The end: you lie across the canal, but the picture checker measures a lying body's HEIGHT (about 2.5 m) against the counter's 16.8 m, so the counter-picture check cannot pass at steps 10-11",
+   "my_choice": "I kept your ending exactly as written and set counter_matches as you asked. If the picture check then fails on the last two steps I will come back to you with the honest pair of options: either counter_matches {\"none\"} with the span still on the counter (what you see is a 16.8 m body across the canal - true, just not measurable as a height), or you end standing astride the canal with one arm out over the water and the boats drifting under it, which keeps the number provable. I will not change the image without asking."
   },
   {
-   "question": "The place: reuse old-town (already built) or build the 'giant human world' of PLAN-100 #72 (still to build)?",
-   "my_choice": "old-town: it is ready, and its doors (2 m), stalls, cart, fountain and 3.2 m lanterns give exactly the metre scale this story needs"
+   "question": "The place: reuse old-town (ready, with canal, stone bridge, boats, houses, stalls and a windmill)?",
+   "my_choice": "yes, old-town: every part of this story already stands there - the only changes are scaling its windmill from 18 m to 12 m so 'taller than the windmill' is true, and knocking the roofs off the houses you walk through in code"
   },
   {
-   "question": "The one new thing: the growing figure and its scale animation in code (no new model files, no new licences)",
-   "my_choice": "yes, one new thing in code: the figure is a scaled Kenney mini-character, everything else comes from environments/old-town.js"
+   "question": "The new things: the x9.33 figure that grows and walks, plus the breaking roofs and walls built in code (no new model files, no new licences)",
+   "my_choice": "yes - two new things, both made in code from what is already in the repo; everything else (canal, bridge, boats, houses, windmill, stalls, fountain, people) comes from environments/old-town.js and assets/kenney"
   }
  ],
  "subject": "you",
- "subject_min_px": 300
+ "subject_min_px": 300,
+ "counter_matches": {
+  "object": "you",
+  "measure": "height",
+  "unit": "m",
+  "hud_number": 0
+ }
 }
