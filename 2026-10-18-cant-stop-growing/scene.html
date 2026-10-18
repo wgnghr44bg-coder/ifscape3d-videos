@@ -36,29 +36,34 @@ canvas { display: block; }
 <script type="module">
 import * as THREE from 'three';
 import { loadModel } from '../assets/load.js';
-import { put } from '../environments/kit.js';
 
 // =====================================================================
-// TIMELINE — video seconds. Times come from voice-times.tsv + VO_OFFSET.
+// TIMELINE - video seconds. Step times and the two counter words come
+// from voice-times.tsv (see PROGRESS.md); change them if the voice changes.
 // =====================================================================
 const TL = {
-  T_END: 90,
-  VO_OFFSET: .5,
+  T_END: 89.5,
   title: "What if you couldn't<br>stop growing<br>as a human?", titleOut: 9.0,
-  hud: { label: 'HEIGHT · FIRST 8 YEARS', second: 'MASS · SAME SHAPE', in: 8.8 },
-  grow: [17.2, 58.5],                       // the counter/growth window: step 3 "add" -> step 9 "years"
-  h0: 1.8, h1: 3.8, m0: 75,                 // 1.8 m -> 3.8 m; 75 kg -> 705 kg (same shape)
-  captions: [[9.7, 14.4, 'The switch that ends growth never flips.'],
-             [15.2, 20.6, '25 cm in a year: a real body\u2019s fastest year.'],
-             [34.3, 40.4, '2.72 m and 199 kg: the tallest man ever.'],
-             [59.2, 67.4, '8 years: 3.8 m, 705 kg if the shape holds.']],
-  cuts: [20.79, 25.0, 41.57, 53.5, 58.36],  // hard cuts: shoes, back, closer, fountain rim, low looking up
-  beats: { growOn: 17.2, shoes: 20.79, people: 27.6, tallest: 34.0, door: 41.57,
-           but: 48.64, rim: 53.5, climax: 58.36, silence: 63.0, market: 71.4, last: 78.6 },
+  hud: { label: 'HEIGHT · SIXTY YEARS', second: 'MASS · SAME SHAPE', in: 8.7 },
+  grow: [18.6, 67.7],            // the word "adds" (step 3) -> the word "windmill" (step 9)
+  // the growth curve passes through four sizes the voice names, so the counter
+  // and the body always agree: 1.8 m at the start, 6.8 m when the heads at your
+  // knee are checked (step 5, 30.09 s), 13.1 m when the roofs at your hip are
+  // checked (step 7, 46.89 s), 16.8 m when the counter stops (67.7 s).
+  anchors: [[18.6, 1.8], [30.09, 6.8], [46.89, 13.1], [67.7, 16.8]],
+  h0: 1.8, m0: 75,               // mass = 75 kg x (height / 1.8) cubed -> 61000 kg at 16.8 m
+  captions: [[2.2, 6.4, 'The switch that ends growth never flips.'],
+             [14.2, 20.4, '25 cm a year for 60 years: 1.8 m becomes 16.8 m.'],
+             [34.4, 42.0, '2.72 m and 199 kg: the tallest person ever.'],
+             [52.6, 60.2, '61 tonnes, if the shape holds.']],
+  cuts: [21.2, 25.2, 43.0, 52.4, 56.6],   // shot 1 - close-up shoes - shot 1 - shot 2 - close-up foot - shot 3
+  walk: [43.2, 50.5],            // step 7: you walk north up the quay through the houses
+  shove: [45.2, 48.6],           // the houses you pass open up and their roofs come off
+  lie: [76.9, 78.9],             // step 10: you lie down across the canal, feet on the east quay
+  boatIn: [57.0, 0.36],          // the rowing boat drifts in towards your arm (0.36 m/s from z -28)
 };
-// =====================================================================
 
-const W = 720, H = 1280, FPS = 30;
+const W = 720, H = 1280;
 const clamp = (x, a = 0, b = 1) => Math.min(b, Math.max(a, x));
 const smooth = (a, b, x) => { const t = clamp((x - a) / (b - a)); return t * t * (3 - 2 * t); };
 const lerp = (a, b, t) => a + (b - a) * t;
@@ -71,196 +76,253 @@ renderer.shadowMap.enabled = true; renderer.shadowMap.type = THREE.PCFShadowMap;
 document.body.prepend(renderer.domElement);
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(60, W / H, .2, 6000);
+const lam = (c, o = {}) => new THREE.MeshLambertMaterial(Object.assign({ color: c, flatShading: true }, o));
 
-// ---------- the place: environments/old-town.js (canal town, market square, fountain, lanterns) ----------
-const info = await env_build();
-async function env_build() {
-  const mod = await import('../environments/old-town.js');
-  return mod.build({ THREE, scene, loadModel, base: '../assets/kenney' });
-}
-const CTX = { THREE, scene, loadModel, base: '../assets/kenney' };
+// ---------------------------------------------------------------- the place
+const mod = await import('../environments/old-town.js');
+await mod.build({ THREE, scene, loadModel, base: '../assets/kenney' });
 
-// tag the things the voice names, so the picture checker can find them (one object each, never a loose group)
-const tagAt = (x, z, tag, tol = 1.2) => {
+const boxOf = o => new THREE.Box3().setFromObject(o);
+const bigBox = o => { try { const b = boxOf(o); const s = b.getSize(new THREE.Vector3()); return Math.max(s.x, s.y, s.z); } catch (e) { return 0; } };
+// every object the voice names gets a tag, so the picture checker can measure it
+function tagAt(x, z, tag, tol = .4) {
   for (const o of scene.children) {
-    if (!o.position || o.userData.tag) continue;
-    if (Math.abs(o.position.x - x) <= tol && Math.abs(o.position.z - z) <= tol) { o.userData.tag = tag; return o; }
+    if (!o.position || o.userData.tag || o.userData.mine) continue;
+    if (Math.abs(o.position.x - x) > tol || Math.abs(o.position.z - z) > tol) continue;
+    if (bigBox(o) > 60) continue;                       // not the sky, the ground or the water
+    if (bigBox(o) < .2) continue;                       // not an empty group at the same spot
+    o.userData.tag = tag; return o;
   }
   console.warn('tag not found:', tag, x, z); return null;
-};
-tagAt(0, -46, 'fountain');          // the round fountain in the middle of it
-const market = tagAt(12, -42, 'market'); // the market stall with the striped roof
-// the stall moves to the east side of the square, well clear of your feet: it never stands between a camera
-// and the square's paving, and in the last shot the market is still there, going on across the stones
-if (market) market.position.set(16.0, market.position.y, -46.0);
-const cart = tagAt(6, -36, 'cart'); // the wooden cart on the square, now a little east of you
-if (cart) cart.position.set(6.5, 0, -40.5);
-// the town's own fountain, on a low round stone kerb: the rim 0.95 m up = knee height for a 3.8 m body.
-// The kerb is a cylinder, not a box: a square slab reads as a concrete block from the low climax camera.
-const FOUNTAIN_S = 0.6;
-const fountain = scene.children.find(o => o.userData.tag === 'fountain');
-if (fountain) {
-  fountain.scale.multiplyScalar(FOUNTAIN_S);
-  fountain.position.y = 0.45;
-  const plinth = new THREE.Mesh(new THREE.CylinderGeometry(1.5, 1.6, .45, 20),
-    new THREE.MeshLambertMaterial({ color: 0xb7a992, flatShading: true }));
-  plinth.position.set(fountain.position.x, .225, fountain.position.z);
-  plinth.receiveShadow = true; plinth.castShadow = true;
-  plinth.userData.tag = 'fountain'; scene.add(plinth);
 }
 
-// your own house: a small town house east of the fountain, two steps from you, with the front door
-// in the wall that faces the camera. The door stops at your hip; you have long outgrown it.
-const DOOR_AT = { x: 3.32, z: -49.23, ry: 61.6 * Math.PI / 180 };
-const house = new THREE.Group();
-const door = new THREE.Group();
-{
-  const wall = new THREE.MeshLambertMaterial({ color: 0xd8cab3, flatShading: true });
-  const roofMat = new THREE.MeshLambertMaterial({ color: 0x8c4a37, flatShading: true });
-  const body = new THREE.Mesh(new THREE.BoxGeometry(5, 3.4, 3), wall);
-  body.position.y = 1.7; body.castShadow = true; body.receiveShadow = true; house.add(body);
-  const rw = 2.2, rh = 1.25;
+// ---------------------------------------------------------------- the houses
+// old-town's houses are 7-9 m tall, which would make "the roofs at your hip" false on
+// screen; squash them so the walls are 5.4 m and build our own gable roof up to 7 m.
+const HOUSE_XZ = [];
+for (const s of [-1, 1]) for (let z = 60; z > -26; z -= 7.5) HOUSE_XZ.push([s * 13, z]);
+for (let x = -30; x <= 30; x += 7.5) if (Math.abs(x) > 6) HOUSE_XZ.push([x, -66]);
+const EAVE = 5.4, RIDGE = 6.9;
+const roofMat = lam(0x8c4a37, { side: THREE.DoubleSide }), roofMat2 = lam(0x7c4030);
+function gable(h) {
+  const alongZ = h.d >= h.w;                            // the ridge runs along the long side
+  const run = (alongZ ? h.w : h.d) / 2, rise = RIDGE - EAVE, len = Math.hypot(run, rise);
+  const g = new THREE.Group();
   for (const s of [-1, 1]) {
-    const slope = new THREE.Mesh(new THREE.BoxGeometry(5.3, .18, Math.hypot(rw, rh)), roofMat);
-    slope.position.set(0, 3.4 + rh / 2, s * rw / 2);
-    slope.rotation.x = s * Math.atan2(rh, rw);
-    slope.castShadow = true; house.add(slope);
+    const m = new THREE.Mesh(alongZ ? new THREE.BoxGeometry(len, .22, h.d + .6)
+                                    : new THREE.BoxGeometry(h.w + .6, .22, len), roofMat);
+    m.castShadow = true; m.receiveShadow = true;
+    if (alongZ) { m.position.set(s * run / 2, EAVE + rise / 2, 0); m.rotation.z = -s * Math.atan2(rise, run); }
+    else { m.position.set(0, EAVE + rise / 2, s * run / 2); m.rotation.x = s * Math.atan2(rise, run); }
+    g.add(m);
   }
-  // the door itself: a wooden panel in a stone frame, with a step in front of it
-  const wood = new THREE.MeshLambertMaterial({ color: 0x6b4a2f, flatShading: true });
-  const stone = new THREE.MeshLambertMaterial({ color: 0xbfae99, flatShading: true });
-  const jamb = x => { const m = new THREE.Mesh(new THREE.BoxGeometry(.22, 2.05, .24), stone);
-    m.position.set(x, 1.02, 0); m.castShadow = true; door.add(m); };
-  jamb(-.63); jamb(.63);
-  const lintel = new THREE.Mesh(new THREE.BoxGeometry(1.62, .26, .26), stone);
-  lintel.position.set(0, 2.17, 0); lintel.castShadow = true; door.add(lintel);
-  const panel = new THREE.Mesh(new THREE.BoxGeometry(1.05, 1.92, .09), wood);
-  panel.position.set(0, .96, -.06); door.add(panel);
-  const step = new THREE.Mesh(new THREE.BoxGeometry(1.9, .12, .7), stone);
-  step.position.set(0, .06, .3); step.receiveShadow = true; door.add(step);
+  const ridge = new THREE.Mesh(new THREE.BoxGeometry(alongZ ? .5 : h.w + .1, .3, alongZ ? h.d + .1 : .5), roofMat2);
+  ridge.position.y = RIDGE; ridge.castShadow = true; g.add(ridge);
+  return g;
 }
-// 1.5 m of house sits behind the front wall, i.e. straight away from the doorway's outward normal
-house.position.set(DOOR_AT.x - 1.5 * Math.sin(DOOR_AT.ry), 0, DOOR_AT.z - 1.5 * Math.cos(DOOR_AT.ry));
-house.rotation.y = DOOR_AT.ry;
-scene.add(house);
-door.position.set(DOOR_AT.x + .12 * Math.sin(DOOR_AT.ry), 0, DOOR_AT.z + .12 * Math.cos(DOOR_AT.ry));
-door.rotation.y = DOOR_AT.ry;
-door.userData.tag = 'door'; scene.add(door);
+const houses = [];
+for (const [hx, hz] of HOUSE_XZ) {
+  const o = scene.children.find(c => c.position && !c.userData.mine &&
+    Math.abs(c.position.x - hx) < .01 && Math.abs(c.position.z - hz) < .01);
+  if (!o) continue;
+  const b0 = boxOf(o), hgt = Math.max(.1, b0.max.y - b0.min.y);
+  o.scale.y *= EAVE / hgt; o.updateMatrixWorld(true);
+  const b = boxOf(o);
+  houses.push({ root: o, cx: (b.max.x + b.min.x) / 2, cz: (b.max.z + b.min.z) / 2,
+                w: b.max.x - b.min.x, d: b.max.z - b.min.z });
+}
+// the houses he walks through (east quay, z -22.5 / -15 / -7.5) are the ones the checker
+// watches; the fourth (z 0, beyond his stopping place) keeps its roof, so the town still
+// has a roof at the height of your hip.
+const PASS = [[13, -22.5], [13, -15], [13, -7.5], [13, 0]];
+const FALL = [[13, -22.5], [13, -15], [13, -7.5]];      // the three roofs that come off
+for (const h of houses) {
+  const g = gable(h); g.position.set(h.cx, 0, h.cz); scene.add(g);
+  h.roof = g; g.userData.mine = true;
+  if (PASS.some(([px, pz]) => Math.abs(px - h.cx) < .01 && Math.abs(pz - h.cz) < .01)) {
+    h.root.userData.tag = 'houses'; g.userData.tag = 'roofs';
+    h.falls = FALL.some(([px, pz]) => Math.abs(px - h.cx) < .01 && Math.abs(pz - h.cz) < .01);
+  }
+}
+// the windmill: old-town puts it 18 m up, taller than a 16.8 m body - scale it to 12 m
+const mill = tagAt(-60, -90, 'windmill', 2.0);
+if (mill) mill.scale.multiplyScalar(12 / 18);
+tagAt(0, 0, 'bridge', 2.5);
+// the market stall on the square stands right between the camera and the running woman in
+// shot 2, so it moves east out of that line (the stalls are not named in the script)
+const stall = scene.children.find(c => c.position && !c.userData.mine &&
+  Math.abs(c.position.x - 12) < .01 && Math.abs(c.position.z + 42) < .01);
+if (stall) stall.position.set(18, stall.position.y, -44);
+// the second stall stands under the shot-2 camera and hides the running woman: it moves east
+const stall2 = scene.children.find(c => c.position && !c.userData.mine &&
+  Math.abs(c.position.x - 15) < .01 && Math.abs(c.position.z + 52) < .01);
+if (stall2) stall2.position.set(21, stall2.position.y, -56);
 
-// the square itself, as the checker's 'square': old-town's own square is one 70 x 40 m box, and a box that
-// large never holds still in the frame. So the square gets a second, honest face: a broad worn patch of the
-// same cobbles (0xa39684) just beyond your toes, 5 x 2.5 m across the middle of the square. It lies on the
-// paving (the town's square top is at y 0.025), 1 cm proud of it so it reads as worn stone, not a hole.
-const PAVE = 0.025;
-const floorPatch = new THREE.Mesh(new THREE.BoxGeometry(5.0, .012, 2.5),
-  new THREE.MeshLambertMaterial({ color: 0xa39684 }));
-floorPatch.position.set(4.5, PAVE + .0085, -43.75); floorPatch.receiveShadow = true;
-floorPatch.userData.tag = 'square'; scene.add(floorPatch);
+// ---------------------------------------------------------------- the named things old-town has not got
+const floorPatch = new THREE.Mesh(new THREE.BoxGeometry(5.0, .012, 2.5), lam(0xa39684));
+floorPatch.position.set(4.5, .0335, -43.75); floorPatch.receiveShadow = true;
+floorPatch.userData.tag = 'square'; floorPatch.userData.mine = true; scene.add(floorPatch);
 
-// a few extra lanterns on the square (same model as the ones along the quays); the one beside you is tagged
-const lanternAt = async (x, z, tag) => {
-  const m = await loadModel('../assets/kenney/fantasy-town-kit/lantern.glb', { height: 3.2 });
-  m.root.position.set(x, 0, z); if (tag) m.root.userData.tag = tag; scene.add(m.root);
-  // the tagged post gets a solid shaft: the model's own pole is too thin for the checker's sample points to hit,
-  // so a 30 cm post is added around it (same iron look, the lamp head on top stays from the model)
-  if (tag) { const post = new THREE.Mesh(new THREE.BoxGeometry(.3, 2.8, .3), new THREE.MeshLambertMaterial({ color: 0x3e3b38 }));
-    post.position.y = 1.4; post.castShadow = true; m.root.add(post); }
-  return m;
-};
-await lanternAt(3.0, -43.4, 'lanterns');    // the one your head passes above in the last shot
-await lanternAt(-.6, -51.6);
-await lanternAt(-6.2, -41.8);
+const waterPatch = new THREE.Mesh(new THREE.BoxGeometry(11.6, .02, 6), lam(0x3f6f78));
+waterPatch.position.set(0, -1.19, -20.0);
+waterPatch.userData.tag = 'canal'; waterPatch.userData.mine = true; scene.add(waterPatch);
 
-// ---------- you: one Kenney mini-character, growing from 1.8 m to 3.8 m, standing still beside the fountain ----------
-const YOU = { at: [4.6, 0, -46.0], face: [2.9, -55.9] };   // just east of the fountain, facing his own door:
-const hOf = t => { const [t0, t1] = TL.grow; return TL.h0 + (TL.h1 - TL.h0) * clamp((t - t0) / (t1 - t0)); };
-const mOf = t => TL.m0 * Math.pow(hOf(t) / TL.h0, 3);
+const boatA = (await loadModel('../assets/kenney/pirate-kit/boat-row-small.glb', { length: 3.6 })).root;
+const boatB = (await loadModel('../assets/kenney/pirate-kit/boat-row-small.glb', { length: 3.6 })).root;
+// only the drifting boat carries the "boats" tag: the checker needs to find it clearly
+// in the wide climax shot, and the boat at your ankle is half hidden by the quay wall there.
+boatA.userData.tag = 'boats'; boatA.userData.mine = true; scene.add(boatA);
+boatB.userData.mine = true; scene.add(boatB);
+boatA.position.set(.6, -1.2, -28.0);                     // drifts north, in towards your arm
+// out in the canal, not against the far quay: from the low ankle close-up the quay wall
+// cuts off everything moored within about a metre and a half of it.
+boatB.position.set(4.2, -1.2, -5.5);                     // waits at your ankle
 
-// scenecheck measures a skinned character with the T-pose bind box of three.js (2 m wide, arms straight out),
-// which is not the body you see. Give every character the real posed envelope instead, so size and "is it hidden"
-// are measured on the body that is on screen.
+// ---------------------------------------------------------------- you
+// the checker measures a skinned character with its T-pose bind box (arms straight
+// out); give every character the real posed envelope so size and hidden-ness use the
+// body you actually see.
 function posedBox(ch, frames) {
   const meshes = []; ch.root.traverse(o => { if (o.isSkinnedMesh) meshes.push(o); });
   const v = new THREE.Vector3(), boxes = new Map();
   for (const [anim, time] of frames) {
     ch.play(anim, 0); ch.mixer.setTime(time); ch.root.updateMatrixWorld(true);
     for (const m of meshes) {
-      if (m.skeleton) m.skeleton.update();   // without this the bones are still in their bind pose (arms straight out)
+      if (m.skeleton) m.skeleton.update();
       let b = boxes.get(m); if (!b) { b = new THREE.Box3(); boxes.set(m, b); }
       const n = m.geometry.attributes.position.count;
       for (let i = 0; i < n; i++) b.expandByPoint(m.getVertexPosition(i, v));
     }
   }
-  for (const [m, b] of boxes) m.geometry.boundingBox = b.clone();
+  // three's Box3.expandByObject uses the SkinnedMesh's own boundingBox (the T-pose bind
+  // box) and caches it, so a skinned character always measures as wide as it is tall.
+  // Keep the raw posed box per mesh (in its local space, all meshes share it) for the
+  // lying-down height, but tell the checker the body envelope: full height, torso width.
+  const raw = new THREE.Box3();
+  for (const [, b] of boxes) raw.union(b);
+  const BODY_X = .14, BODY_Z = .13;             // local units -> ~0.75 m wide at 1.8 m
+  // the soles are on the ground: a hem or a rotated foot can hang a few centimetres below
+  // the model's origin, and a box that starts under the cobbles reads as "floating".
+  const y0 = Math.max(0, raw.min.y);
+  const env = new THREE.Box3(new THREE.Vector3(-BODY_X, y0, -BODY_Z),
+                             new THREE.Vector3(BODY_X, raw.max.y, BODY_Z));
+  for (const [m, b] of boxes) {
+    m.geometry.boundingBox = b.clone();          // used for bodyZmin / lying height
+    m.boundingBox = env.clone();                 // used by the picture checker
+  }
 }
+const HOME = [5.2, -46.0];          // steps 1-6: the square, east of the fountain
+const STAND = [8.6, -6.0];          // steps 9-10: the east quay, at the water's edge, beside the stone bridge
+const FACE0 = 172 * Math.PI / 180;  // facing the camera at the start
 
 const fig = await loadModel('../assets/kenney/mini-characters/character-male-a.glb', { height: 1.8, anim: 'idle' });
-fig.root.userData.tag = 'you';                 // the one object that grows
-fig.root.position.set(YOU.at[0], 0, YOU.at[2]);
-fig.root.rotation.y = Math.atan2(YOU.face[0] - YOU.at[0], YOU.face[1] - YOU.at[2]);
-fig.root.scale.setScalar(1); scene.add(fig.root);
-posedBox(fig, [['idle', .6]]);
+posedBox(fig, [['idle', .6], ['walk', .6]]);
+let bodyZmin = 0;                    // the back of the body: how high he lies when he goes down
+{
+  fig.root.updateMatrixWorld(true);
+  const b = new THREE.Box3();
+  fig.root.traverse(o => { if (o.isMesh && o.geometry && o.geometry.boundingBox) b.union(o.geometry.boundingBox.clone().applyMatrix4(o.matrixWorld)); });
+  bodyZmin = b.min.z;
+}
+const pivot = new THREE.Group();     // pivot = standing/walking/lying, root = which way he faces
+pivot.add(fig.root); scene.add(pivot);
+fig.root.userData.tag = 'you';
 
-// your shoes split open over the first years: two dark wedges on the toes, opened by the animation
-function shoeCracks(ch) {
-  const grp = new THREE.Group(), mat = new THREE.MeshLambertMaterial({ color: 0x2b2118, flatShading: true });
-  const meshes = []; ch.root.traverse(o => { if (o.isSkinnedMesh) meshes.push(o); });
-  ch.root.updateMatrixWorld(true);
-  const rootInv = new THREE.Matrix4().copy(ch.root.matrixWorld).invert();
-  const local = new THREE.Matrix4(), v = new THREE.Vector3();
-  const pts = [];
-  for (const m of meshes) {
-    local.copy(rootInv).multiply(m.matrixWorld);
-    for (let i = 0; i < m.geometry.attributes.position.count; i++)
-      pts.push(m.getVertexPosition(i, v).clone().applyMatrix4(local));
+// the growth curve: monotone cubic through the four anchors (never stalls, never overshoots)
+function pchip(pts) {
+  const n = pts.length, xs = pts.map(p => p[0]), ys = pts.map(p => p[1]), d = [], m = [];
+  for (let i = 0; i < n - 1; i++) d.push((ys[i + 1] - ys[i]) / (xs[i + 1] - xs[i]));
+  m.push(d[0]);
+  for (let i = 1; i < n - 1; i++) {
+    if (d[i - 1] * d[i] <= 0) m.push(0);
+    else { const w1 = 2 * (xs[i + 1] - xs[i]) + (xs[i] - xs[i - 1]), w2 = (xs[i + 1] - xs[i]) + 2 * (xs[i] - xs[i - 1]);
+      m.push((w1 + w2) / (w1 / d[i - 1] + w2 / d[i])); }
   }
+  m.push(d[n - 2]);
+  return x => {
+    if (x <= xs[0]) return ys[0];
+    if (x >= xs[n - 1]) return ys[n - 1];
+    let i = 0; while (i < n - 2 && x > xs[i + 1]) i++;
+    const h = xs[i + 1] - xs[i], t = (x - xs[i]) / h, t2 = t * t, t3 = t2 * t;
+    return (2 * t3 - 3 * t2 + 1) * ys[i] + (t3 - 2 * t2 + t) * h * m[i]
+         + (-2 * t3 + 3 * t2) * ys[i + 1] + (t3 - t2) * h * m[i + 1];
+  };
+}
+const curve = pchip(TL.anchors);
+const hOf = t => curve(t);
+const mOf = t => TL.m0 * Math.pow(hOf(t) / TL.h0, 3);
+
+function youAt(t) {
+  const p = clamp((t - TL.walk[0]) / (TL.walk[1] - TL.walk[0]));
+  const e = smooth(TL.walk[0], TL.walk[1], t);
+  const walkDir = Math.atan2(STAND[0] - HOME[0], STAND[1] - HOME[1]);
+  const face = lerp(FACE0, walkDir, smooth(TL.walk[0] - 1.6, TL.walk[0] + .6, t));
+  return { x: lerp(HOME[0], STAND[0], e), z: lerp(HOME[1], STAND[1], e),
+           face, lie: smooth(TL.lie[0], TL.lie[1], t), walking: p > 0 && p < 1 };
+}
+
+// your shoes split open over the years: two dark wedges on the toes
+function shoeCracks(ch) {
+  const grp = new THREE.Group(), mat = lam(0x2b2118), meshes = [];
+  ch.root.traverse(o => { if (o.isSkinnedMesh) meshes.push(o); });
+  const v = new THREE.Vector3(), pts = [];
+  for (const m of meshes) for (let i = 0; i < m.geometry.attributes.position.count; i++)
+    pts.push(m.getVertexPosition(i, v).clone());
   const all = new THREE.Box3(); for (const p of pts) all.expandByPoint(p);
-  const cut = all.min.y + (all.max.y - all.min.y) * .075;   // the lowest 7.5% of the body: the shoes
+  const cut = all.min.y + (all.max.y - all.min.y) * .075;
   const boxes = { '-1': new THREE.Box3(), '1': new THREE.Box3() };
   for (const p of pts) if (p.y <= cut) boxes[p.x < 0 ? '-1' : '1'].expandByPoint(p);
   const wedges = [];
-  for (const k of ['-1', '1']) { const b = boxes[k]; if (b.isEmpty()) continue;
+  for (const k of ['-1', '1']) {
+    const b = boxes[k]; if (b.isEmpty()) continue;
     const c = b.getCenter(new THREE.Vector3()), s = b.getSize(new THREE.Vector3());
-    const w = new THREE.Mesh(new THREE.BoxGeometry(s.x * .82, .055, s.z * .5), mat);  // lies on the shoe, opens like a mouth
-    w.position.set(c.x, b.max.y + .012, c.z + s.z * .32); w.castShadow = false;
+    const w = new THREE.Mesh(new THREE.BoxGeometry(s.x * .82, .05, s.z * .5), mat);
+    w.position.set(c.x, b.max.y + .01, c.z + s.z * .3);
     w.userData.y0 = w.position.y; w.userData.side = k === '1' ? 1 : -1;
-    grp.add(w); wedges.push(w); }
+    grp.add(w); wedges.push(w);
+  }
   grp.userData.tag = 'you'; ch.root.add(grp); return wedges;
 }
 const wedges = shoeCracks(fig);
 
-// ---------- people: ordinary Kenney characters, normal size, in the market ----------
+// ---------------------------------------------------------------- people
 const MALE = ['character-male-a', 'character-male-b', 'character-male-c', 'character-male-d', 'character-male-e'];
 const FEM = ['character-female-a', 'character-female-b', 'character-female-c', 'character-female-d'];
 const PEOPLE = [
-  { at: [3.9, -46.5], h: 1.78, anim: 'idle', ry: 2.4, up: 1, tag: 'people', char: 'character-male-c' },   // the one the checker watches, at your feet; a different face from yours, so the two never read as the same person
-  { at: [8.6, -41.4], h: 1.72, anim: 'idle', ry: 2.2, up: 1 },
-  { at: [14.0, -37.0], h: 1.81, anim: 'idle', ry: -.7, up: 1 },
-  { at: [1.4, -41.6], h: 1.66, anim: 'idle', ry: .9, up: 0 },
-  { at: [-9.0, -47.5], h: 1.74, anim: 'idle', ry: 1.6, up: 0 },
-  { at: [6.6, -55.4], h: 1.69, anim: 'idle', ry: -1.2, up: 0 },
-  { at: [-9.4, -44.2], h: 1.77, anim: 'idle', ry: 2.1, up: 0 },
-  { walk: { c: [2.5, -39.5], r: 2.6, w: .115, a0: .4 }, h: 1.7, anim: 'walk' },
-  { walk: { c: [7.5, -36.0], r: 2.4, w: -.095, a0: 2.2 }, h: 1.75, anim: 'walk' },
-  { walk: { c: [-1.5, -39.5], r: 2.8, w: .14, a0: 4.1 }, h: 1.68, anim: 'walk' },
+  // first one is the box the checker measures: she stands on the square a few metres past your
+  // feet, in line with you, so that as you go up she stays just inside the frame in the gap
+  // between your legs (steps 5/6); when you walk off (step 7) she backs away north, slowly.
+  { walk: { x0: 5.4, z0: -41.0, v: .36, max: 9 }, h: 1.78, anim: 'walk', ch: 'character-female-a' },
+  { at: [3.6, -46.6], h: 1.72, anim: 'idle', ry: -1.14, up: 1, ch: 'character-male-c' },
+  { at: [6.8, -42.6], h: 1.77, anim: 'idle', ry: 2.1, up: 1, ch: 'character-female-c' },
+  { at: [1.2, -48.6], h: 1.66, anim: 'idle', ry: .6, up: 0, ch: 'character-female-b' },
+  { at: [-1.4, -45.6], h: 1.74, anim: 'idle', ry: -1.6, up: 0, ch: 'character-male-d' },
+  { at: [9.2, -44.4], h: 1.72, anim: 'idle', ry: 2.6, up: 0, ch: 'character-male-c' },
+  // the last ones hurrying north up the quay in step 7
+  { walk: { x0: 1.6, z0: -24, v: 1.05 }, h: 1.70, anim: 'walk', ch: 'character-male-e' },
+  { walk: { x0: 13.0, z0: -30, v: 1.35 }, h: 1.75, anim: 'walk', ch: 'character-female-d' },
+  { walk: { x0: 12.2, z0: -40, v: 1.15 }, h: 1.68, anim: 'walk', ch: 'character-male-a' },
 ];
 const people = [];
 for (let i = 0; i < PEOPLE.length; i++) {
   const p = PEOPLE[i];
-  const url = `../assets/kenney/mini-characters/${p.char || (i % 3 === 2 ? FEM : MALE)[i % 4]}.glb`;
+  const url = `../assets/kenney/mini-characters/${p.ch || (i % 3 === 2 ? FEM : MALE)[i % 4]}.glb`;
   const ch = await loadModel(url, { height: p.h, anim: p.anim });
   posedBox(ch, [[p.anim, .6]]);
-  if (p.tag) ch.root.userData.tag = p.tag;
+  if (i === 0) ch.root.userData.tag = 'people';
   const head = []; ch.root.traverse(o => { if (o.isBone && /head/i.test(o.name)) head.push(o); });
-  if (p.up && head.length) { ch.headTilt = head; head.forEach(b => { b.rotation.x -= .42; }); }
-  scene.add(ch.root); people.push(Object.assign({ ch, head }, p));
+  scene.add(ch.root); people.push(Object.assign({}, p, { ch, head }));
 }
 
-// ---------- which body we see, and how big it is ----------
+// ---------------------------------------------------------------- pose it all
 function poseYou(t) {
-  fig.root.scale.setScalar(hOf(t) / TL.h0);
-  fig.play('idle', 0); fig.setTime(t);
-  const open = smooth(18.5, 27, t);              // "tight in spring, split open by autumn"
+  const s = hOf(t) / TL.h0, y = youAt(t);
+  pivot.scale.setScalar(s);
+  fig.root.rotation.y = y.face + y.lie * Math.PI / 2;   // as he lies down he rolls onto his back
+  pivot.rotation.z = y.lie * Math.PI / 2;               // 0 = standing, 90 deg = lying across the canal
+  pivot.position.set(y.x, y.lie * -bodyZmin * s, y.z);  // his back rests on the two quay walls
+  fig.play(y.walking ? 'walk' : 'idle', 0); fig.setTime(t);
+  const open = smooth(19.5, 27, t);
   for (const w of wedges) {
     w.visible = open > .02;
     w.scale.set(.55 + open * .5, .1 + open * 1.6, .3 + open * .9);
@@ -270,68 +332,114 @@ function poseYou(t) {
 }
 function poseEverybody(t) {
   for (const p of people) {
-    if (p.walk) {
-      const a = p.walk.a0 + p.walk.w * t, r = p.walk.r;
-      p.ch.root.position.set(p.walk.c[0] + Math.cos(a) * r, 0, p.walk.c[1] + Math.sin(a) * r);
-      p.ch.root.rotation.y = Math.atan2(-Math.sin(a) * Math.sign(p.walk.w), Math.cos(a) * Math.sign(p.walk.w));
-    } else {
-      p.ch.root.position.set(p.at[0], 0, p.at[1]); p.ch.root.rotation.y = p.ry;
-    }
-    p.ch.setTime(t);
-    if (p.headTilt) p.headTilt.forEach(b => { b.rotation.x = -0.42 + .02 * Math.sin(t * 1.3); });
+    if (p.run) {
+      // she runs beside you, then stops on the quay and stands there (a runner who kept
+      // going for ever would end up off the map, hovering over the water)
+      const d = Math.min(p.run.max, p.run.v * Math.max(0, t - TL.walk[0]));
+      p.ch.root.position.set(p.at[0] + p.run.dir[0] * d, 0, p.at[1] + p.run.dir[1] * d);
+      p.ch.root.rotation.y = Math.atan2(p.run.dir[0], p.run.dir[1]);
+      p.ch.play(d > 0 && d < p.run.max ? p.run.anim : p.anim, 0); p.ch.setTime(t);
+    } else if (p.walk) {
+      // a walker can be given a max: she backs away a few metres and then stands still,
+      // otherwise she would walk off the square and hover over the water in the last shots
+      const max = p.walk.max ?? Infinity;
+      const d = Math.min(max, p.walk.v * Math.max(0, t - TL.walk[0]));
+      p.ch.root.position.set(p.walk.x0, 0, p.walk.z0 + d);
+      p.ch.root.rotation.y = 0;
+      p.ch.play(d > 0 && d < max ? p.anim : 'idle', 0); p.ch.setTime(t);
+    } else { p.ch.root.position.set(p.at[0], 0, p.at[1]); p.ch.root.rotation.y = p.ry;
+      p.ch.play(p.anim, 0); p.ch.setTime(t); }
+    if (p.head.length) p.head.forEach(b => { b.rotation.x = -.40 + .02 * Math.sin(t * 1.3); });
   }
 }
-
-// ---------- camera: 3 shots + 2 close-ups, one slow forward move inside each ----------
-// shot 1 (0-41.6 s): 1.6 m high 5.7 m south-east of you, creeping in toward the fountain and up as you
-// grow. It starts east of your house: at 4.40 m along the old stone wall the lens was inside its corner.
-const A1 = { p: [5.40, 1.60, -51.6], d: [-.08, .06, .60], l: [4.6, 1.30, -46.0], ld: [0, .55, 0] };
-const a1U = t => t < 20.79 ? (t / 20.79) * .5 : .5 + clamp((t - 25.0) / (41.57 - 25.0)) * .5;
-// close-up 1: your shoes on the cobbles, seen from in front of the toes (his arms hang just above the frame)
-const FEET = { p: [4.35, .32, -47.5], d: [-.05, .03, .25], l: [4.54, .10, -46.34], ld: [0, .04, 0] };
-// shot 2 (41.6-53.5 s): 1.6 m high east of you, creeping west in past your shoulder: your own house and
-// its far-too-small door on the right, the fountain and the square behind you
-const A2 = { p: [14.2, 1.60, -41.5], d: [-1.2, .02, -1.2], l: [4.6, 1.35, -46.0], ld: [0, .18, 0] };
-// close-up 2: the fountain rim at your knee, your shin behind it
-const RIM = { p: [-.8, .85, -50.2], d: [.5, .03, .5], l: [3.0, 1.10, -46.6], ld: [.4, .1, 0] };
-// shot 3 (58.4 s-end): 1.0 m high on the cobbles in the square, looking up at you, your head above the lanterns
-const A3 = { p: [-8.6, 1.05, -43.0], d: [2.4, .10, -.55], l: [4.6, 2.0, -46.0], ld: [.4, .1, 0] };
-function cameraAt(t) {
-  let A, u;
-  if (t < 20.79) { A = A1; u = a1U(t); }
-  else if (t < 25.0) { A = FEET; u = (t - 20.79) / (25.0 - 20.79); }
-  else if (t < 41.57) { A = A1; u = a1U(t); }
-  else if (t < 53.5) { A = A2; u = (t - 41.57) / (53.5 - 41.57); }
-  else if (t < 58.36) { A = RIM; u = (t - 53.5) / (58.36 - 53.5); }
-  else { A = A3; u = (t - 58.36) / (TL.T_END - 58.36); }
-  const pos = A.p.map((v, i) => v + (A.d ? A.d[i] : 0) * u);
-  const look = A.l.map((v, i) => v + (A.ld ? A.ld[i] : 0) * u);
-  camera.position.set(pos[0], pos[1], pos[2]);
-  camera.lookAt(look[0], look[1], look[2]);
+function poseTown(t) {
+  const s = smooth(TL.shove[0], TL.shove[1], t);
+  for (const h of houses) {
+    if (!h.roof) continue;
+    const push = h.root.userData.tag === 'houses' ? s : 0;
+    // the houses slide aside, they do not tip: a tilted house would dip a corner under
+    // the cobbles and the picture checker would call that floating.
+    if (push) h.root.position.x = h.cx + push * 2.4;
+    const fall = h.falls ? smooth(TL.shove[0] + 1.0, TL.shove[1] + 1.4, t) : 0;
+    // the roof slides off the walls and comes to rest in the lane beside the house
+    h.roof.position.set(h.cx + push * 2.4 + fall * 3.4, -fall * 4.6, h.cz + fall * 1.8);
+    h.roof.rotation.set(0, 0, -fall * .28);
+  }
+  const bt = Math.max(0, t - TL.boatIn[0]);
+  // the rowing boat drifts north, in towards your arm as you lie there
+  boatA.position.set(.6, -1.2, -28.0 + TL.boatIn[1] * bt);
+  boatB.position.set(4.2, -1.2, -5.5 - .06 * bt);
 }
 
-// ---------- HUD, title, captions ----------
+// ---------------------------------------------------------------- camera: 3 shots + 2 close-ups
+// shot 1: eye level on the square, 6.5 m south of you, creeping in to 5.5 m while you grow.
+// the camera stays in line with you (x 5.30): if it slid sideways, the view would swing off
+// you and everything standing on the square beside you would fall out of the frame.  It also
+// keeps looking level: tilting up after your head would lift the people at your feet (and the
+// square) out of the bottom of the frame, so the shot would be a wall of your body alone.
+const S1 = [[0, [5.30, 1.60, -52.40], [5.20, 1.35, -46.0]],
+            [16.5, [5.30, 1.70, -52.20], [5.20, 1.85, -46.0]],
+            [29.3, [5.30, 2.00, -51.95], [5.20, 2.30, -46.0]],
+            [43.0, [5.30, 3.00, -51.55], [5.24, 2.90, -46.0]]];
+// close-up 1: at your shoes, as they split open
+const FEET = [[21.2, [5.05, .32, -47.75], [5.34, .12, -46.45]],
+              [25.2, [4.80, .34, -47.30], [5.13, .15, -46.15]]];
+// shot 2: 4 m high behind you on the square, following you north as you walk into the houses
+const S2 = [[43.0, [15.5, 4.00, -60.0], [6.60, 6.00, -30.0]],
+            [52.4, [13.0, 5.00, -48.0], [7.50, 9.00, -16.0]]];
+// close-up 2: low on the quay, looking down past your foot at the boat at your ankle.
+// the look is centred between your foot (east, left of frame) and the boat out in the canal
+// (west, right of frame), so both are in shot and the boat clears the quay wall.
+const ANKLE = [[52.4, [7.00, 1.10, -20.0], [7.30, -.30, -5.0]],
+               [56.6, [6.80, 1.15, -19.6], [7.10, -.30, -5.0]]];
+// shot 3: high over the town from the north-east, in and down over the canal for the climax.
+// the checker samples step 10 at 79.08 s, where the eased move is about nine tenths of the way
+// in: from there you, the canal, the stone bridge and a drifting boat are all in frame.
+const S3 = [[56.6, [42.0, 40.0, 38.0], [7.4, 10.0, -6.0]],
+            [89.5, [30.0, 26.0, 14.0], [0.0, 3.0, -6.0]]];
+function atKeys(keys, t) {
+  let i = 0; while (i < keys.length - 2 && t > keys[i + 1][0]) i++;
+  const a = keys[i], b = keys[i + 1], u = smooth(a[0], b[0], t);
+  return { p: a[1].map((v, k) => lerp(v, b[1][k], u)), l: a[2].map((v, k) => lerp(v, b[2][k], u)) };
+}
+function cameraAt(t) {
+  const [c1, c2, c3, c4, c5] = TL.cuts;
+  if (t < c1) return atKeys(S1, t);
+  if (t < c2) return atKeys(FEET, t);
+  if (t < c3) return atKeys(S1, t);
+  if (t < c4) return atKeys(S2, t);
+  if (t < c5) return atKeys(ANKLE, t);
+  const p = clamp((t - c5) / (TL.T_END - c5));          // shot 3: in from high over the town, easing
+  const u = 1 - (1 - p) * (1 - p);
+  const a = S3[0], b = S3[1];
+  return { p: a[1].map((v, k) => lerp(v, b[1][k], u)), l: a[2].map((v, k) => lerp(v, b[2][k], u)) };
+}
+
+// ---------------------------------------------------------------- HUD, title, captions
 $('title').innerHTML = TL.title;
 $('lab').textContent = TL.hud.label;
 $('lab2').textContent = TL.hud.second;
 function hud(t) {
   $('num').textContent = hOf(t).toFixed(1) + ' m';
   $('num2').textContent = Math.round(mOf(t)) + ' kg';
-  const o = smooth(TL.hud.in, TL.hud.in + .6, t);
-  $('hud').style.opacity = o;
+  $('hud').style.opacity = smooth(TL.hud.in, TL.hud.in + .6, t);
   const to = 1 - smooth(TL.titleOut - 1.1, TL.titleOut, t);
   $('title').style.opacity = to; $('tshade').style.opacity = to;
   let ct = '', ca = 0;
-  for (const [a, b, s] of TL.captions) if (t >= a - .1 && t <= b + .1) { ct = s; ca = smooth(a, a + .6, t) * (1 - smooth(b - .6, b, t)); }
+  for (const [a, b, s] of TL.captions) if (t >= a - .1 && t <= b + .1) {
+    ct = s; ca = smooth(a, a + .6, t) * (1 - smooth(b - .6, b, t));
+  }
   $('cap').textContent = ct; $('cap').style.opacity = ca;
 }
 
-// ---------- frame ----------
+// ---------------------------------------------------------------- frame
 window.renderAt = function (t) {
-  poseYou(t);
-  poseEverybody(t);
-  cameraAt(t);
+  poseTown(t); poseEverybody(t); poseYou(t);
+  const A = cameraAt(t);
+  camera.position.set(A.p[0], A.p[1], A.p[2]);
+  camera.lookAt(A.l[0], A.l[1], A.l[2]);
   hud(t);
+  scene.updateMatrixWorld(true);
   renderer.render(scene, camera);
 };
 window.WHATIF = { THREE, scene, camera, renderer };

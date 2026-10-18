@@ -94,10 +94,43 @@ Route: **FIRST RULE** in AGENTS.md — storyboard alleen via `tools/whatif/whati
       getallen: step 5 "their heads come up to your chest ✓ 74 %", step 9 "your head is above the lanterns ✓ 84 %",
       step 7 deur 227 px, step 8 fonteinrand 27 %, en 3 harde cutten op 42, 54 en 59 s.
 
+## Fantasy-scène, stem en beeldcheck (18 okt 2026, nadat de eigenaar "ga door" zei)
+
+- [x] **Stem** met Chatterbox op de pc (gratis): `voice.mp3` + `voice-times.tsv` — 21 regels, eindigt op 88,6 s.
+      De 11 stappen liggen op 4,35 · 11,29 · 16,46 · 23,56 · 30,09 · 37,49 · 46,89 · 56,18 · 66,73 · 79,08 · 85,75 s;
+      teller vanaf 9,5 s, titel tot 9 s. **Alle tijden in de scène komen uit `voice-times.tsv` (+0,5 s).**
+- [x] **Scène** omgebouwd naar de fantasy-versie: één anker-curve voor de groei (1,8 m bij het begin van de teller,
+      6,8 m bij step 5, 13,1 m bij step 7, 16,8 m bij de stop; massa = 75 kg × (h/1,8)³), je loopt noordwaarts door
+      de huizenrij (muren breken weg, de daken breken af op heuphoogte), de molen komt op borsthoogte, en aan het
+      eind lig je als een brug over de gracht met roeibootjes die onder je arm door drijven.
+      **Nieuw in code (2 dingen, geen nieuwe bestanden/licenties):** het Kenney-poppetje ×9,33 laten groeien en
+      lopen, en de brekende daken/muren van de huizen waar je doorheen gaat.
+- [x] **`counter_matches` = `length`** (de langste zijde, dus ook goed als je ligt): de checker meet de echte lengte
+      van je lichaam in de scène tegen het getal in de teller → 1,85 / 4,10 / 6,98 / 10,14 / 13,44 / 15,33 / 17,07 /
+      17,24 m, elk binnen de marge.
+- [x] `node tools/whatif/scenecheck.mjs 2026-10-18-cant-stop-growing` → ✅ **ALL PICTURE CHECKS PASSED**
+      (11 stappen, 3 harde cutten op 43, 53 en 57 s, step 10 met gracht + brug + bootjes, geen FAIL, geen WARN).
+- [x] Twee rondes visuele controle (van max 3) tegen de VISUAL QUALITY CHECKLIST — vier echte fouten gefixt:
+      1. **Shot 1 keek na step 5 te steil omhoog** (pitch +12° → +23°): je onderlichaam én de mensen aan je voeten
+         vielen onder uit het kader en het beeld werd een muur van groene trui en blauwe broek. De camera kijkt nu
+         vlak (≤ +3°), blijft in één lijn met je en kruipt van 6,5 m naar 5,5 m, dus op step 5 en 6 zie je je
+         schoenen, je benen, het plein en de kleine mensen er tussen.
+      2. **De getagde voorbijganger stond naast de kijklijn**, dus de checker zag haar niet → ze staat nu op de as van
+         de camera, in het gat tussen je benen (step 5: 190 px, step 6: 197 px), en wandelt op step 7 weg noordwaarts
+         het escalatiebeeld in (step 7: 128 px).
+      3. **Een wandelaar liep aan het eind van het plein af** en hing boven het water → de wandeling heeft nu een
+         maximum, dus ze blijft op de keien staan.
+      4. **Het roeibootje bij je enkel lag tegen de kademuur**, die het vanaf de lage close-up-camera precies
+         afsneed → het bootje ligt nu vrij in de gracht en de close-up kijkt tussen je voet en het bootje in, zodat
+         je op step 8 je schoen én het bootje ziet liggen.
+- [x] `plan.json` bijgewerkt waar de scène eerlijk verschilt van het storyboard (shot 1 "6,5 m in één lijn, kijkt
+      vlak" en de enkel-close-up) → `python tools/whatif/whatif.py check` → ✅ **ALL CHECKS PASSED**
+      (`STORYBOARD.md`, `script.txt` en `upload.draft.json` opnieuw gegenereerd).
+
 ## Staat nu
 
-- **Wacht op de eigenaar**: `STORYBOARD.md` bekijken (opnieuw de storyboard-stap = STOP). Nog géén stem, géén geluid,
-  géén scène-werk, géén volledige render.
+- **Wacht op de eigenaar**: `CHECK.jpg` + `CHECK.md` bekijken (stap 3 = STOP). Nog géén geluid, géén volledige
+  render, géén `upload.json`.
 - Schatting: ≈194 woorden, ≈91 s (definitieve tijden komen straks uit `voice-times.tsv`).
 - Plek: `environments/old-town.js` (bestaat): plein met fontein/kramen/kar, kaden, smalle huizenrijen langs de gracht,
   stenen brug (±14 m), roeibootjes op het water, molen aan de rand van de stad. Custom camera's voor shot 1, shot 2,
@@ -114,24 +147,22 @@ Route: **FIRST RULE** in AGENTS.md — storyboard alleen via `tools/whatif/whati
 
 ## Aan de eigenaar gevraagd
 
-- 3 vragen staan onderaan `STORYBOARD.md` — elk met mijn keuze. Belangrijkste: **de laatste twee stappen** (jij ligt
-  als brug over de gracht) kan de beeldchecker niet goedkeuren: die meet de *hoogte* van je lichaam als je ligt
-  (≈2,5 m) tegen de teller (16,8 m). Ik heb jouw einde letterlijk overgenomen en `counter_matches` precies zoals
-  gevraagd gezet; als de beeldcheck daar straks op faalt kom ik terug met twee eerlijke opties (of `{"none"}` met de
-  spanwijdte op de teller, of aan het eind staand met één arm over het water).
-- **Nu**: `STORYBOARD.md` goedkeuren ("ga door" voor stap 2: scène + stem).
+- **Nu**: naar `CHECK.jpg` (contactsheet van de 11 stappen) + `CHECK.md` kijken en zeggen "ga door" voor stap 4
+  (geluid, volledige render, contact sheet, `upload.json`).
+- Het liggende einde is opgelost zoals gevraagd: `counter_matches` staat op `length` (de langste zijde), dus de
+  teller van 16,8 m klopt ook als je over de gracht ligt (gemeten 17,24 m in de scène). Je slotzin en de
+  brug-scène zijn ongewijzigd.
+- De drie vragen onderaan `STORYBOARD.md` blijven staan, elk met mijn keuze; de laatste (teller bij het liggen) is
+  dus afgehandeld.
 
 
-## Gepland na "ga door" (stap 2)
+## Gepland na "ga door" (stap 4)
 
-1. **Scène** in `scene.html`: de bestaande scène ombouwen naar de nieuwe cijfers (×9,33), de nieuwe route (plein →
-   kade door de huizen → gracht) en de nieuwe beelden (brekende daken, molen op 12 m, liggend als brug).
-   Hooks: `window.renderAt(t)`, `window.ready`, `window.WHATIF = { THREE, scene, camera, renderer }`,
-   `userData.tag` op alles wat de stem noemt, teller in `<div id="hud">`.
-2. **Beeldcheck**: `node tools/whatif/scenecheck.mjs` → ✅; daarna `CHECK.jpg` zelf tegen de VISUAL QUALITY
-   CHECKLIST (max 3 rondes) → commit + push `CHECK.md` + `CHECK.jpg` → STOP.
-3. **Chatterbox-stem** (gratis, pc): `voice.mp3` + `voice-times.tsv`; daarna alle tijden in de scène op de stem zetten.
-4. Geluid (`make_audio.py`), volledige render (`render.mjs` + ffmpeg), contact sheet, `upload.json`.
+1. **Geluid** (`make_audio.py`): normale stadsgeluiden → het moment → de gebeurtenissen → bijna stilte na de climax.
+   Geen muziek, effecten ≈8 dB onder de stem, mix −14 LUFS, piek −1 dB.
+2. **Volledige render** (`render.mjs` + ffmpeg, 720×1280 hier, eindbestand 1080×1920, 30 fps) + contact sheet.
+3. **`upload.json`** met titel, beschrijving, credits (CC0 Kenney/Quaternius, Poly Pizza waar nodig) en de bronnen
+   van de drie feiten.
 
 ## Notities
 

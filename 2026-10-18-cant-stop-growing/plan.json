@@ -122,7 +122,7 @@
    "step": 2,
    "role": "Where you are",
    "lines": [
-    "You are standing on the square of a canal town."
+    "You are standing on the square of an old Dutch town."
    ],
    "pause_after": "pause"
   },
@@ -185,7 +185,7 @@
    "role": "Climax",
    "lines": [
     "You stand over the whole town at sixteen point eight metres.",
-    "The windmill comes up to your chest, the roofs to your knee."
+    "The windmill comes up to your chest, the roofs to your thigh."
    ],
    "pause_after": "long"
   },
@@ -212,7 +212,7 @@
   {
    "word": "you",
    "model": "one Kenney mini-character (character-male-a, idle/walk) scaled up in code from x1 to x9.33 during the video - the growth itself is the one new thing, built in code",
-   "looks": "your own body seen from outside: the shoes split every year, the stall roofs stay at your shin, the roofs of the houses break at your hip, your chest comes level with the windmill, and at the end your whole body lies across the canal with a boat drifting under your arm"
+   "looks": "your own body seen from outside: the shoes split every year, the stall roofs stay at your shin, the roofs of the houses break at your hip, your chest comes level with the windmill, and at the end your whole body lies across the canal with a boat drifting in across the open water towards you"
   },
   {
    "word": "people",
@@ -242,16 +242,16 @@
   {
    "word": "bridge",
    "model": "old-town's stone bridge over the canal (nature-kit bridge_stoneRound, 14 m long)",
-   "looks": "the old stone bridge arching over the canal a little way off, and you lying across the same water beside it - a second, much bigger bridge"
+   "looks": "the old stone bridge arching over the canal a little way off, and you lying across the same water just beyond it - a second, much bigger bridge"
   },
   {
    "word": "canal",
-   "model": "old-town's canal: the water between the two quays (water y -1.2, quay walls at x ±6), with a small tagged patch of the same water where you lie down",
+   "model": "old-town's canal: the water between the two quays (water y -1.2, quay walls at x ±6), with a small tagged patch of the same water on the far side of where you lie down",
    "looks": "the canal running north under the stone bridge with rowing boats on the dark water, and at the end your body lying right across it"
   },
   {
    "word": "boats",
-   "model": "old-town's pirate-kit rowing boats (4 m) on the canal, one of them drifting in under your arm at the end",
+   "model": "old-town's pirate-kit rowing boats (4 m) on the canal, one of them drifting slowly in across the water towards you at the end",
    "looks": "small rowing boats on the water, one of them floating in between your arm and the water below as you lie across the canal"
   }
  ],
@@ -308,8 +308,8 @@
    "type": "shot",
    "from_step": 1,
    "camera": "custom",
-   "shows": "you standing in the square at 1.8 m, people of your own size walking past, the fountain, the stalls and the cart around you - and as the body grows, a market stall whose roof stays at your shin, so there is an object to look at in every second - and nothing in front of the lens during the title",
-   "where": "1.6 m high, 6 m south-east of you on the square, looking north-west at you; the camera creeps forward to 4.5 m as the first words are spoken"
+   "shows": "you standing in the square at 1.8 m, people of your own size walking past, the fountain, the stalls and the cart around you - and as the body grows the people at your feet keep shrinking against you while the counter flies, so there is something to measure yourself against in every second - and nothing in front of the lens during the title",
+   "where": "1.6 m high on the square, 6.5 m in line with you (straight south of your feet, not off to one side, so the view stays on you as you grow), looking level at your feet; the camera creeps forward to 5.5 m and rises to 3 m as the first words are spoken, and it keeps looking level, so the people at your feet stay in shot while your body goes up out of the frame"
   },
   {
    "type": "closeup",
@@ -331,9 +331,9 @@
    "type": "closeup",
    "from_step": 8,
    "camera": "custom",
-   "where": "0.8 m high on the quay at your foot, looking down past it at the water: a rowing boat floats at your ankle with the canal running away under the stone bridge",
+   "where": "1.1 m high on the quay beside your foot, looking north along the canal: the rowing boat floats out in the water just past your ankle and the bridge and the far quay stand beyond it",
    "seconds": 4,
-   "shows": "your foot on the quay and the rowing boat floating at your ankle below it, the canal and the old stone bridge beyond"
+   "shows": "your shoe on the quay with the rowing boat floating in the canal beside it, the lamp post and the bridge beyond, the town already small in the distance"
   },
   {
    "type": "shot",
@@ -341,7 +341,7 @@
    "camera": "custom",
    "where": "45 m high and 60 m back, north-east of you over the canal, looking south-west down at the whole town: you standing over the canal, the windmill beyond, the roofs and quays below; the camera creeps forward very slowly and the last frame stays",
    "seconds": 0,
-   "shows": "you from above at 16.8 m: the roofs at your knee, the windmill coming up to your chest, the houses and quays small at your feet, the canal and its boats below - and then your body lying right across the canal like a bridge, longer than the water is wide, with a rowing boat drifting in under your arm and the counter frozen on sixteen point eight metres"
+   "shows": "you from above at 16.8 m: the roofs at your thigh, the windmill coming up to your chest, the houses and quays small at your feet, the canal and its boats below - and then your body lying right across the canal like a bridge, longer than the water is wide, with a rowing boat drifting in across the water beyond you and the counter frozen on sixteen point eight metres"
   }
  ],
  "scale_checks": [
@@ -381,18 +381,19 @@
    "compare": "you",
    "top_between": [
     0.3,
-    0.45
+    0.55
    ],
-   "says": "the roofs come to your knee"
+   "says": "the roofs come to your thigh"
   }
  ],
  "may_float": [
   "boats",
   "bridge",
-  "you"
+  "you",
+  "roofs"
  ],
  "climax": {
-  "visual": "the biggest picture of the video: a high camera far back over the town, looking down at you as you stand over the canal - the roofs at your knee, the windmill at your chest, the quays and their houses small around your feet - and then you lie down across the canal like a bridge, with a rowing boat drifting in under your arm and the old stone bridge standing just beyond you; about five seconds of silence in which only that one boat drifts, the counter holding on sixteen point eight metres",
+  "visual": "the biggest picture of the video: a high camera far back over the town, looking down at you as you stand over the canal - the roofs at your thigh, the windmill at your chest, the quays and their houses small around your feet - and then you lie down across the canal like a bridge, the old stone bridge arching over the water in the foreground and a rowing boat drifting in across the dark water beyond you; about five seconds of silence in which only that one boat drifts, the counter holding on sixteen point eight metres",
   "why_it_fits_the_closing_line": "The closing line says nothing that lived was built to be this long, and the last image says it without a word: the body that outgrew a whole town ends up stretched across its canal as a bridge, longer than the water is wide - and the closing line makes clear those sixty years were only the beginning."
  },
  "models": [
@@ -479,7 +480,7 @@
   },
   {
    "weak_point": "The first draft ended with you standing still beside the fountain: the quietest picture of the film, and it showed none of the sixty years",
-   "fix": "the ending is now your body lying across the canal like a second bridge with the boats drifting under your arm - the biggest last frame the place allows"
+   "fix": "the ending is now your body lying across the canal like a second bridge with a boat drifting in across the water - the biggest last frame the place allows"
   },
   {
    "weak_point": "A counter label with digits would break the picture check: the checker reads the FIRST number inside the counter, so 'HEIGHT - 60 YEARS' would have compared 60 with your height",
@@ -491,7 +492,7 @@
   },
   {
    "weak_point": "A straight-line counter would fight its own story: a steady ramp from 75 kg to 61 t reads about 30 t at the half-way point, where a same-shaped body of that height is only about 10 t, and the spoken eight hundred times would be false until the very last second",
-   "fix": "the scene drives both lines from one curve - height h = 1.8 + 15 x p^0.7 over the counter window, mass = 75 kg x (h / 1.8) cubed - so at step 5 you are about 7.3 m (people at your knee), at step 7 about 12.4 m (roofs at your hip) and only at the stop 16.8 m and 61 t"
+   "fix": "the scene drives both lines from one smooth curve through four anchors - 1.8 m at the counter start (16.9 s), 6.4 m at step 5 (heads at your knee), 13.2 m at step 7 (roofs at your hip) and 16.8 m at the stop - with mass = 75 kg x (height / 1.8) cubed, so at every moment the counter shows the body that is really on screen and the spoken size words match the picture"
   },
   {
    "weak_point": "The closing line used to say the growth has not stopped while the counter sits frozen on sixteen point eight metres: the picture contradicted the words",
@@ -504,8 +505,8 @@
  ],
  "questions": [
   {
-   "question": "The end: you lie across the canal, but the picture checker measures a lying body's HEIGHT (about 2.5 m) against the counter's 16.8 m, so the counter-picture check cannot pass at steps 10-11",
-   "my_choice": "I kept your ending exactly as written and set counter_matches as you asked. If the picture check then fails on the last two steps I will come back to you with the honest pair of options: either counter_matches {\"none\"} with the span still on the counter (what you see is a 16.8 m body across the canal - true, just not measurable as a height), or you end standing astride the canal with one arm out over the water and the boats drifting under it, which keeps the number provable. I will not change the image without asking."
+   "question": "The end: you lie across the canal - can the counter still prove what you see?",
+   "my_choice": "now it can, exactly as you asked: the counter measures the LONGEST SIDE of your body, so standing it reads 16.8 m (your height) and lying it reads 16.8 m (your length, bank to bank). The body lies straight along the x axis so the longest side is the same 16.8 m in both poses, and steps 10-11 pass the picture check."
   },
   {
    "question": "The place: reuse old-town (ready, with canal, stone bridge, boats, houses, stalls and a windmill)?",
@@ -520,7 +521,7 @@
  "subject_min_px": 300,
  "counter_matches": {
   "object": "you",
-  "measure": "height",
+  "measure": "length",
   "unit": "m",
   "hud_number": 0
  }
