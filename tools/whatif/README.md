@@ -80,7 +80,7 @@ It opens `scene.html`, goes to every story step (times from `voice-times.tsv`, e
 | everything the voice names in that step (`on_screen`) | no object with that `userData.tag`; out of frame; smaller than 40 px of 1280; hidden behind something |
 | standing on something | a tagged object floats > 0.4 m above the surface below it (allowed only for words in `may_float`, e.g. boats, birds, a bridge) |
 | size promises (`scale_checks` in plan.json) | e.g. `{"step": 5, "object": "cart", "compare": "you", "top_between": [0.4, 0.65], "says": "the cart comes up to your thigh"}` – the top of the cart must be at 40–65 % of your height |
-| main subject (`subject` in plan.json, e.g. `"you"`) | smaller than `subject_min_px` (default 300 of 1280 px) in a step where the voice names it (close-ups excepted). Lesson from the growing video: the giant was measured "in frame" at 144 px, but nobody could SEE he was a giant |
+| main subject (`subject` in plan.json, e.g. `"you"`) | smaller than `subject_min_px` (default 300 of 1280 px) in a step where the voice names it (close-ups excepted). Lesson from the growing video: the giant was measured "in frame" at 144 px, but nobody could SEE he was a giant. Also FAILs when less than 60 % of the subject is visible (the fountain rim hid the giant's body in the climax) |
 | text contrast (`#hud`, `#title`, `.caption`) | contrast with the picture behind it below 3 : 1 (2.2 : 1 with a text shadow). A (semi-transparent) dark `background` band behind the text counts. Needs `renderer` in `window.WHATIF` |
 | title (0–9 s) | more than 15 % of the middle of the picture is closer than 3 m to the camera |
 | counter | no `<div id="hud">`, or not fully on screen from 9.5 s |

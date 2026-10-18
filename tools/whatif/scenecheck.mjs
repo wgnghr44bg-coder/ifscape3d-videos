@@ -214,6 +214,8 @@ if (hooks.renderAt && hooks.whatif) {
       const o = m.objects[subj];
       if (o.heightPx < times.subject_min_px)
         fail(where, `the main subject "${subj}" is only ${Math.round(o.heightPx)} px high (needs ≥ ${times.subject_min_px} of 1280): the viewer must SEE the story – bring the camera closer or lower`);
+      else if (o.tried && o.seen / o.tried < .6)
+        fail(where, `the main subject "${subj}" is mostly hidden behind ${o.blockers.join(', ')} (only ${o.seen}/${o.tried} points visible, needs 60 %) – nothing big between the camera and the subject`);
     }
     if (m.hud && m.hud.missing) fail(where, 'no counter: put it in <div id="hud">');
     else if (m.hud && !(m.hud.inside && m.hud.shown)) fail(where, 'the counter (#hud) is not fully on screen');
