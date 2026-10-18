@@ -36,20 +36,52 @@ Route: **FIRST RULE** in AGENTS.md — storyboard alleen via `tools/whatif/whati
 - [x] `plan.json` bijgewerkt op de punten waar de scène eerlijk verschilt van het storyboard (2 close-up `where`-regels,
       1 `where`-regel van shot 2) → `python tools/whatif/whatif.py check` → ✅ **ALL CHECKS PASSED** (storyboard opnieuw gegenereerd).
 
+- [x] **Eigenaar: vijf punten om het verhaal als "jij = een reus" te laten lezen** — alle vijf verwerkt:
+      1) `"subject": "you"` in `plan.json` + `renderer` in `window.WHATIF`;
+      2) jij bent vanaf step 5 onmiskenbaar een reus (naast gewone mensen, lantaarns en je eigen deur; je bent
+      ≥300 px in elk beeld waar de stem je noemt);
+      3) de climax (step 9–11) is een lage camera op de keien die naar je opkijkt, één langzame voorwaartse
+      beweging, met een harde cut ervoor;
+      4) step 7 zet je naast je eigen deur, en die deur is duidelijk kleiner dan jij;
+      5) teller en captions staan vet op een donkere halfdoorzichtige band.
+      → `plan.json` aangepast waar de scène eerlijk verschilt → `check` → ✅ **ALL CHECKS PASSED**.
+- [x] **Eerste ronde van de visuele controle (van max 3)** — de contactsheet en de losse stills bekeken; zeven echte
+      fouten gevonden en gefixt:
+      1) `posedBox` zette nooit `skeleton.update()`: de checker mat elke figuur in bindpose (armen wijd, 1,7 m
+      breed) i.p.v. in de animatiepose → nu met `m.skeleton.update()` kloppen de maten;
+      2) de getagde voorbijganger had hetzelfde model als jij → kreeg `character-male-c`, zodat jij en hij nooit
+      als dezelfde persoon lezen;
+      3) de camera van shot 1 kroop van 5,6 m naar 3 m: op step 5 en 6 vulde jouw hoofd het hele kader en viel je
+      onderlichaam weg → de creep is gehalveerd (naar 4,5 m), zodat je daar met voeten en plein in beeld staat;
+      4) de camera van shot 1 stond ín de hoek van je huis (onzichtbaar door FrontSide, maar de titelcheck zag
+      100 % "iets dichter dan 3 m") → camera 1 m naar het oosten, buiten de muur;
+      5) de close-up van de schoenen (step 4) was een muur van armen: de camera stond naast je heup → nu staat hij
+      0,3 m boven de keien recht vóór je tenen, onder je handen langs;
+      6) de fontein stond op een vierkante plaat die in de climax als betonblok in beeld stond → de plaat is nu een
+      ronde stenen rand (de rand blijft op kniehoogte, 0,95 m);
+      7) je stond met je rug naar de climaxcamera → je kijkt nu naar je eigen deur (zuid-zuidwest), zodat shot 1 je
+      gezicht houdt en de lage climaxcamera je van voren-links ziet.
+      En het verhaal zelf: "A cart comes up to your thigh" kon de plaat niet eerlijk laten zien (die kar is 2,8 m
+      breed: naast een lichaam van 2,4 m valt hij óf buiten het kader óf hij verstopt je), dus step 5 vergelijkt nu
+      mensen: "Their heads come up to your chest" — met de voorbijganger op dezelfde diepte als jij klopt dat op de
+      plaat. De kar blijft als decor op het plein staan (niet meer genoemd).
+
 ## Staat nu
 
 - **Wacht op de eigenaar**: `CHECK.jpg` bekijken (stap 3 = STOP). Nog géén stem, géén geluid, géén volledige render.
 - Schatting: ≈188 woorden, ≈89 s (definitieve tijden komen straks uit `voice-times.tsv`).
-- Plek: `environments/old-town.js` (bestaat, 3 camera's) + custom camera's voor shot 2, de twee close-ups en de high shot.
+- Plek: `environments/old-town.js` (bestaat, 3 camera's) + custom camera's voor shot 1, shot 2, de twee close-ups en de lage climax-shot.
 - Teller: `HEIGHT · FIRST 8 YEARS` 1,8 → 3,8 m, tweede regel `MASS · SAME SHAPE` 75 → 705 kg.
 - Shots: square (0–21 s) → close-up schoenen (21–25 s, 4 s) → square (25–42 s) → escalatie vanaf de vloer (42–54 s)
-  → close-up fonteinrand (54–59 s) → high shot 34 m (59 s → eind). 4 harde overgangen = 3 shots + 2 close-ups.
+  → close-up fonteinrand (54–59 s) → lage camera op de keien die naar je opkijkt (59 s → eind). 4 harde overgangen
+  = 3 shots + 2 close-ups.
 - Nieuw in code (1 ding): het groeiende personage (Kenney mini-character ×1 → ×2,11). Geen nieuwe modelbestanden,
   geen nieuwe licenties (Kenney CC0 + bestaande omgeving).
-- Scene-details die niet in `plan.json` horen maar wel eerlijk zijn: de `square`-tag zit op een onzichtbare
-  plaat (2×8 m, dezelfde cobblekleur) midden op het plein, omdat de checker met de 70×40 m grondbox alleen punten
-  buiten het kader of achter de fontein zou meten; de getagde lantaarn kreeg een 30 cm paal om zijn dunne modelpaal;
-  `check/` is niet gecommit.
+- Scene-details die niet in `plan.json` horen maar wel eerlijk zijn: de `square`-tag zit op een brede versleten
+  plaat van dezelfde cobblekleur (5×2,5 m, 1 cm boven de bestrating) midden op het plein, omdat de checker met de
+  70×40 m grondbox alleen punten buiten het kader of achter de fontein zou meten; de getagde lantaarn kreeg een
+  30 cm paal om zijn dunne modelpaal; je eigen huis met de te kleine deur en de sokkel onder de fontein zijn
+  code-built; `check/` is niet gecommit.
 
 ## Aan de eigenaar gevraagd
 

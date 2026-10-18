@@ -10,16 +10,21 @@ html, body { margin: 0; width: 720px; height: 1280px; overflow: hidden; backgrou
 canvas { display: block; }
 #tshade { position: absolute; left: 0; top: 260px; width: 720px; height: 560px; opacity: 0;
         background: radial-gradient(ellipse 420px 250px at 360px 260px, rgba(22,26,34,.34), rgba(0,0,0,0)); }
-#hud { position: absolute; left: 44px; top: 148px; color: #f3ede2; opacity: 0;
-      text-shadow: 0 2px 10px rgba(0,0,0,.65), 0 0 3px rgba(0,0,0,.5); }
-#lab, #lab2 { font: 600 21px CG, serif; letter-spacing: 5px; opacity: .9; }
+#hud { position: absolute; left: 44px; top: 148px; color: #f7f2e8; opacity: 0; display: inline-block;
+      font-weight: 700;
+      background: rgba(16,13,10,.62); border-radius: 16px; padding: 14px 24px 18px;
+      box-shadow: 0 4px 22px rgba(0,0,0,.45); text-shadow: 0 2px 10px rgba(0,0,0,.75), 0 0 3px rgba(0,0,0,.6); }
+#lab, #lab2 { font: 700 21px CG, serif; letter-spacing: 5px; opacity: .95; }
 #lab2 { margin-top: 20px; }
-#num { font: 600 62px PF, serif; line-height: 1.06; }
-#num2 { font: 600 47px PF, serif; line-height: 1.1; }
-#title { position: absolute; left: 0; right: 0; top: 430px; text-align: center; color: #f6f1e7;
-       font: 600 60px PF, serif; line-height: 1.16; text-shadow: 0 3px 18px rgba(0,0,0,.55), 0 0 4px rgba(0,0,0,.25); }
-#cap { position: absolute; left: 0; right: 0; top: 1015px; text-align: center; color: #f6f1e7; opacity: 0;
-     font: 600 italic 40px PF, serif; text-shadow: 0 3px 14px rgba(0,0,0,.6); padding: 0 52px; }
+#num { font: 700 62px PF, serif; line-height: 1.06; }
+#num2 { font: 700 47px PF, serif; line-height: 1.1; }
+#title { position: absolute; left: 40px; right: 40px; top: 430px; text-align: center; color: #f8f4ec;
+       font: 700 60px PF, serif; line-height: 1.16; padding: 18px 22px 22px; border-radius: 18px;
+       background: rgba(16,13,10,.56); box-shadow: 0 6px 26px rgba(0,0,0,.4);
+       text-shadow: 0 3px 18px rgba(0,0,0,.7), 0 0 4px rgba(0,0,0,.5); }
+#cap { position: absolute; left: 36px; right: 36px; top: 1000px; text-align: center; color: #f8f4ec; opacity: 0;
+     font: 700 italic 40px PF, serif; padding: 12px 18px; border-radius: 16px;
+     background: rgba(16,13,10,.58); text-shadow: 0 3px 14px rgba(0,0,0,.75); }
 </style>
 </head>
 <body>
@@ -31,6 +36,7 @@ canvas { display: block; }
 <script type="module">
 import * as THREE from 'three';
 import { loadModel } from '../assets/load.js';
+import { put } from '../environments/kit.js';
 
 // =====================================================================
 // TIMELINE — video seconds. Times come from voice-times.tsv + VO_OFFSET.
@@ -46,9 +52,8 @@ const TL = {
              [15.2, 20.6, '25 cm in a year: a real body\u2019s fastest year.'],
              [34.3, 40.4, '2.72 m and 199 kg: the tallest man ever.'],
              [59.2, 67.4, '8 years: 3.8 m, 705 kg if the shape holds.']],
-  cuts: [20.79, 25.0, 41.57, 53.5, 58.36],  // hard cuts: close-up, back, closer, close-up, high above
-  shots: [[0, 1], [20.79, 2], [25.0, 3], [41.57, 4], [53.5, 5], [58.36, 6]],
-  beats: { walkEnd: 13.0, growOn: 17.2, shoes: 20.79, people: 27.6, tallest: 34.0, door: 41.57,
+  cuts: [20.79, 25.0, 41.57, 53.5, 58.36],  // hard cuts: shoes, back, closer, fountain rim, low looking up
+  beats: { growOn: 17.2, shoes: 20.79, people: 27.6, tallest: 34.0, door: 41.57,
            but: 48.64, rim: 53.5, climax: 58.36, silence: 63.0, market: 71.4, last: 78.6 },
 };
 // =====================================================================
@@ -73,6 +78,7 @@ async function env_build() {
   const mod = await import('../environments/old-town.js');
   return mod.build({ THREE, scene, loadModel, base: '../assets/kenney' });
 }
+const CTX = { THREE, scene, loadModel, base: '../assets/kenney' };
 
 // tag the things the voice names, so the picture checker can find them (one object each, never a loose group)
 const tagAt = (x, z, tag, tol = 1.2) => {
@@ -83,19 +89,72 @@ const tagAt = (x, z, tag, tol = 1.2) => {
   console.warn('tag not found:', tag, x, z); return null;
 };
 tagAt(0, -46, 'fountain');          // the round fountain in the middle of it
-tagAt(6, -36, 'cart');              // the wooden cart on the square
-tagAt(15, -52, 'market');           // the market stall with the striped roof
-tagAt(7.5, -66, 'door');            // a house door on the far side of the square
-const FOUNTAIN_S = 1.25;            // 6 m -> 7.5 m across, so the rim is 1.05 m: knee height for a 3.8 m body
+const market = tagAt(12, -42, 'market'); // the market stall with the striped roof
+// the stall moves to the east side of the square, well clear of your feet: it never stands between a camera
+// and the square's paving, and in the last shot the market is still there, going on across the stones
+if (market) market.position.set(16.0, market.position.y, -46.0);
+const cart = tagAt(6, -36, 'cart'); // the wooden cart on the square, now a little east of you
+if (cart) cart.position.set(6.5, 0, -40.5);
+// the town's own fountain, on a low round stone kerb: the rim 0.95 m up = knee height for a 3.8 m body.
+// The kerb is a cylinder, not a box: a square slab reads as a concrete block from the low climax camera.
+const FOUNTAIN_S = 0.6;
 const fountain = scene.children.find(o => o.userData.tag === 'fountain');
-if (fountain) fountain.scale.multiplyScalar(FOUNTAIN_S);
+if (fountain) {
+  fountain.scale.multiplyScalar(FOUNTAIN_S);
+  fountain.position.y = 0.45;
+  const plinth = new THREE.Mesh(new THREE.CylinderGeometry(1.5, 1.6, .45, 20),
+    new THREE.MeshLambertMaterial({ color: 0xb7a992, flatShading: true }));
+  plinth.position.set(fountain.position.x, .225, fountain.position.z);
+  plinth.receiveShadow = true; plinth.castShadow = true;
+  plinth.userData.tag = 'fountain'; scene.add(plinth);
+}
 
-// the cobbled floor of the square, as the checker's 'square': old-town's ground is one 70 x 40 m box, whose sample
-// points fall far outside the frame in every shot. This plate lies 2.5 cm above it, same cobbles (0xa39684), so it is
-// invisible in the picture and the checker measures a surface that is really on screen.
-const floorPatch = new THREE.Mesh(new THREE.BoxGeometry(1.2, .02, 8),
+// your own house: a small town house east of the fountain, two steps from you, with the front door
+// in the wall that faces the camera. The door stops at your hip; you have long outgrown it.
+const DOOR_AT = { x: 3.32, z: -49.23, ry: 61.6 * Math.PI / 180 };
+const house = new THREE.Group();
+const door = new THREE.Group();
+{
+  const wall = new THREE.MeshLambertMaterial({ color: 0xd8cab3, flatShading: true });
+  const roofMat = new THREE.MeshLambertMaterial({ color: 0x8c4a37, flatShading: true });
+  const body = new THREE.Mesh(new THREE.BoxGeometry(5, 3.4, 3), wall);
+  body.position.y = 1.7; body.castShadow = true; body.receiveShadow = true; house.add(body);
+  const rw = 2.2, rh = 1.25;
+  for (const s of [-1, 1]) {
+    const slope = new THREE.Mesh(new THREE.BoxGeometry(5.3, .18, Math.hypot(rw, rh)), roofMat);
+    slope.position.set(0, 3.4 + rh / 2, s * rw / 2);
+    slope.rotation.x = s * Math.atan2(rh, rw);
+    slope.castShadow = true; house.add(slope);
+  }
+  // the door itself: a wooden panel in a stone frame, with a step in front of it
+  const wood = new THREE.MeshLambertMaterial({ color: 0x6b4a2f, flatShading: true });
+  const stone = new THREE.MeshLambertMaterial({ color: 0xbfae99, flatShading: true });
+  const jamb = x => { const m = new THREE.Mesh(new THREE.BoxGeometry(.22, 2.05, .24), stone);
+    m.position.set(x, 1.02, 0); m.castShadow = true; door.add(m); };
+  jamb(-.63); jamb(.63);
+  const lintel = new THREE.Mesh(new THREE.BoxGeometry(1.62, .26, .26), stone);
+  lintel.position.set(0, 2.17, 0); lintel.castShadow = true; door.add(lintel);
+  const panel = new THREE.Mesh(new THREE.BoxGeometry(1.05, 1.92, .09), wood);
+  panel.position.set(0, .96, -.06); door.add(panel);
+  const step = new THREE.Mesh(new THREE.BoxGeometry(1.9, .12, .7), stone);
+  step.position.set(0, .06, .3); step.receiveShadow = true; door.add(step);
+}
+// 1.5 m of house sits behind the front wall, i.e. straight away from the doorway's outward normal
+house.position.set(DOOR_AT.x - 1.5 * Math.sin(DOOR_AT.ry), 0, DOOR_AT.z - 1.5 * Math.cos(DOOR_AT.ry));
+house.rotation.y = DOOR_AT.ry;
+scene.add(house);
+door.position.set(DOOR_AT.x + .12 * Math.sin(DOOR_AT.ry), 0, DOOR_AT.z + .12 * Math.cos(DOOR_AT.ry));
+door.rotation.y = DOOR_AT.ry;
+door.userData.tag = 'door'; scene.add(door);
+
+// the square itself, as the checker's 'square': old-town's own square is one 70 x 40 m box, and a box that
+// large never holds still in the frame. So the square gets a second, honest face: a broad worn patch of the
+// same cobbles (0xa39684) just beyond your toes, 5 x 2.5 m across the middle of the square. It lies on the
+// paving (the town's square top is at y 0.025), 1 cm proud of it so it reads as worn stone, not a hole.
+const PAVE = 0.025;
+const floorPatch = new THREE.Mesh(new THREE.BoxGeometry(5.0, .012, 2.5),
   new THREE.MeshLambertMaterial({ color: 0xa39684 }));
-floorPatch.position.set(4.0, .035, -44); floorPatch.receiveShadow = true;
+floorPatch.position.set(4.5, PAVE + .0085, -43.75); floorPatch.receiveShadow = true;
 floorPatch.userData.tag = 'square'; scene.add(floorPatch);
 
 // a few extra lanterns on the square (same model as the ones along the quays); the one beside you is tagged
@@ -108,12 +167,12 @@ const lanternAt = async (x, z, tag) => {
     post.position.y = 1.4; post.castShadow = true; m.root.add(post); }
   return m;
 };
-await lanternAt(6.4, -43.2, 'lanterns');    // the one your head passes above in the last shot
-await lanternAt(.4, -51.6);
+await lanternAt(3.0, -43.4, 'lanterns');    // the one your head passes above in the last shot
+await lanternAt(-.6, -51.6);
 await lanternAt(-6.2, -41.8);
 
-// ---------- you: one Kenney mini-character, growing from 1.8 m to 3.8 m ----------
-const YOU = { a: [7.4, 0, -34], b: [4.6, 0, -45.0], arrive: 8.5, face: [0, -46] };
+// ---------- you: one Kenney mini-character, growing from 1.8 m to 3.8 m, standing still beside the fountain ----------
+const YOU = { at: [4.6, 0, -46.0], face: [2.9, -55.9] };   // just east of the fountain, facing his own door:
 const hOf = t => { const [t0, t1] = TL.grow; return TL.h0 + (TL.h1 - TL.h0) * clamp((t - t0) / (t1 - t0)); };
 const mOf = t => TL.m0 * Math.pow(hOf(t) / TL.h0, 3);
 
@@ -126,6 +185,7 @@ function posedBox(ch, frames) {
   for (const [anim, time] of frames) {
     ch.play(anim, 0); ch.mixer.setTime(time); ch.root.updateMatrixWorld(true);
     for (const m of meshes) {
+      if (m.skeleton) m.skeleton.update();   // without this the bones are still in their bind pose (arms straight out)
       let b = boxes.get(m); if (!b) { b = new THREE.Box3(); boxes.set(m, b); }
       const n = m.geometry.attributes.position.count;
       for (let i = 0; i < n; i++) b.expandByPoint(m.getVertexPosition(i, v));
@@ -134,10 +194,12 @@ function posedBox(ch, frames) {
   for (const [m, b] of boxes) m.geometry.boundingBox = b.clone();
 }
 
-const fig = await loadModel('../assets/kenney/mini-characters/character-male-a.glb', { height: 1.8, anim: 'walk' });
+const fig = await loadModel('../assets/kenney/mini-characters/character-male-a.glb', { height: 1.8, anim: 'idle' });
 fig.root.userData.tag = 'you';                 // the one object that grows
+fig.root.position.set(YOU.at[0], 0, YOU.at[2]);
+fig.root.rotation.y = Math.atan2(YOU.face[0] - YOU.at[0], YOU.face[1] - YOU.at[2]);
 fig.root.scale.setScalar(1); scene.add(fig.root);
-posedBox(fig, [['walk', .1], ['walk', .7], ['idle', .2], ['idle', 1.1]]);
+posedBox(fig, [['idle', .6]]);
 
 // your shoes split open over the first years: two dark wedges on the toes, opened by the animation
 function shoeCracks(ch) {
@@ -171,23 +233,23 @@ const wedges = shoeCracks(fig);
 const MALE = ['character-male-a', 'character-male-b', 'character-male-c', 'character-male-d', 'character-male-e'];
 const FEM = ['character-female-a', 'character-female-b', 'character-female-c', 'character-female-d'];
 const PEOPLE = [
-  { at: [5.8, -46.5], h: 1.78, anim: 'idle', ry: .5, up: 1, tag: 'people' },   // the one the checker watches
-  { at: [8.2, -41.2], h: 1.72, anim: 'idle', ry: .15, up: 1 },
-  { at: [11.5, -49.5], h: 1.81, anim: 'idle', ry: -.7, up: 1 },
+  { at: [3.9, -46.5], h: 1.78, anim: 'idle', ry: 2.4, up: 1, tag: 'people', char: 'character-male-c' },   // the one the checker watches, at your feet; a different face from yours, so the two never read as the same person
+  { at: [8.6, -41.4], h: 1.72, anim: 'idle', ry: 2.2, up: 1 },
+  { at: [14.0, -37.0], h: 1.81, anim: 'idle', ry: -.7, up: 1 },
   { at: [1.4, -41.6], h: 1.66, anim: 'idle', ry: .9, up: 0 },
-  { at: [-2.6, -48.4], h: 1.74, anim: 'idle', ry: 1.6, up: 0 },
-  { at: [7.6, -55.4], h: 1.69, anim: 'idle', ry: -1.2, up: 0 },
+  { at: [-9.0, -47.5], h: 1.74, anim: 'idle', ry: 1.6, up: 0 },
+  { at: [6.6, -55.4], h: 1.69, anim: 'idle', ry: -1.2, up: 0 },
   { at: [-9.4, -44.2], h: 1.77, anim: 'idle', ry: 2.1, up: 0 },
-  { walk: { c: [2, -48.6], r: 8.2, w: .115, a0: .4 }, h: 1.7, anim: 'walk' },
-  { walk: { c: [4, -47], r: 10.5, w: -.095, a0: 2.2 }, h: 1.75, anim: 'walk' },
-  { walk: { c: [-1, -47.5], r: 6.4, w: .14, a0: 4.1 }, h: 1.68, anim: 'walk' },
+  { walk: { c: [2.5, -39.5], r: 2.6, w: .115, a0: .4 }, h: 1.7, anim: 'walk' },
+  { walk: { c: [7.5, -36.0], r: 2.4, w: -.095, a0: 2.2 }, h: 1.75, anim: 'walk' },
+  { walk: { c: [-1.5, -39.5], r: 2.8, w: .14, a0: 4.1 }, h: 1.68, anim: 'walk' },
 ];
 const people = [];
 for (let i = 0; i < PEOPLE.length; i++) {
   const p = PEOPLE[i];
-  const url = `../assets/kenney/mini-characters/${(i % 3 === 2 ? FEM : MALE)[i % 4]}.glb`;
+  const url = `../assets/kenney/mini-characters/${p.char || (i % 3 === 2 ? FEM : MALE)[i % 4]}.glb`;
   const ch = await loadModel(url, { height: p.h, anim: p.anim });
-  posedBox(ch, [[p.anim, .2], [p.anim, .9]]);
+  posedBox(ch, [[p.anim, .6]]);
   if (p.tag) ch.root.userData.tag = p.tag;
   const head = []; ch.root.traverse(o => { if (o.isBone && /head/i.test(o.name)) head.push(o); });
   if (p.up && head.length) { ch.headTilt = head; head.forEach(b => { b.rotation.x -= .42; }); }
@@ -195,19 +257,9 @@ for (let i = 0; i < PEOPLE.length; i++) {
 }
 
 // ---------- which body we see, and how big it is ----------
-let curFigAnim = '';
 function poseYou(t) {
-  const [h0, h1] = TL.grow;
-  const u = clamp(t / YOU.arrive);
-  const x = YOU.a[0] + (YOU.b[0] - YOU.a[0]) * u, z = YOU.a[2] + (YOU.b[2] - YOU.a[2]) * u;
-  fig.root.position.set(x, 0, z);
-  const walkRy = Math.atan2(YOU.b[0] - YOU.a[0], YOU.b[2] - YOU.a[2]);
-  const faceRy = Math.atan2(YOU.face[0] - YOU.b[0], YOU.face[1] - YOU.b[2]);
-  fig.root.rotation.y = lerp(walkRy, faceRy, smooth(YOU.arrive, YOU.arrive + 1.5, t));
   fig.root.scale.setScalar(hOf(t) / TL.h0);
-  const anim = t < YOU.arrive ? 'walk' : 'idle';
-  if (anim !== curFigAnim) { fig.play(anim, anim === 'walk' ? 0 : YOU.arrive); curFigAnim = anim; }
-  fig.setTime(t);
+  fig.play('idle', 0); fig.setTime(t);
   const open = smooth(18.5, 27, t);              // "tight in spring, split open by autumn"
   for (const w of wedges) {
     w.visible = open > .02;
@@ -231,20 +283,27 @@ function poseEverybody(t) {
 }
 
 // ---------- camera: 3 shots + 2 close-ups, one slow forward move inside each ----------
-const SQ = { p: [6, 1.75, -29], d: [0, .5, -4.0], l: [5.5, 2.1, -50], ld: [0, -.1, -1.5] };
-const sqU = t => t < 20.79 ? (t / 20.79) * .5 : .5 + clamp((t - 25.0) / (41.57 - 25.0)) * .5;
-const FEET = { p: [3.05, .5, -43.85], d: [.5, .06, -.22], l: [4.6, .14, -45.0] };
-const LOW = { p: [1.0, 1.9, -28.0], d: [0, .1, -1.2], l: [.3, 3.2, -50], ld: [.8, .2, 2.4] };
-const RIM = { p: [-4.5, 1.4, -53.5], d: [.72, -.05, .83], l: [1.5, .9, -46.5] };
-const HIGH = { p: [10, 34, -16], d: [-1.5, -1, -4], l: [3, .5, -47], ld: [0, 0, -.6] };
+// shot 1 (0-41.6 s): 1.6 m high 5.7 m south-east of you, creeping in toward the fountain and up as you
+// grow. It starts east of your house: at 4.40 m along the old stone wall the lens was inside its corner.
+const A1 = { p: [5.40, 1.60, -51.6], d: [-.08, .06, .60], l: [4.6, 1.30, -46.0], ld: [0, .55, 0] };
+const a1U = t => t < 20.79 ? (t / 20.79) * .5 : .5 + clamp((t - 25.0) / (41.57 - 25.0)) * .5;
+// close-up 1: your shoes on the cobbles, seen from in front of the toes (his arms hang just above the frame)
+const FEET = { p: [4.35, .32, -47.5], d: [-.05, .03, .25], l: [4.54, .10, -46.34], ld: [0, .04, 0] };
+// shot 2 (41.6-53.5 s): 1.6 m high east of you, creeping west in past your shoulder: your own house and
+// its far-too-small door on the right, the fountain and the square behind you
+const A2 = { p: [14.2, 1.60, -41.5], d: [-1.2, .02, -1.2], l: [4.6, 1.35, -46.0], ld: [0, .18, 0] };
+// close-up 2: the fountain rim at your knee, your shin behind it
+const RIM = { p: [-.8, .85, -50.2], d: [.5, .03, .5], l: [3.0, 1.10, -46.6], ld: [.4, .1, 0] };
+// shot 3 (58.4 s-end): 1.0 m high on the cobbles in the square, looking up at you, your head above the lanterns
+const A3 = { p: [-8.6, 1.05, -43.0], d: [2.4, .10, -.55], l: [4.6, 2.0, -46.0], ld: [.4, .1, 0] };
 function cameraAt(t) {
   let A, u;
-  if (t < 20.79) { A = SQ; u = sqU(t); }
+  if (t < 20.79) { A = A1; u = a1U(t); }
   else if (t < 25.0) { A = FEET; u = (t - 20.79) / (25.0 - 20.79); }
-  else if (t < 41.57) { A = SQ; u = sqU(t); }
-  else if (t < 53.5) { A = LOW; u = (t - 41.57) / (53.5 - 41.57); }
+  else if (t < 41.57) { A = A1; u = a1U(t); }
+  else if (t < 53.5) { A = A2; u = (t - 41.57) / (53.5 - 41.57); }
   else if (t < 58.36) { A = RIM; u = (t - 53.5) / (58.36 - 53.5); }
-  else { A = HIGH; u = (t - 58.36) / (TL.T_END - 58.36); }
+  else { A = A3; u = (t - 58.36) / (TL.T_END - 58.36); }
   const pos = A.p.map((v, i) => v + (A.d ? A.d[i] : 0) * u);
   const look = A.l.map((v, i) => v + (A.ld ? A.ld[i] : 0) * u);
   camera.position.set(pos[0], pos[1], pos[2]);
@@ -275,7 +334,7 @@ window.renderAt = function (t) {
   hud(t);
   renderer.render(scene, camera);
 };
-window.WHATIF = { THREE, scene, camera };
+window.WHATIF = { THREE, scene, camera, renderer };
 window.TL = TL; window.T_END = TL.T_END;
 window.renderAt(0);
 document.fonts.ready.then(() => { window.ready = true; });

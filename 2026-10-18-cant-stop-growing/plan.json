@@ -141,7 +141,7 @@
    "role": "How people react; things in the street",
    "lines": [
     "People move back and look up at you.",
-    "A cart comes up to your thigh."
+    "Their heads come up to your chest."
    ],
    "pause_after": "pause"
   },
@@ -186,7 +186,7 @@
    "role": "Aftermath",
    "lines": [
     "The square is the only room that fits you.",
-    "The market goes on around your legs."
+    "The market goes on below you."
    ],
    "pause_after": "long"
   },
@@ -213,33 +213,28 @@
   },
   {
    "word": "square",
-   "model": "old-town.js square (cobbled, 70 x 40 m) with the fountain in the middle",
-   "looks": "the market square between the houses; it holds you at the start and is the only space that still fits you at the end"
-  },
-  {
-   "word": "cart",
-   "model": "fantasy-town-kit cart on the square (old-town.js, at 6, 0, -36)",
-   "looks": "a wooden cart with two wheels standing beside your feet; its top comes up to your thigh"
+   "model": "old-town's cobbled square (its own 70 x 40 m paving under you) with one broad worn patch of the same stone just beyond your toes",
+   "looks": "cobbles running away on every side: houses and stalls at the edge of the stone, the fountain in the middle, and the worn patch of paving at your feet"
   },
   {
    "word": "door",
-   "model": "modular-buildings house doors along the square (about 2 m high)",
-   "looks": "the front door of a square house; you duck through it, then turn sideways, and at last cannot pass at all"
+   "model": "a door frame about 2 m high in the front wall of a small town house east of the fountain, facing the camera of shot 2",
+   "looks": "the front door of your own house, right beside you and clearly shorter than you; at last you cannot pass it at all"
   },
   {
    "word": "fountain",
-   "model": "fantasy-town-kit fountain-round in the middle of the square (old-town.js)",
+   "model": "fantasy-town-kit fountain-round on a low stone plinth in the middle of the square (old-town.js), rim 0.95 m high",
    "looks": "the round stone fountain; the rim comes to your knee, and it becomes the thing you hold on to"
   },
   {
    "word": "lanterns",
-   "model": "fantasy-town-kit lanterns on posts (3.2 m, along the quays and the square)",
+   "model": "fantasy-town-kit lanterns on posts (3.2 m: along the quays and one beside you on the square)",
    "looks": "iron lanterns on posts at 3.2 m; your head passes above them in the last shot"
   },
   {
    "word": "market",
-   "model": "the morning market on the square (the stalls and the cart from old-town.js)",
-   "looks": "stalls with striped roofs around your legs at the end, the market going on as if nothing had changed"
+   "model": "the morning market on the square (the stalls from old-town.js)",
+   "looks": "stalls with striped roofs still standing on the square at the far side, the market going on as if nothing had changed"
   }
  ],
  "counter": {
@@ -294,14 +289,15 @@
   {
    "type": "shot",
    "from_step": 1,
-   "camera": "square",
-   "shows": "eye level on the square: the fountain, the market stalls and the houses; you stand by the stalls at 1.8 m and people walk past at your own size. Nothing stands in front of the lens during the title"
+   "camera": "custom",
+   "shows": "you standing in the square at 1.8 m, people of your own size passing you, a market cart standing off your leg, and nothing in front of the lens during the title",
+   "where": "1.6 m high, 5.7 m south-east of you on the square, looking north-west at you; the camera creeps forward to 4.5 m"
   },
   {
    "type": "closeup",
    "from_step": 4,
    "camera": "custom",
-   "where": "0.5 m high, 2 m from your feet on the cobbles, looking down at the shoes",
+   "where": "0.3 m high, 1.2 m in front of your toes on the cobbles, looking at the split shoes",
    "seconds": 4,
    "shows": "your shoes on the cobbles, the seams split open at the toes"
   },
@@ -309,15 +305,15 @@
    "type": "shot",
    "from_step": 7,
    "camera": "custom",
-   "where": "1.9 m high, about 18 m from you on the square, looking along the square past the fountain to the house doors",
+   "where": "1.6 m high, level with your chest, north-east of you on the square, creeping west in past your shoulder: your own house and its far-too-small door on the left of you, the fountain and the square around you",
    "seconds": 0,
-   "shows": "the escalation from the square: the door frame at your chest, the stall roofs just under your chest, people at your feet looking up, and you standing still because walking now costs too much"
+   "shows": "the escalation: your open door comes to your chest and is clearly shorter than you, the fountain rim at your knee, and you standing still because walking now costs too much"
   },
   {
    "type": "closeup",
    "from_step": 8,
    "camera": "custom",
-   "where": "1.4 m high, 5 m from the fountain rim, looking along the rim with you behind it",
+   "where": "1.0 m high, 2 m from the fountain rim, looking along the rim with your shin right behind it",
    "seconds": 4,
    "shows": "the stone rim of the fountain coming only to your knee, with your shin behind it"
   },
@@ -325,37 +321,46 @@
    "type": "shot",
    "from_step": 9,
    "camera": "custom",
-   "where": "36 m above the square, looking down at you in the middle of it, the houses, the canal and the mill around",
+   "where": "1.0 m high, low on the cobbles 13 m west of you, looking up at you across the square; the camera creeps forward towards you, to 11 m",
    "seconds": 0,
-   "shows": "the whole town from above: your head above the lanterns, the market going on around your legs like a toy; the counter freezes on the year and the last frame stays"
+   "shows": "you from below at 3.8 m: head above the lanterns and the stall roofs, your own house and its door small at your legs, the market still standing on the square and the stones going on beneath you; the counter freezes on the year and the last frame stays"
   }
  ],
  "scale_checks": [
   {
    "step": 5,
-   "object": "cart",
+   "object": "people",
    "compare": "you",
-   "top_between": [0.35, 0.6],
-   "says": "the cart comes up to your thigh"
+   "top_between": [
+    0.55,
+    0.85
+   ],
+   "says": "their heads come up to your chest"
   },
   {
    "step": 8,
    "object": "fountain",
    "compare": "you",
-   "top_between": [0.2, 0.35],
+   "top_between": [
+    0.2,
+    0.35
+   ],
    "says": "the fountain rim comes only to your knee"
   },
   {
    "step": 9,
    "object": "lanterns",
    "compare": "you",
-   "top_between": [0.75, 0.95],
+   "top_between": [
+    0.75,
+    0.95
+   ],
    "says": "your head is above the lanterns"
   }
  ],
  "may_float": [],
  "climax": {
-  "visual": "the high shot over the town: you stand still in the middle of the square beside the fountain, its rim at your knee, head above the lanterns and the stall roofs, while the market goes on around your feet; then about 5 s of silence in which nothing moves and the counter holds on the year",
+  "visual": "the low shot from the cobbles looking up: you stand still in the middle of the square beside the fountain, its rim at your knee, your head above the lanterns and the stall roofs, your own door small at your shoulder and people at your feet, while the market goes on around your legs; then about 5 s of silence in which nothing moves and the counter holds on the year",
   "why_it_fits_the_closing_line": "The closing line says nothing in a human body was built to be this big, so the climax is not a fall or a break: it is the quiet image of a body standing still in a space built for people half its height, with the market carrying on around it - and the line that the growth itself has not stopped."
  },
  "models": [
@@ -448,8 +453,8 @@
    "fix": "the counter's own labels now say it: 'HEIGHT · FIRST 8 YEARS' and 'MASS · SAME SHAPE', short enough for a phone, so the frozen number is the eight-year window"
   },
   {
-   "weak_point": "Step 5 said a cart reaches your knee, but the counter runs 5 s per year, so at that moment you are 2.25 m and the cart reaches your thigh",
-   "fix": "the line now says the thigh; the same sum says the door frame is at your chest in step 7, which is where that shot puts it"
+   "weak_point": "Step 5 leaned on a cart for the metre scale, but that cart is 2.8 m wide: beside a 2.4 m body it either leaves the frame or hides you, so the picture could not show a thigh",
+   "fix": "step 5 compares people instead - their heads come up to your chest - and the shot shows the onlooker at your side at that height"
   },
   {
    "weak_point": "Step 6 said the tallest man never stopped growing, which the source does not say",
@@ -473,5 +478,7 @@
    "question": "The one new thing: the growing figure and its scale animation in code (no new model files, no new licences)",
    "my_choice": "yes, one new thing in code: the figure is a scaled Kenney mini-character, everything else comes from environments/old-town.js"
   }
- ]
+ ],
+ "subject": "you",
+ "subject_min_px": 300
 }
