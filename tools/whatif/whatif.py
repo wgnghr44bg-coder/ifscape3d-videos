@@ -147,7 +147,7 @@ def template(question, env, folder):
         'spelling': 'metres',
         'environment': env,
         'pace': 'TODO slow | sudden  (how fast the change happens in the story)',
-        'realism': 'real',
+        'realism': 'fantasy',
         'numbers': [
             {'id': 'TODO', 'value': 0, 'unit': 'TODO', 'said_as': [], 'meaning': 'TODO what this number is',
              'premise': False},
@@ -610,6 +610,14 @@ def check(plan, folder, skip_files=False, online=True):
     if subj and (visible_base(subj) or subj) not in words:
         R.fail('scale', f'subject "{subj}" is not an on_screen word.')
     cmt = plan.get('counter_matches')
+    if not cmt:
+        R.fail('counter', 'add "counter_matches" so the picture checker can prove the counter shows what you SEE, e.g. '
+                          '{"object": "you", "measure": "height", "unit": "m", "hud_number": 0}. If the counter measures '
+                          'something you cannot measure in the scene (a temperature), write {"none": "<why, and how the picture shows it>"}.')
+    elif 'none' in cmt:
+        if len(str(cmt['none'])) < 30:
+            R.fail('counter', 'counter_matches "none": explain in a sentence how the picture shows the counter value instead.')
+        cmt = None
     if cmt:
         w = str(cmt.get('object', '')).lower()
         if (visible_base(w) or w) not in words:
@@ -770,7 +778,7 @@ def times_json(plan, folder):
             'subject': next((o['word'] for o in plan.get('on_screen', []) if plan.get('subject')
                              and (visible_base(o['word']) or o['word'].lower()) == (visible_base(str(plan['subject']).lower()) or str(plan['subject']).lower())), None),
             'subject_min_px': plan.get('subject_min_px', 300),
-            'counter_matches': plan.get('counter_matches'),
+            'counter_matches': None if 'none' in (plan.get('counter_matches') or {'none': 1}) else plan['counter_matches'],
             'closeup_steps': [s['from_step'] for s in plan.get('shots', []) if s.get('type') == 'closeup']}
 
 

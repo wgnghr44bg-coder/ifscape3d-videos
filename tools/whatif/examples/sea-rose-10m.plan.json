@@ -5,6 +5,7 @@
  "spelling": "metres",
  "environment": "old-town",
  "pace": "slow",
+ "realism": "real",
  "numbers": [
   {
    "id": "rise",
@@ -404,5 +405,12 @@
    "fix": "steady rise, the climax is the stop + silence"
   }
  ],
- "questions": []
+ "questions": [],
+ "counter_matches": {
+  "object": "lake",
+  "measure": "top",
+  "unit": "m",
+  "hud_number": 0,
+  "from_ground": true
+ }
 }

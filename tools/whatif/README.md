@@ -67,7 +67,8 @@ last frame held 3.5 s) and fails outside 78–92 s. The final times always come 
 `"realism": "fantasy"` in plan.json: it does not have to be real (a giant walking through houses). Then the physics,
 `reality`, climax and fact/source checks only WARN. **Still strict:** the numbers table (voice, counter and captions agree),
 units, form, length, shots, licences – and in the picture checker: **the counter shows what you see** (`counter_matches`).
-Default is `"realism": "real"`.
+`whatif.py new` starts every video with `"realism": "fantasy"` (owner's default); `"real"` only when the owner asks.
+`counter_matches` is required in every plan (or `{"none": "<why>"}` when the counter is something you cannot measure, like a temperature).
 
 ## Second reviewer (OpenCode)
 After ALL CHECKS PASSED, ask `@physics-review` to read `STORYBOARD.md`. It only reads and lists science problems.
