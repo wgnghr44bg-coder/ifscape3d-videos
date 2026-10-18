@@ -79,6 +79,10 @@ Whenever the owner asks for a new "What if", make it the same way as the gravity
 ## Current defaults on top of PART A (newest owner instructions)
 
 Later owner instructions override PART A where they differ; check `GRAVITY-VIDEO.md` → "Wat nu anders is dan deze video":
+- **Gripping first (owner, 18 Oct 2026).** The video must hold viewers: big numbers, extreme escalation, something new
+  on screen every ~5 s, a spectacular climax. Fantasy is allowed when it makes it more gripping – then set
+  `"realism": "fantasy"` in plan.json. What the voice presents as a REAL fact must still be true and sourced.
+  No blood or injuries shown.
 - **3 shots with hard cuts, exactly like the gravity video (PART A, point 6)** — that stays;
 - no end card and no fade to black — the last frame stays;
 - European units (kg instead of pounds);
