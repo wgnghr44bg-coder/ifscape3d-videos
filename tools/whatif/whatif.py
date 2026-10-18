@@ -622,8 +622,9 @@ def check(plan, folder, skip_files=False, online=True):
         w = str(cmt.get('object', '')).lower()
         if (visible_base(w) or w) not in words:
             R.fail('scale', f'counter_matches: "{w}" is not an on_screen word.')
-        if cmt.get('measure', 'height') not in ('height', 'top'):
-            R.fail('scale', 'counter_matches: measure must be "height" (size of the object) or "top" (e.g. a water level).')
+        if cmt.get('measure', 'height') not in ('height', 'length', 'top'):
+            R.fail('scale', 'counter_matches: measure must be "height" (how tall), "length" (longest side – also right when '
+                            'the object lies down) or "top" (e.g. a water level).')
     for w in plan.get('may_float', []):
         if (visible_base(str(w).lower()) or str(w).lower()) not in words:
             R.fail('scale', f'may_float "{w}" is not an on_screen word.')

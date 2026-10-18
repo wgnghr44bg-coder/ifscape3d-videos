@@ -353,7 +353,7 @@
  "subject": "statue",
  "counter_matches": {
   "object": "statue",
-  "measure": "height",
+  "measure": "length",
   "unit": "m",
   "hud_number": 0
  }
