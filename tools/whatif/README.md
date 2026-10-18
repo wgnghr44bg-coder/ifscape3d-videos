@@ -51,6 +51,9 @@ last frame held 3.5 s) and fails outside 78–92 s. The final times always come 
 ## Physics checks
 - **Counter end values must add up**: every end value is the premise, comes from a sourced fact, or is calculated
   in `derivations`. Never invent a number just to make the sum work – every number in the table is reviewed with its `meaning`.
+- **The sum must contain every effect the story mentions**: if the script or `reality` mentions compaction
+  ("presses", "turned to ice"), melting, evaporation or draining away, the derivation must include it.
+  (Lesson from the snow video: 1.5 m × 20 winters = 30 m was a correct sum, but snow compacts to about half.)
 - **After the counter stops, nothing is "still rising / getting hotter / more and more"** in later steps.
 - **Known mistakes** in `physics-myths.json` (glowing rock, 1 361 W/m² at the ground, sound in space, …).
   Every new mistake a review finds is added there (pattern + why + fix), so the list grows with every video.

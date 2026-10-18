@@ -205,6 +205,16 @@ STILL_CHANGING = (r"\b(still|keeps?|keep on|goes on|continues? to)\s+(\w+ing|ris
                   r"|\b(getting|grows?|growing)\s+(hotter|colder|higher|deeper|lower|worse|bigger|stronger|faster)\b"
                   r"|\bmore and more\b|\bhigher and higher\b|\bhotter and hotter\b")
 
+# effects the story can mention -> words the derivation must then contain (formula or explain)
+EFFECTS = [
+    ('compaction', r'\b(press(es|ed|ing)?|compact\w*|squeez\w*|settl\w*|firn|turn(s|ed)? (in)?to ice)\b',
+     r'compact|press|density|dense|firn|settl'),
+    ('melting', r'\bmelt\w*', r'melt'),
+    ('evaporation', r'\bevaporat\w*|\bdr(y|ies) up\b', r'evaporat'),
+    ('draining away', r'\b(drain\w*|flows? away|runs? off|soaks? (in|away)|absorb\w*|seeps? away)\b',
+     r'drain|flow|runoff|run off|soak|absorb|seep'),
+]
+
 OPS = {ast.Add: operator.add, ast.Sub: operator.sub, ast.Mult: operator.mul, ast.Div: operator.truediv,
        ast.Pow: operator.pow, ast.USub: operator.neg}
 
@@ -420,6 +430,12 @@ def check(plan, folder, skip_files=False):
             R.fail('physics', f'derivation of "{rid}": {d["formula"]} = {got:g}, but the table says {want:g}. '
                               'The numbers do not add up – fix the story or the number, never fudge the sum.')
         derived[rid] = d
+        said = ' '.join([script_text, ' '.join(r.get('why_it_really_happens', '') for r in plan.get('reality', []))])
+        for name, in_story, in_sum in EFFECTS:
+            m = re.search(in_story, said, re.I)
+            if m and not re.search(in_sum, d.get('formula', '') + ' ' + d.get('explain', ''), re.I):
+                R.fail('physics', f'the story mentions {name} ("{m.group()}"), but the derivation of "{rid}" ignores it. '
+                                  f'Put that effect in the sum (with a sourced number), or take it out of the story.')
     for k in ('to', 'second_to'):
         v = c.get(k)
         if not isinstance(v, (int, float)) or v == 0:
