@@ -6,6 +6,7 @@
 //   - nothing big right in front of the camera during the title (0–9 s)
 //   - the counter (#hud) is fully on screen from 9.5 s
 //   - plan.json "scale_checks" (e.g. the cart comes up to your thigh) match the real sizes in the scene
+//   - the counter shows what the picture shows (plan.json "counter_matches", e.g. the giant's real height in the scene)
 //   - the main subject (plan.json "subject") is big in frame wherever the voice names it (not in close-ups)
 //   - every text block (#hud, #title, .caption) has enough contrast with the picture behind it (needs WHATIF.renderer)
 // Writes <folder>/check/step-NN.jpg, <folder>/CHECK.jpg (all steps on one sheet) and <folder>/CHECK.md.
@@ -66,7 +67,7 @@ if (!hooks.renderer) fail('scene', 'add the renderer to the hook so text contras
 if (!hooks.whatif) fail('scene', 'scene.html needs: window.WHATIF = { THREE, scene, camera, renderer };  (one line after the scene is built)');
 
 // ---- everything below runs inside the page
-function measure({ words, scale, mayFloat, t, titleEnd, counterFrom }) {
+function measure({ words, scale, mayFloat, t, titleEnd, counterFrom, match }) {
   const { THREE, scene, camera, renderer } = window.WHATIF;
   // text contrast: render and read the pixels behind every visible text block in the same task
   const contrast = [];
@@ -171,6 +172,15 @@ function measure({ words, scale, mayFloat, t, titleEnd, counterFrom }) {
       const r = el.getBoundingClientRect(), cs = getComputedStyle(el);
       out.hud = { inside: r.left >= 0 && r.top >= 0 && r.right <= innerWidth && r.bottom <= innerHeight && r.width > 0,
         shown: cs.display !== 'none' && cs.visibility !== 'hidden' && +cs.opacity > .5 };
+      // the counter must show what the picture shows (plan.json "counter_matches")
+      if (match) {
+        const nums = (el.textContent.replace(/(\d)[\s\u202f\u00a0,](?=\d{3}\b)/g, '$1').match(/[-+]?\d+(?:\.\d+)?/g) || []).map(Number);
+        const b = boxOf(norm(match.object));
+        const unitK = { m: 1, cm: 100, mm: 1000, km: .001 }[match.unit || 'm'] || 1;
+        const ref = match.from_ground ? 0 : b.min.y;
+        const real = b.isEmpty() ? null : ((match.measure === 'top' ? b.max.y - ref : b.max.y - b.min.y) * unitK);
+        out.match = { shown: nums[match.hud_number || 0], real, all: nums };
+      }
     }
   }
   out.contrast = contrast;
@@ -185,7 +195,7 @@ if (hooks.renderAt && hooks.whatif) {
     const t = +(Math.min(st.end, st.start + Math.max(.6, (st.end - st.start) * .4))).toFixed(2);
     await page.evaluate(t => window.renderAt(t), t);
     const scale = times.scale_checks.filter(s => s.step === st.step);
-    const m = await page.evaluate(measure, { words: st.must_see, scale, mayFloat: times.may_float, t,
+    const m = await page.evaluate(measure, { words: st.must_see, scale, mayFloat: times.may_float, t, match: times.counter_matches,
       titleEnd: times.title_end, counterFrom: times.counter_from });
     const where = `step ${st.step} @${t}s`, notes = [];
     for (const [w, o] of Object.entries(m.objects)) {
@@ -216,6 +226,14 @@ if (hooks.renderAt && hooks.whatif) {
         fail(where, `the main subject "${subj}" is only ${Math.round(o.heightPx)} px high (needs ≥ ${times.subject_min_px} of 1280): the viewer must SEE the story – bring the camera closer or lower`);
       else if (o.tried && o.seen / o.tried < .6)
         fail(where, `the main subject "${subj}" is mostly hidden behind ${o.blockers.join(', ')} (only ${o.seen}/${o.tried} points visible, needs 60 %) – nothing big between the camera and the subject`);
+    }
+    if (m.match) {
+      const cm = times.counter_matches;
+      if (m.match.real === null) fail(where, `counter_matches: no object tagged "${cm.object}"`);
+      else if (m.match.shown === undefined) fail(where, `counter_matches: no number nr ${cm.hud_number || 0} in the counter (found ${m.match.all.join(', ') || 'none'})`);
+      else if (Math.abs(m.match.shown - m.match.real) > Math.max(Math.abs(m.match.real) * .1, cm.unit === 'cm' ? 15 : .15))
+        fail(where, `the counter says ${m.match.shown} ${cm.unit || 'm'}, but "${cm.object}" in the picture is ${m.match.real.toFixed(2)} ${cm.unit || 'm'} – what the counter says must be what you SEE`);
+      else notes.push(`counter ${m.match.shown} = picture ${m.match.real.toFixed(2)} ✓`);
     }
     if (m.hud && m.hud.missing) fail(where, 'no counter: put it in <div id="hud">');
     else if (m.hud && !(m.hud.inside && m.hud.shown)) fail(where, 'the counter (#hud) is not fully on screen');

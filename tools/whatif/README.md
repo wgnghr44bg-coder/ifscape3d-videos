@@ -64,9 +64,10 @@ last frame held 3.5 s) and fails outside 78–92 s. The final times always come 
   page (no internet or a blocked site → only a WARN; `--offline` skips it).
 
 ## Fantasy mode (owner's choice)
-`"realism": "fantasy"` in plan.json: the spectacle may be impossible (a giant walking through houses). Then the physics,
-`reality` and climax checks only WARN. **Still strict:** every fact the voice presents as real (with its source), the
-numbers table, units, form, length, shots and licences. Default is `"realism": "real"`.
+`"realism": "fantasy"` in plan.json: it does not have to be real (a giant walking through houses). Then the physics,
+`reality`, climax and fact/source checks only WARN. **Still strict:** the numbers table (voice, counter and captions agree),
+units, form, length, shots, licences – and in the picture checker: **the counter shows what you see** (`counter_matches`).
+Default is `"realism": "real"`.
 
 ## Second reviewer (OpenCode)
 After ALL CHECKS PASSED, ask `@physics-review` to read `STORYBOARD.md`. It only reads and lists science problems.
@@ -87,6 +88,7 @@ It opens `scene.html`, goes to every story step (times from `voice-times.tsv`, e
 | size promises (`scale_checks` in plan.json) | e.g. `{"step": 5, "object": "cart", "compare": "you", "top_between": [0.4, 0.65], "says": "the cart comes up to your thigh"}` – the top of the cart must be at 40–65 % of your height |
 | main subject (`subject` in plan.json, e.g. `"you"`) | smaller than `subject_min_px` (default 300 of 1280 px) in a step where the voice names it (close-ups excepted). Lesson from the growing video: the giant was measured "in frame" at 144 px, but nobody could SEE he was a giant. Also FAILs when less than 60 % of the subject is visible (the fountain rim hid the giant's body in the climax) |
 | text contrast (`#hud`, `#title`, `.caption`) | contrast with the picture behind it below 3 : 1 (2.2 : 1 with a text shadow). A (semi-transparent) dark `background` band behind the text counts. Needs `renderer` in `window.WHATIF` |
+| counter = picture (`counter_matches` in plan.json, e.g. `{"object": "you", "measure": "height", "unit": "m", "hud_number": 0}`) | the n-th number in `#hud` differs more than 10 % (min 0.15 m) from what is measured in the scene: `height` = the object's height, `top` = its top above y 0 (`"from_ground": true`), e.g. a water level |
 | title (0–9 s) | more than 15 % of the middle of the picture is closer than 3 m to the camera |
 | counter | no `<div id="hud">`, or not fully on screen from 9.5 s |
 | camera rule | more than 6 or fewer than 2 hard cuts; a WARN when the camera stands still in a shot |

@@ -80,9 +80,11 @@ Whenever the owner asks for a new "What if", make it the same way as the gravity
 
 Later owner instructions override PART A where they differ; check `GRAVITY-VIDEO.md` → "Wat nu anders is dan deze video":
 - **Gripping first (owner, 18 Oct 2026).** The video must hold viewers: big numbers, extreme escalation, something new
-  on screen every ~5 s, a spectacular climax. Fantasy is allowed when it makes it more gripping – then set
-  `"realism": "fantasy"` in plan.json. What the voice presents as a REAL fact must still be true and sourced.
-  No blood or injuries shown.
+  on screen every ~5 s, a spectacular climax. It does NOT have to be real: fantasy is fine everywhere (set
+  `"realism": "fantasy"` in plan.json; physics and fact checks then only warn).
+  **What must always be right: the counter shows exactly what you SEE** (the giant that the counter calls 3.1 m is 3.1 m
+  in the scene, the water the counter calls +4 m is at +4 m) – set `"counter_matches"` in plan.json, scenecheck measures it.
+  Numbers in voice, counter and captions agree with each other. No blood or injuries shown.
 - **3 shots with hard cuts, exactly like the gravity video (PART A, point 6)** — that stays;
 - no end card and no fade to black — the last frame stays;
 - European units (kg instead of pounds);

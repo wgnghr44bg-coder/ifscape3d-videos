@@ -340,15 +340,21 @@
    "object": "crates",
    "compare": "statue",
    "top_between": [
-    0.2,
-    0.5
+    0.1,
+    0.3
    ],
-   "says": "a crate reaches the statue's knee"
+   "says": "a crate reaches only the statue's shin"
   }
  ],
  "may_float": [
   "boats",
   "bridge"
  ],
- "subject": "statue"
+ "subject": "statue",
+ "counter_matches": {
+  "object": "statue",
+  "measure": "height",
+  "unit": "m",
+  "hud_number": 0
+ }
 }
