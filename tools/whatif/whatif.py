@@ -147,6 +147,7 @@ def template(question, env, folder):
         'spelling': 'metres',
         'environment': env,
         'pace': 'TODO slow | sudden  (how fast the change happens in the story)',
+        'realism': 'fantasy',
         'numbers': [
             {'id': 'TODO', 'value': 0, 'unit': 'TODO', 'said_as': [], 'meaning': 'TODO what this number is',
              'premise': False},
@@ -185,6 +186,8 @@ def template(question, env, folder):
         'may_float': [],
         'subject': 'TODO the on_screen word of the main subject the story is about (e.g. "you"), or "" if there is none',
         'subject_min_px': 300,
+        'counter_matches': {'object': 'TODO on_screen word the counter measures (e.g. "you"), or remove this',
+                            'measure': 'height', 'unit': 'm', 'hud_number': 0},
         'reality': [{'step': n, 'why_it_really_happens': 'TODO physics/biology in one or two sentences; '
                      'if it would not really happen, change the step'} for n in (7, 9, 10)],
         'critic': [{'weak_point': 'TODO', 'fix': 'TODO'} for _ in range(3)],
@@ -606,6 +609,21 @@ def check(plan, folder, skip_files=False, online=True):
     subj = str(plan.get('subject', '') or '').lower()
     if subj and (visible_base(subj) or subj) not in words:
         R.fail('scale', f'subject "{subj}" is not an on_screen word.')
+    cmt = plan.get('counter_matches')
+    if not cmt:
+        R.fail('counter', 'add "counter_matches" so the picture checker can prove the counter shows what you SEE, e.g. '
+                          '{"object": "you", "measure": "height", "unit": "m", "hud_number": 0}. If the counter measures '
+                          'something you cannot measure in the scene (a temperature), write {"none": "<why, and how the picture shows it>"}.')
+    elif 'none' in cmt:
+        if len(str(cmt['none'])) < 30:
+            R.fail('counter', 'counter_matches "none": explain in a sentence how the picture shows the counter value instead.')
+        cmt = None
+    if cmt:
+        w = str(cmt.get('object', '')).lower()
+        if (visible_base(w) or w) not in words:
+            R.fail('scale', f'counter_matches: "{w}" is not an on_screen word.')
+        if cmt.get('measure', 'height') not in ('height', 'top'):
+            R.fail('scale', 'counter_matches: measure must be "height" (size of the object) or "top" (e.g. a water level).')
     for w in plan.get('may_float', []):
         if (visible_base(str(w).lower()) or str(w).lower()) not in words:
             R.fail('scale', f'may_float "{w}" is not an on_screen word.')
@@ -760,6 +778,7 @@ def times_json(plan, folder):
             'subject': next((o['word'] for o in plan.get('on_screen', []) if plan.get('subject')
                              and (visible_base(o['word']) or o['word'].lower()) == (visible_base(str(plan['subject']).lower()) or str(plan['subject']).lower())), None),
             'subject_min_px': plan.get('subject_min_px', 300),
+            'counter_matches': None if 'none' in (plan.get('counter_matches') or {'none': 1}) else plan['counter_matches'],
             'closeup_steps': [s['from_step'] for s in plan.get('shots', []) if s.get('type') == 'closeup']}
 
 
@@ -800,6 +819,13 @@ def main():
     except (OSError, json.JSONDecodeError) as e:
         sys.exit(f'FAIL [json] cannot read {p}: {e}')
     R, tim = check(plan, folder, a.skip_files, online=not a.offline)
+    if plan.get('realism') == 'fantasy':
+        # owner's choice: the spectacle may be fantasy. Physics becomes advice; facts, sources, numbers and form stay strict.
+        soft = [x for x in R.fails if re.match(r'FAIL \[(physics|reality|climax|facts)\]', x)]
+        R.fails = [x for x in R.fails if x not in soft]
+        R.warns += [x.replace('FAIL', 'WARN', 1) + ' (fantasy: allowed)' for x in soft]
+    elif plan.get('realism', 'real') != 'real':
+        R.fails.append('FAIL [realism] "realism" must be "real" or "fantasy".')
     for line in R.fails + R.warns:
         print(line)
     if R.fails:

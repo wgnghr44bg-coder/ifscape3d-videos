@@ -79,6 +79,15 @@ Whenever the owner asks for a new "What if", make it the same way as the gravity
 ## Current defaults on top of PART A (newest owner instructions)
 
 Later owner instructions override PART A where they differ; check `GRAVITY-VIDEO.md` → "Wat nu anders is dan deze video":
+- **Gripping first – for EVERY What if, by default (owner, 18 Oct 2026).** The video must hold viewers: big numbers, extreme escalation, something new
+  on screen every ~5 s, a spectacular climax. It does NOT have to be real: fantasy is fine everywhere (set
+  `"realism": "fantasy"` in plan.json; physics and fact checks then only warn).
+  **What must always be right: the counter shows exactly what you SEE** (the giant that the counter calls 3.1 m is 3.1 m
+  in the scene, the water the counter calls +4 m is at +4 m) – set `"counter_matches"` in plan.json, scenecheck measures it.
+  Numbers in voice, counter and captions agree with each other. No blood or injuries shown.
+  How to make every topic extreme: push the number far (years/size/speed) so the counter flies, escalate in steps
+  (people → streets → buildings → the whole place), make the climax the biggest picture of the video, and end on one
+  unforgettable image. `whatif.py new` starts with `"realism": "fantasy"`; only choose `"real"` when the owner asks.
 - **3 shots with hard cuts, exactly like the gravity video (PART A, point 6)** — that stays;
 - no end card and no fade to black — the last frame stays;
 - European units (kg instead of pounds);
