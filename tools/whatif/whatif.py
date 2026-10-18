@@ -183,6 +183,8 @@ def template(question, env, folder):
              'says': 'TODO the size the voice promises, e.g. "the cart comes up to your thigh" – or remove this entry'},
         ],
         'may_float': [],
+        'subject': 'TODO the on_screen word of the main subject the story is about (e.g. "you"), or "" if there is none',
+        'subject_min_px': 300,
         'reality': [{'step': n, 'why_it_really_happens': 'TODO physics/biology in one or two sentences; '
                      'if it would not really happen, change the step'} for n in (7, 9, 10)],
         'critic': [{'weak_point': 'TODO', 'fix': 'TODO'} for _ in range(3)],
@@ -601,6 +603,9 @@ def check(plan, folder, skip_files=False, online=True):
             R.fail('scale', f'scale check "{sc.get("says")}": top_between must be [low, high], e.g. [0.4, 0.6].')
         if not 1 <= sc.get('step', 0) <= 11:
             R.fail('scale', f'scale check "{sc.get("says")}": step must be 1–11.')
+    subj = str(plan.get('subject', '') or '').lower()
+    if subj and (visible_base(subj) or subj) not in words:
+        R.fail('scale', f'subject "{subj}" is not an on_screen word.')
     for w in plan.get('may_float', []):
         if (visible_base(str(w).lower()) or str(w).lower()) not in words:
             R.fail('scale', f'may_float "{w}" is not an on_screen word.')
@@ -751,7 +756,11 @@ def times_json(plan, folder):
                 said.append(o['word'])
         steps.append({'step': s['step'], 'start': round(a, 2), 'end': round(b, 2), 'text': ' '.join(s['lines']), 'must_see': said})
     return {'source': source, 'title_end': 9, 'counter_from': 9.5, 'steps': steps,
-            'scale_checks': plan.get('scale_checks', []), 'may_float': plan.get('may_float', [])}
+            'scale_checks': plan.get('scale_checks', []), 'may_float': plan.get('may_float', []),
+            'subject': next((o['word'] for o in plan.get('on_screen', []) if plan.get('subject')
+                             and (visible_base(o['word']) or o['word'].lower()) == (visible_base(str(plan['subject']).lower()) or str(plan['subject']).lower())), None),
+            'subject_min_px': plan.get('subject_min_px', 300),
+            'closeup_steps': [s['from_step'] for s in plan.get('shots', []) if s.get('type') == 'closeup']}
 
 
 def main():

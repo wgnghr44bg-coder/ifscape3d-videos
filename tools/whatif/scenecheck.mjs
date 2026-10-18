@@ -6,11 +6,13 @@
 //   - nothing big right in front of the camera during the title (0–9 s)
 //   - the counter (#hud) is fully on screen from 9.5 s
 //   - plan.json "scale_checks" (e.g. the cart comes up to your thigh) match the real sizes in the scene
+//   - the main subject (plan.json "subject") is big in frame wherever the voice names it (not in close-ups)
+//   - every text block (#hud, #title, .caption) has enough contrast with the picture behind it (needs WHATIF.renderer)
 // Writes <folder>/check/step-NN.jpg, <folder>/CHECK.jpg (all steps on one sheet) and <folder>/CHECK.md.
 // Exit code 1 when something FAILs.
 //
 // The scene must have (see tools/whatif/README.md):
-//   window.renderAt(t), window.ready = true, window.WHATIF = { THREE, scene, camera },
+//   window.renderAt(t), window.ready = true, window.WHATIF = { THREE, scene, camera, renderer },
 //   obj.userData.tag = '<on_screen word>' on every object the voice names, and the counter in <div id="hud">.
 import http from 'http';
 import fs from 'fs';
@@ -57,14 +59,38 @@ page.on('pageerror', e => fail('scene', `JavaScript error: ${e.message}`));
 await page.goto(`http://localhost:${server.address().port}/${REL}/scene.html`);
 try { await page.waitForFunction(() => window.ready === true, null, { timeout: 300000 }); }
 catch { fail('scene', 'window.ready never became true'); }
-const hooks = await page.evaluate(() => ({ renderAt: typeof window.renderAt === 'function',
+const hooks = await page.evaluate(() => ({ renderAt: typeof window.renderAt === 'function', renderer: !!(window.WHATIF && window.WHATIF.renderer),
   whatif: !!(window.WHATIF && window.WHATIF.scene && window.WHATIF.camera && window.WHATIF.THREE) }));
 if (!hooks.renderAt) fail('scene', 'scene.html needs window.renderAt(t)');
-if (!hooks.whatif) fail('scene', 'scene.html needs: window.WHATIF = { THREE, scene, camera };  (one line after the scene is built)');
+if (!hooks.renderer) fail('scene', 'add the renderer to the hook so text contrast can be measured: window.WHATIF = { THREE, scene, camera, renderer };');
+if (!hooks.whatif) fail('scene', 'scene.html needs: window.WHATIF = { THREE, scene, camera, renderer };  (one line after the scene is built)');
 
 // ---- everything below runs inside the page
 function measure({ words, scale, mayFloat, t, titleEnd, counterFrom }) {
-  const { THREE, scene, camera } = window.WHATIF;
+  const { THREE, scene, camera, renderer } = window.WHATIF;
+  // text contrast: render and read the pixels behind every visible text block in the same task
+  const contrast = [];
+  if (renderer) {
+    window.renderAt(t);
+    const gl = renderer.getContext(), cv = renderer.domElement, k = cv.width / cv.clientWidth;
+    const lum = ([r, g, b]) => { const f = v => { v /= 255; return v <= .03928 ? v / 12.92 : ((v + .055) / 1.055) ** 2.4; };
+      return .2126 * f(r) + .7152 * f(g) + .0722 * f(b); };
+    for (const el of document.querySelectorAll('#hud, #title, #caption, #captions, .caption, [data-text]')) {
+      const cs = getComputedStyle(el), r = el.getBoundingClientRect();
+      if (cs.display === 'none' || cs.visibility === 'hidden' || +cs.opacity < .5 || !el.textContent.trim() || r.width < 2) continue;
+      const w = Math.max(1, Math.round(r.width * k)), h = Math.max(1, Math.round(r.height * k));
+      const x = Math.max(0, Math.round(r.left * k)), y = Math.max(0, cv.height - Math.round(r.bottom * k));
+      const px = new Uint8Array(w * h * 4); gl.readPixels(x, y, w, h, gl.RGBA, gl.UNSIGNED_BYTE, px);
+      let sum = 0, n = 0; for (let i = 0; i < px.length; i += 16) { sum += lum([px[i], px[i + 1], px[i + 2]]); n++; }
+      let bg = sum / Math.max(1, n);
+      const band = (cs.backgroundColor.match(/[\d.]+/g) || []).map(Number);    // a (semi-transparent) band behind the text counts
+      if (band.length >= 3) { const al = band.length > 3 ? band[3] : 1; bg = al * lum(band.slice(0, 3)) + (1 - al) * bg; }
+      const fg = lum((cs.color.match(/\d+(\.\d+)?/g) || [255, 255, 255]).slice(0, 3).map(Number));
+      const ratio = (Math.max(bg, fg) + .05) / (Math.min(bg, fg) + .05);
+      contrast.push({ id: el.id || el.className || 'text', text: el.textContent.trim().slice(0, 30), ratio,
+        shadow: cs.textShadow && cs.textShadow !== 'none', weight: +cs.fontWeight || 400 });
+    }
+  }
   scene.updateMatrixWorld(true); camera.updateMatrixWorld(); camera.updateProjectionMatrix();
   const norm = w => { w = String(w).toLowerCase().trim(); return w.endsWith('ss') ? w : w.replace(/(ch|sh|s|x)es$/, '$1').replace(/s$/, ''); };
   const shown = o => { for (let p = o; p; p = p.parent) if (p.visible === false) return false; return true; };
@@ -147,9 +173,11 @@ function measure({ words, scale, mayFloat, t, titleEnd, counterFrom }) {
         shown: cs.display !== 'none' && cs.visibility !== 'hidden' && +cs.opacity > .5 };
     }
   }
+  out.contrast = contrast;
   return out;
 }
 
+const closeupSteps = new Set(times.closeup_steps || []);
 const shotDir = path.join(FOLDER, 'check'); fs.mkdirSync(shotDir, { recursive: true });
 const files = [];
 if (hooks.renderAt && hooks.whatif) {
@@ -176,6 +204,17 @@ if (hooks.renderAt && hooks.whatif) {
       else notes.push(`${s.sc.says} ✓ ${(s.ratio * 100).toFixed(0)}%`);
     }
     if (m.title !== null && m.title > .15) fail(where, `during the title ${Math.round(m.title * 100)} % of the middle of the picture is something closer than 3 m – move the camera`);
+    for (const c of m.contrast) {
+      const need = c.shadow ? 2.2 : 3;          // a dark text shadow/outline helps, but not on everything
+      if (c.ratio < need) fail(where, `text "${c.text}" (${c.id}) is hard to read: contrast ${c.ratio.toFixed(1)} : 1 with what is behind it, needs ${need} : 1 – darker outline/shadow, a dark band behind it, or another colour`);
+      else if (c.weight < 500) warn(where, `text "${c.text}" (${c.id}) is thin (font-weight ${c.weight}); bolder letters read better on a phone`);
+    }
+    const subj = times.subject;
+    if (subj && m.objects[subj] && !m.objects[subj].missing && st.must_see.includes(subj) && !closeupSteps.has(st.step)) {
+      const o = m.objects[subj];
+      if (o.heightPx < times.subject_min_px)
+        fail(where, `the main subject "${subj}" is only ${Math.round(o.heightPx)} px high (needs ≥ ${times.subject_min_px} of 1280): the viewer must SEE the story – bring the camera closer or lower`);
+    }
     if (m.hud && m.hud.missing) fail(where, 'no counter: put it in <div id="hud">');
     else if (m.hud && !(m.hud.inside && m.hud.shown)) fail(where, 'the counter (#hud) is not fully on screen');
     // labelled still
