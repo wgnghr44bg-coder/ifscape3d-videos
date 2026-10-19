@@ -1,0 +1,278 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<!-- Gemaakt door tools/whatif/autoscene.py uit plan.json + scene.json. Niet met de hand aanpassen: pas scene.json aan
+     en draai autoscene.py build opnieuw. -->
+<style>
+@font-face { font-family: PF; font-weight: 600; font-style: normal; src: url(../node_modules/@fontsource/playfair-display/files/playfair-display-latin-600-normal.woff2); }
+@font-face { font-family: PF; font-weight: 600; font-style: italic; src: url(../node_modules/@fontsource/playfair-display/files/playfair-display-latin-600-italic.woff2); }
+@font-face { font-family: CG; font-weight: 600; src: url(../node_modules/@fontsource/cormorant-garamond/files/cormorant-garamond-latin-600-normal.woff2); }
+html, body { margin: 0; width: 720px; height: 1280px; overflow: hidden; background: #000; }
+canvas { display: block; }
+#hud { position: absolute; left: 44px; top: 148px; color: #f7f2e8; opacity: 0; display: inline-block; font-weight: 700;
+      background: rgba(16,13,10,.62); border-radius: 16px; padding: 14px 24px 18px;
+      box-shadow: 0 4px 22px rgba(0,0,0,.45); text-shadow: 0 2px 10px rgba(0,0,0,.75), 0 0 3px rgba(0,0,0,.6); }
+#lab, #lab2 { font: 700 21px CG, serif; letter-spacing: 5px; opacity: .95; }
+#lab2 { margin-top: 20px; }
+#num { font: 700 62px PF, serif; line-height: 1.06; }
+#num2 { font: 700 47px PF, serif; line-height: 1.1; }
+#title { position: absolute; left: 40px; right: 40px; top: 430px; text-align: center; color: #f8f4ec;
+       font: 700 60px PF, serif; line-height: 1.16; padding: 18px 22px 22px; border-radius: 18px;
+       background: rgba(16,13,10,.56); box-shadow: 0 6px 26px rgba(0,0,0,.4);
+       text-shadow: 0 3px 18px rgba(0,0,0,.7), 0 0 4px rgba(0,0,0,.5); }
+#cap { position: absolute; left: 36px; right: 36px; top: 1000px; text-align: center; color: #f8f4ec; opacity: 0;
+     font: 700 italic 40px PF, serif; padding: 12px 18px; border-radius: 16px;
+     background: rgba(16,13,10,.58); text-shadow: 0 3px 14px rgba(0,0,0,.75); }
+</style>
+</head>
+<body>
+<div id="hud"><div id="lab"></div><div id="num"></div><div id="lab2"></div><div id="num2"></div></div>
+<div id="title"></div>
+<div id="cap" class="caption"></div>
+<script type="importmap">{ "imports": { "three": "../node_modules/three/build/three.module.js", "three/addons/": "../node_modules/three/examples/jsm/" } }</script>
+<script type="module">
+import * as THREE from 'three';
+import { clone as skClone } from 'three/addons/utils/SkeletonUtils.js';
+import { loadModel } from '../assets/load.js';
+
+const CFG = /*CFG*/null;
+const C = CFG.counter, W = 720, H = 1280;
+const clamp = (x, a = 0, b = 1) => Math.min(b, Math.max(a, x));
+const smooth = (a, b, x) => { const t = clamp((x - a) / (b - a)); return t * t * (3 - 2 * t); };
+const lerp = (a, b, t) => a + (b - a) * t;
+const $ = id => document.getElementById(id);
+
+const renderer = new THREE.WebGLRenderer({ antialias: true, preserveDrawingBuffer: true });
+renderer.setSize(W, H); renderer.setPixelRatio(1);
+renderer.outputColorSpace = THREE.SRGBColorSpace;
+renderer.shadowMap.enabled = true; renderer.shadowMap.type = THREE.PCFShadowMap;
+document.body.prepend(renderer.domElement);
+const scene = new THREE.Scene();
+const camera = new THREE.PerspectiveCamera(60, W / H, .2, 8000);
+
+// ---------------------------------------------------------------- de plek (elk geladen model onthoudt zijn bestand)
+const lm = async (url, o) => { const m = await loadModel(url, o); m.root.userData.src = url; return m; };
+const env = await import(`../environments/${CFG.env}.js`);
+const info = await env.build({ THREE, scene, loadModel: lm, base: '../assets/kenney' });
+const CAMS = Object.values(info.cameras);
+const addTag = (o, w) => { o.userData.tag = o.userData.tag ? o.userData.tag + ',' + w : w; };
+for (const tg of CFG.tags) {
+  let n = 0;
+  for (const o of scene.children) if (o.userData.src && o.userData.src.includes(tg.match)) { addTag(o, tg.word); n++; }
+  if (!n) console.warn('tag niet gevonden:', tg.word, tg.match);
+}
+
+// hoogte van het oppervlak van de PLEK onder een punt (alleen de plek zelf, niet het onderwerp of het water)
+const ray = new THREE.Raycaster();
+scene.updateMatrixWorld(true);
+const ENV = scene.children.slice();
+// "grond" = grote, platte dingen (vlakte, kade, plein, zand), niet daken, bomen of lantaarns
+const GROUND = [];
+for (const o of ENV) o.traverse(m => {
+  if (!m.isMesh) return;
+  const b = new THREE.Box3().setFromObject(m), z = b.getSize(new THREE.Vector3());
+  if (Math.max(z.x, z.z) > 25 && z.y < 12) GROUND.push(m);
+});
+function surfY(x, z) {
+  ray.set(new THREE.Vector3(x, 800, z), new THREE.Vector3(0, -1, 0));
+  const hit = ray.intersectObjects(GROUND, false).find(h => h.object.visible);
+  return hit ? hit.point.y : (info.groundY || 0);
+}
+// plek van het onderwerp: CFG.at, anders het dichtstbijzijnde stuk LAND bij waar camera 1 naar kijkt (niet in het water)
+// open plek: op land én minstens 6 m vrij van huizen/bomen/kramen (anders staan die tussen camera en onderwerp)
+const OBST = [];
+for (const o of ENV) o.traverse(m => {
+  if (!m.isMesh || GROUND.includes(m)) return;
+  const b = new THREE.Box3().setFromObject(m); if (b.getSize(new THREE.Vector3()).y > .8 && b.min.y < 30) OBST.push(b);
+});
+const clearance = (x, z) => Math.min(60, ...OBST.map(b => Math.hypot(Math.max(b.min.x - x, 0, x - b.max.x), Math.max(b.min.z - z, 0, z - b.max.z))));
+function landNear(x, z) {
+  const g = (info.groundY || 0) - .05; let best = null, bestC = -1;
+  for (let i = 0; i < 1500; i++) {
+    const r = .8 * Math.sqrt(i), a = i * 2.39996, px = x + Math.cos(a) * r, pz = z + Math.sin(a) * r;
+    if (surfY(px, pz) < g) continue;
+    const c = clearance(px, pz);
+    if (c >= 6) return [px, pz];
+    if (c > bestC) { bestC = c; best = [px, pz]; }
+  }
+  return best || [x, z];
+}
+const at = CFG.at || landNear(CAMS[0].look[0], CAMS[0].look[2]);
+const F = new THREE.Vector3(at[0], surfY(at[0], at[1]), at[1]);
+
+// ---------------------------------------------------------------- teller = wat je ziet
+const val = (t, a, b) => lerp(a, b, C.jump ? smooth(C.t0, C.t0 + 3, t) : clamp((t - C.t0) / (C.t1 - C.t0)));
+const V = t => val(t, C.from, C.to);
+const toM = C.unit === 'cm' ? .01 : 1;
+const DEC = C.decimals != null ? C.decimals : (['m', 'cm'].includes(C.unit) && Math.abs(C.to - C.from) < 50 ? 1 : 0);
+const fmt = (x, unit, dec = 0) => x.toFixed(dec) + (unit ? ' ' + unit : '');
+
+// ---------------------------------------------------------------- het onderwerp
+const S = CFG.subject, fx = CFG.effect;
+let subj = null, copies = [], land = [], water = null, people = [], SPREAD = 0;
+if (S && (fx === 'grow')) {
+  subj = await lm('../assets/' + S.model, { height: 1, anim: S.anim });
+  subj.root.position.copy(F); addTag(subj.root, S.word); scene.add(subj.root);
+  subj.root.rotation.y = Math.atan2(CAMS[0].pos[0] - F.x, CAMS[0].pos[2] - F.z);   // kijkt naar camera 1
+}
+if (S && (fx === 'multiply' || fx === 'rain')) {
+  const base = await lm('../assets/' + S.model, { height: S.height || 1 });
+  const N = Math.round(Math.max(C.from, C.to));
+  const g = (info.groundY || 0) - .05; let j = 0;
+  for (let i = 0; i < N; i++) {
+    // volgende plek op de spiraal die op land ligt en niet in een huis/boom (max 20x zoveel plekken proberen)
+    let x, z;
+    for (; j < N * 20; j++) {
+      const r = CFG.spacing * Math.sqrt(j) * .9, a = j * 2.39996;
+      x = F.x + Math.cos(a) * r; z = F.z + Math.sin(a) * r;
+      if (surfY(x, z) >= g && clearance(x, z) >= .5) { j++; break; }
+    }
+    const a = i * 2.39996;
+    SPREAD = Math.max(SPREAD, Math.hypot(x - F.x, z - F.z));
+    const o = skClone(base.root); o.userData.gy = surfY(x, z); o.position.set(x, o.userData.gy, z); o.rotation.y = a * 3.1;
+    addTag(o, S.word); o.visible = false; scene.add(o); copies.push(o);
+    // wanneer kopie i "erbij komt": eerste t waarop de teller > i
+    let lo = 0, hi = CFG.T_END; for (let k = 0; k < 30; k++) { const m = (lo + hi) / 2; if (V(m) > i + .5) hi = m; else lo = m; }
+    land.push(V(0) > i + .5 ? -1 : hi);
+  }
+}
+if (fx === 'water') {
+  water = new THREE.Mesh(new THREE.BoxGeometry(4000, 1, 4000),
+    new THREE.MeshLambertMaterial({ color: 0x2f7f9c, transparent: true, opacity: .88, flatShading: true }));
+  water.userData.tag = CFG.water_word; water.receiveShadow = true; scene.add(water);
+}
+if (CFG.people) {
+  const kinds = ['character-male-a', 'character-female-b', 'character-male-c', 'character-female-d', 'character-male-e', 'character-female-f'];
+  for (let i = 0; i < 6; i++) {
+    const p = await lm(`../assets/kenney/mini-characters/${kinds[i]}.glb`, { height: 1.7, anim: 'walk' });
+    p.off = (i % 2 ? 1 : -1) * (.55 + .12 * i); p.r0 = 2.5 + (i % 3) * .8;                         // aan de kant van camera 1, in beeld
+    if (i === 0 || i === 1) addTag(p.root, CFG.people);
+    scene.add(p.root); people.push(p);
+  }
+}
+
+// grootte waar de camera op richt
+const subjH = t => fx === 'grow' ? V(t) * toM : (S ? (S.height || 1) : 2);
+function frameSize(t) {
+  if (fx === 'grow') return Math.max(1.6, subjH(t));
+  if (fx === 'multiply' || fx === 'rain') return Math.max((S.height || 1) * 1.5, 2 * SPREAD * Math.sqrt(clamp(V(t) / Math.max(1, copies.length), .02, 1)) + 2);
+  return 10;
+}
+
+function pose(t) {
+  if (subj) {
+    subj.root.scale.setScalar(subjH(t));
+    if (subj.setTime) subj.setTime(t);
+  }
+  for (let i = 0; i < copies.length; i++) {
+    const tl = land[i], o = copies[i];
+    if (fx === 'multiply') { o.visible = t >= tl; o.scale.setScalar(clamp((t - tl) / .4, .05, 1)); }
+    else {                                                             // rain: valt de laatste 1,2 s voor het landen
+      o.visible = t >= tl - 1.2;
+      const g = clamp((tl - t) / 1.2); o.position.y = o.userData.gy + 30 * g * g;
+    }
+  }
+  if (water) { const top = V(t) * toM + .02; water.scale.y = top + 2; water.position.y = (top - 2) / 2; }
+  for (const p of people) {                                           // na het begin van de teller lopen ze weg
+    const d = Math.min(p.r0 + Math.max(0, t - C.t0) * 1.1, p.r0 + .45 * frameSize(t));   // blijven in beeld
+    const a = AZ[0] + p.off; p.root.rotation.y = a;                                       // lopen van het onderwerp weg
+    p.root.position.set(F.x + Math.sin(a) * d, 0, F.z + Math.cos(a) * d);
+    p.root.position.y = surfY(p.root.position.x, p.root.position.z);
+    if (p.setTime) p.setTime(t);
+  }
+}
+
+// ---------------------------------------------------------------- camera: 3 shots, steeds langzaam naar binnen
+const SHOT = [{ el: .10, k: 2.0, min: 6 }, { el: .30, k: 1.8, min: 9 }, { el: .85, k: 2.6, min: 14 }];
+function cameraAt(t) {
+  const k = t < CFG.cuts[0] ? 0 : t < CFG.cuts[1] ? 1 : 2;
+  const a = [0, ...CFG.cuts][k], b = [...CFG.cuts, CFG.T_END][k], p = clamp((t - a) / (b - a));
+  const cam = CAMS[k] || CAMS[0];
+  if (fx === 'water') {
+    const pos = cam.pos.map((v, i) => lerp(v, cam.look[i], .12 * p));
+    pos[1] = Math.max(pos[1], V(t) * toM + 1.6);
+    return { pos, look: [cam.look[0], Math.max(cam.look[1], V(t) * toM), cam.look[2]] };
+  }
+  const s = frameSize(t), sh = SHOT[k], az = AZ[k];
+  const D = Math.max(sh.min, sh.k * s) * (1 - .12 * p);
+  return { pos: camPos(t, k, az, D), look: target(t) };
+}
+const EL = [SHOT[0].el, SHOT[1].el, SHOT[2].el];
+const target = t => { const s = frameSize(t); return [F.x, F.y + (fx === 'grow' ? .5 * s : .3 * (S.height || 1)), F.z]; };
+function camPos(t, k, az, D) {
+  const tg = target(t), el = EL[k];
+  return [tg[0] + Math.sin(az) * D * Math.cos(el), Math.max(F.y + 1.6, tg[1] + D * Math.sin(el)), tg[2] + Math.cos(az) * D * Math.cos(el)];
+}
+// per shot één vaste kijkrichting, zo dicht mogelijk bij de camera van de plek, maar zonder muur/huis tussen camera en onderwerp
+const AZ = [];
+if (fx !== 'water') {
+  const edges = [0, ...CFG.cuts, CFG.T_END];
+  for (let k = 0; k < 3; k++) {
+    const cam = CAMS[k] || CAMS[0];
+    // shot 1: richting van camera 1 van de plek; shot 2 en 3: vanaf de voorkant van het onderwerp (dat kijkt naar camera 1)
+    const az0 = k === 0 ? Math.atan2(cam.pos[0] - cam.look[0], cam.pos[2] - cam.look[2]) : AZ[0] + (k === 1 ? 1.05 : .35);
+    let best = az0, bestScore = -1, bestEl = EL[k];
+    for (let j = 0; j < 36 * (k === 2 ? 4 : 1); j++) {
+      if (k === 2) EL[2] = [.85, 1.0, 1.15, 1.3][Math.floor(j / 36)];     // vogelvlucht: zo laag mogelijk, steiler als het moet
+      const jj = j % 36, az = az0 + (jj % 2 ? 1 : -1) * Math.ceil(jj / 2) * Math.PI / 18;
+      // shot 2 moet duidelijk anders staan dan shot 1 (anders ziet niemand de cut), maar wel van voren
+      const dA = Math.abs(Math.atan2(Math.sin(az - AZ[0]), Math.cos(az - AZ[0])));
+      if (k === 1 && (dA < .95 || dA > 2.7)) continue;
+      let clear = 0;
+      for (const f of [.05, .5, .95]) {
+        const t = lerp(edges[k], edges[k + 1], f), D = Math.max(SHOT[k].min, SHOT[k].k * frameSize(t)) * (1 - .12 * f);
+        const to = new THREE.Vector3(...camPos(t, k, az, D)), h = fx === 'grow' ? frameSize(t) : (S.height || 1), w = fx === 'grow' ? .35 * h : .4 * frameSize(t);
+        // dezelfde 9 punten als scenecheck.mjs: het hele onderwerp moet vrij zijn, niet alleen het midden
+        for (const f of [[.5, .5, .5], [.25, .3, .25], [.75, .3, .25], [.25, .3, .75], [.75, .3, .75], [.25, .75, .25], [.75, .75, .25], [.25, .75, .75], [.75, .75, .75]]) {
+          const from = new THREE.Vector3(F.x - w + 2 * w * f[0], F.y + f[1] * h, F.z - w + 2 * w * f[2]), dir = to.clone().sub(from), len = dir.length();
+          ray.set(from, dir.normalize()); ray.far = len;
+          if (!ray.intersectObjects(ENV, true).some(x => x.object.isMesh && x.distance > .3)) clear++;
+        }
+        // onderkant van het beeld: geen dak/muur vlak voor de lens (straal 25° onder de kijkrichting)
+        const tg = new THREE.Vector3(...target(t)), fwd = tg.clone().sub(to).normalize();
+        const side = new THREE.Vector3().crossVectors(fwd, new THREE.Vector3(0, 1, 0)).normalize();
+        for (const ang of [.2, .42]) {
+          ray.set(to, fwd.clone().applyAxisAngle(side, -ang)); ray.far = .6 * to.distanceTo(tg);
+          const hit = ray.intersectObjects(ENV, true).find(x => x.object.isMesh && !GROUND.includes(x.object));
+          if (hit) clear -= 4;
+        }
+      }
+      ray.far = Infinity;
+      if (clear > bestScore) { bestScore = clear; best = az; bestEl = EL[k]; }
+      if (clear === 27) break;
+    }
+    AZ.push(best); EL[k] = bestEl;
+  }
+}
+
+// ---------------------------------------------------------------- tekst
+$('title').textContent = CFG.title;
+$('lab').textContent = C.label;
+$('lab2').textContent = C.second_label || '';
+function hud(t) {
+  $('num').textContent = fmt(V(t), C.unit, DEC);
+  if (C.second_from != null) $('num2').textContent = fmt(val(t, C.second_from, C.second_to), C.second_unit);
+  $('hud').style.opacity = smooth(CFG.hudIn, CFG.hudIn + .6, t);
+  $('title').style.opacity = 1 - smooth(CFG.titleOut - 1.1, CFG.titleOut, t);
+  let ct = '', ca = 0;
+  for (const [a, b, s] of CFG.captions) if (t >= a - .1 && t <= b + .1) { ct = s; ca = smooth(a, a + .6, t) * (1 - smooth(b - .6, b, t)); }
+  $('cap').textContent = ct; $('cap').style.opacity = ca;
+}
+
+window.renderAt = function (t) {
+  pose(t);
+  const A = cameraAt(t);
+  camera.position.set(...A.pos); camera.lookAt(...A.look);
+  if (info.update) info.update(t);
+  hud(t);
+  scene.updateMatrixWorld(true);
+  renderer.render(scene, camera);
+};
+window.WHATIF = { THREE, scene, camera, renderer };
+window.T_END = CFG.T_END;
+window.renderAt(0);
+document.fonts.ready.then(() => { window.ready = true; });
+</script>
+</body>
+</html>

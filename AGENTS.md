@@ -3,6 +3,59 @@
 These are the owner's standing rules (PART A). Read them before starting any new "What if".
 The template to copy is `2026-10-04-gravity-doubled/` — read its `GRAVITY-VIDEO.md` first.
 
+## 🌙 NACHTRUN — automatisch, elke nacht (eigenaar 19 okt 2026: "ja doe de nacht maar")
+
+Staat er "NACHTRUN" in je opdracht, dan maak je ZELF één complete Short en zet je hem op het schema. De eigenaar slaapt:
+stel NOOIT een vraag en wacht nergens op. Hier gelden GEEN STOP-momenten (de FIRST RULE en PART A punt 11 "STOP en laat zien"
+gelden alleen als de eigenaar zelf in de chat zit). Alle controles gelden wél. Lukt iets echt niet na 3 pogingen: stop, schrijf
+"NIET ingepland: <reden>" in het rapport, commit wat er is.
+Je bouwt de scène NIET zelf in three.js: het vaste sjabloon `tools/whatif/autoscene.py` doet dat (zie de uitleg bovenin dat bestand).
+
+Paden op de pc: deze repo = de map waarin je start; vox-lux = `..\vox-lux-alteraqon`;
+Chatterbox-python = `C:\Users\rane\Documents\Standaardproject\whatif\stem-env\Scripts\python.exe`; video's = `C:\Users\rane\Videos\alteraqon\ifscape3d\`.
+
+0. **Eenmalig** (alleen als `node_modules/three` of `node_modules/@fontsource` ontbreekt):
+   `npm install three@0.170.0 playwright @fontsource/playfair-display @fontsource/cormorant-garamond` en `npx playwright install chromium`.
+1. `git pull origin main`. **Onderwerp**: zelf kiezen, spannend en extreem ("Gripping first", fantasy mag), nooit een titel die al
+   in `*/upload.json`, `*/plan.json` (question) of `..\vox-lux-alteraqon\alteraqon\*\upload.json` staat. Het onderwerp MOET passen bij
+   één van de 4 effecten van het sjabloon:
+   - `grow` – iets/iemand groeit of krimpt (teller = hoogte in m of cm) – bijv. een reus, een kat zo groot als een huis;
+   - `water` – water stijgt over een plek (teller = waterhoogte in m) – overstroming, zee stijgt, gletsjers smelten;
+   - `multiply` – iets vermenigvuldigt zich (teller = aantal, max 400) – konijnen, bomen, robots;
+   - `rain` – iets valt uit de lucht en stapelt op (teller = aantal, max 400) – sneeuwpoppen, pompoenen, meteorieten.
+   Plekken: `python tools/whatif/whatif.py envs`; modellen: `assets/CATALOG.md`.
+2. `python tools/whatif/whatif.py new <yyyy-mm-dd>-<slug> --question "What if …?" --env <plek>` en vul `plan.json`
+   (zoals de FIRST RULE), met deze extra regels voor het sjabloon:
+   - `on_screen` alleen: het onderwerp (bijv. "you", "rabbits"), bij water het waterwoord ("sea", "water"), en dingen van de plek
+     waarvan de modelnaam in `python tools/whatif/autoscene.py models <plek>` staat (die komen in `tags`). Noem in het script
+     NIETS anders dat zichtbaar moet zijn.
+   - `counter_matches`: grow → `{"object": "<onderwerp>", "measure": "height", "unit": "m", "hud_number": 0}`;
+     water → `{"object": "<waterwoord>", "measure": "top", "unit": "m", "hud_number": 0, "from_ground": true}`;
+     multiply/rain → `{"none": "aantal is niet te meten"}`. `subject` = het onderwerp-woord (niet bij water).
+   - Geen `scale_checks`, geen close-ups in `shots` (het sjabloon heeft 3 shots: ooghoogte → ander standpunt vanaf stap 7 → hoog vanaf stap 9).
+   - `whatif.py check` tot ALL CHECKS PASSED; daarna `@physics-review` op `STORYBOARD.md`, echte problemen oplossen, opnieuw check.
+3. `scene.json` in de map (voorbeeld en alle velden: bovenin `tools/whatif/autoscene.py`). Het model van het onderwerp staat onder
+   `assets/` (bijv. `kenney/mini-characters/character-female-b.glb`, `kenney/nature-kit/...`, `nasa/...`); controleer dat het bestand bestaat.
+4. **Stem** (Chatterbox, gratis): kopieer `script.txt` naar `script-cues.txt` en start op de ACHTERGROND:
+   `Start-Process <Chatterbox-python> -ArgumentList '..\vox-lux-alteraqon\alteraqon\tools\make_voice_local.py','<map>','..\stem-cache','--pause-ms','500','--long-pause-ms','1000','--sentence-pause-ms','300' -RedirectStandardOutput <map>\voice.log -WindowStyle Hidden`
+   en kijk elke minuut of `voice-times.tsv` er is. Daarna opnieuw `whatif.py check` (de tijden komen nu uit de stem).
+5. `python tools/whatif/autoscene.py build <map>` (een FOUT daar = plan.json/scene.json aanpassen), dan
+   `node tools/whatif/scenecheck.mjs <map>` tot **ALL PICTURE CHECKS PASSED** (oplossen via scene.json: `at` = andere plek op land,
+   `tags`; of via plan.json: een woord dat niet te zien is uit het script halen). Max 5 rondes.
+   Laat `@beeldcontrole` `CHECK.jpg` bekijken: "Is het onderwerp in elk beeld duidelijk en groot? Is het spannend? JA/NEE + waarom". NEE: verbeter en opnieuw.
+6. **Render** (op de ACHTERGROND, duurt minuten): `node tools/whatif/render.mjs <map> video 4 --gpu`
+   (geeft hij fouten of zwarte beelden: zonder `--gpu`). Dan
+   `python tools/whatif/finish.py <map> C:\Users\rane\Videos\alteraqon\ifscape3d\<slug>.mp4` – moet eindigen op "Klaar en gecontroleerd".
+7. `upload.json` = `upload.draft.json` + `"tags"` (4 stuks: "what if", onderwerp, langere zoekterm, "3d animation") +
+   `"tiktok"` (1–2 prikkelende zinnen met emoji, vraag met 👇, #whatif #fyp + 1–3 onderwerp-hashtags). Beschrijving: eerste regel
+   een korte prikkelende zin + vraag met 👇, daarna de bronnen en credits zoals in de draft.
+8. **Inplannen** alleen als ALLES groen is (check, physics-review zonder open echte fouten, scenecheck, @beeldcontrole JA, finish.py):
+   `python ..\vox-lux-alteraqon\alteraqon\tools\upload_short.py <map> C:\Users\rane\Videos\alteraqon\ifscape3d\<slug>.mp4 --schedule`
+   (kiest zelf kanaal @ifscape3d en het schema uit `channel.json` / `schedule.json`). Anders: "NIET ingepland: <reden>".
+9. `PROGRESS.md` kort bijwerken, `git add <map>` (geen mp4/check/stills: staan in .gitignore), commit `"<slug>: nachtrun-short"`, `git push origin main`.
+10. Rapport ONDERAAN in het rapportbestand uit je opdracht (max ±12 regels): `=== IfScape3D: <titel> ===`, ingepland op
+    <datum/tijd NL> + YouTube-link (of NIET ingepland + reden), kijklink `http://<tailscale-ip>:8765/ifscape3d/<slug>.mp4`, de TikTok-tekst.
+
 ## ⚠️ FIRST RULE — when the owner says "What if …"
 
 Whenever the owner gives you a "What if …" (in any words, also in Dutch: "wat als …"), do exactly this, nothing else first:

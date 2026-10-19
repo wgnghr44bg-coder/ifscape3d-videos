@@ -2,6 +2,7 @@
 
 Gebruik:  python tools/whatif/finish.py <map> <uit.mp4>
 Leest <map>/render.mp4 (node tools/whatif/render.mjs <map> video) en <map>/voice.mp3.
+De stem start op 0,5 s (VO_OFFSET in whatif.py: scènetijden = voice-times.tsv + 0,5 s).
 Geluid: zachte omgevingsruis (geen muziek, AGENTS.md punt 8) die na de stem bijna stil wordt, stem erbovenop,
 eindmix -14 LUFS / piek -1 dB. Heeft de map een eigen sfx-bed.wav (make_audio.py), dan wordt dat gebruikt.
 Controleert daarna: formaat, geluid, duur 60-95 s, geen decodeerfouten.
@@ -32,8 +33,8 @@ else:   # bruine ruis als wind/stad, onder de stem; na de stem langzaam naar bij
             f"afade=t=out:st={max(V - 2, 1):.2f}:d=4,apad[bed]")
 out.parent.mkdir(parents=True, exist_ok=True)
 fc = (f"[0:v]scale=1080:1920:flags=lanczos,setsar=1[v];"
-      f"[1:a]aresample=44100,apad[vo];{bedf};"
-      f"[bed][vo]sidechaincompress=threshold=0.05:ratio=6:attack=20:release=400[duck];"
+      f"[1:a]aresample=44100,adelay=500:all=1,apad,asplit=2[vo][vk];{bedf};"
+      f"[bed][vk]sidechaincompress=threshold=0.05:ratio=6:attack=20:release=400[duck];"
       f"[duck][vo]amix=inputs=2:normalize=0,atrim=0:{D:.2f},loudnorm=I=-14:TP=-1:LRA=11[a]")
 subprocess.run(["ffmpeg", "-v", "error", "-y", "-i", str(render), "-i", str(voice), *ins, "-filter_complex", fc,
                 "-map", "[v]", "-map", "[a]", "-c:v", "libx264", "-preset", "slow", "-crf", "18", "-pix_fmt", "yuv420p",
@@ -50,7 +51,7 @@ if (v["width"], v["height"]) != (1080, 1920): probs.append(f"formaat {v['width']
 if "audio" not in kinds: probs.append("geen geluid")
 if not 60 <= dur(out) <= 95: probs.append(f"duur {dur(out):.1f} s")
 if errs.strip(): probs.append("decodeerfouten")
-if V > D: probs.append(f"stem ({V:.1f} s) langer dan beeld ({D:.1f} s)")
+if V + 0.5 > D: probs.append(f"stem ({V:.1f} s) langer dan beeld ({D:.1f} s)")
 if probs:
     sys.exit("FOUT: " + ", ".join(probs))
 print(f"Klaar en gecontroleerd: {out} (1080x1920, {dur(out):.1f} s, met geluid)")
