@@ -17,7 +17,9 @@ en <map>/scene.json, het enige wat jij invult:
   "at": [0, 0],              // optioneel: x, z van het onderwerp (standaard: waar camera 1 van de plek naar kijkt)
   "spacing": 1.2,            // optioneel bij multiply/rain: afstand tussen kopieën (m)
   "people": "people",        // optioneel: 6 kleine mensen rond het onderwerp die weglopen; het woord voor de stem
-  "tags": [{"word": "palms", "match": "palm"}]   // dingen van de plek die de stem noemt: deel van de modelnaam
+  "tags": [{"word": "palms", "match": "palm"}],  // dingen van de plek die de stem noemt: deel van de modelnaam
+  "wide": true,              // alleen bij een hoofdstuk van een LANGE video: liggend 16:9 (render.mjs/finish.py met --wide)
+  "title": "Chapter 1: …"    // optioneel: andere titeltekst in beeld dan de vraag (bijv. hoofdstuktitel)
 }
 De camera richt zich vanzelf: shot 1 ooghoogte, shot 2 (vanaf stap 7) ander standpunt, shot 3 (vanaf stap 9) hoog,
 steeds langzaam naar binnen, en altijd zo dat het onderwerp groot in beeld is. De teller toont precies wat je ziet.
@@ -87,7 +89,7 @@ def build(folder):
         caps.append([round(s['start'] + .3, 2), round(min(s['end'] + 1, s['start'] + 6), 2), text])
     words = lambda w: str(w).lower()
     cfg = {
-        'env': plan['environment'], 'title': plan['question'], 'effect': sc['effect'],
+        'env': plan['environment'], 'title': sc.get('title', plan['question']), 'effect': sc['effect'], 'wide': bool(sc.get('wide')),
         'subject': sc.get('subject'), 'water_word': words(sc.get('water_word', 'water')), 'at': sc.get('at'),
         'spacing': sc.get('spacing', 1.2), 'people': sc.get('people'), 'tags': sc.get('tags', []),
         'counter': {'label': c.get('label', ''), 'from': c['from'], 'to': c['to'], 'unit': unit,

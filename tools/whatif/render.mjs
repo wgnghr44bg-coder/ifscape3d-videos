@@ -2,6 +2,7 @@
 //   node tools/whatif/render.mjs <map> video [workers=2] [--gpu]   -> <map>/render.mp4 (stil, 720x1280, 30 fps)
 //   node tools/whatif/render.mjs <map> stills 5 30 60 [--gpu]       -> <map>/stills/still-<t>.jpg
 //   node tools/whatif/render.mjs <map> part <van> <tot> [--gpu]     -> <map>/render-part.mp4 (stukje om te testen)
+// --wide: liggend 1280x720 (hoofdstuk van een lange video; scene.json "wide": true)
 // Serveert de repo-root (scene.html laadt ../node_modules/three, ../assets, ../environments).
 // --gpu: gebruik de videokaart (pc van de eigenaar, veel sneller); zonder: swiftshader (CPU, werkt overal).
 import http from 'http';
@@ -17,11 +18,11 @@ catch { ({ chromium } = createRequire('/opt/node22/lib/node_modules/')('playwrig
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..', '..');
 const argv = process.argv.slice(2);
-const GPU = argv.includes('--gpu');
-const [dir, mode, ...rest] = argv.filter(a => a !== '--gpu');
+const GPU = argv.includes('--gpu'), WIDE = argv.includes('--wide');
+const [dir, mode, ...rest] = argv.filter(a => a !== '--gpu' && a !== '--wide');
 const VID = path.resolve(dir);
 const PAGE = '/' + path.relative(ROOT, path.join(VID, 'scene.html')).split(path.sep).join('/');
-const FPS = 30, W = 720, H = 1280;
+const FPS = 30, W = WIDE ? 1280 : 720, H = WIDE ? 720 : 1280;   // --wide: liggend (hoofdstuk van een lange video)
 const types = { '.html': 'text/html', '.js': 'text/javascript', '.mjs': 'text/javascript', '.json': 'application/json',
   '.woff2': 'font/woff2', '.glb': 'model/gltf-binary', '.gltf': 'model/gltf+json', '.png': 'image/png', '.jpg': 'image/jpeg' };
 const server = http.createServer((q, r) => {

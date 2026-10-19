@@ -55,7 +55,8 @@ const fail = (where, msg) => fails.push(`FAIL [${where}] ${msg}`);
 const warn = (where, msg) => warns.push(`WARN [${where}] ${msg}`);
 
 const browser = await chromium.launch({ args: ['--use-angle=swiftshader', '--enable-unsafe-swiftshader', '--ignore-gpu-blocklist'] });
-const page = await browser.newPage({ viewport: { width: 720, height: 1280 } });
+const WIDE = /"wide":\s*true/.test(fs.readFileSync(path.join(FOLDER, 'scene.html'), 'utf-8'));   // hoofdstuk van een lange video (16:9)
+const page = await browser.newPage({ viewport: WIDE ? { width: 1280, height: 720 } : { width: 720, height: 1280 } });
 page.on('pageerror', e => fail('scene', `JavaScript error: ${e.message}`));
 await page.goto(`http://localhost:${server.address().port}/${REL}/scene.html`);
 try { await page.waitForFunction(() => window.ready === true, null, { timeout: 300000 }); }

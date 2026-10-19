@@ -24,6 +24,9 @@ Chatterbox-python = `C:\Users\rane\Documents\Standaardproject\whatif\stem-env\Sc
    - `multiply` – iets vermenigvuldigt zich (teller = aantal, max 400) – konijnen, bomen, robots;
    - `rain` – iets valt uit de lucht en stapelt op (teller = aantal, max 400) – sneeuwpoppen, pompoenen, meteorieten.
    Plekken: `python tools/whatif/whatif.py envs`; modellen: `assets/CATALOG.md`.
+   **Afwisselen** (eigenaar: "gevarieerd"): kijk naar de laatste 3 video's (`*/plan.json`, nieuwste eerst): nooit hetzelfde
+   effect, dezelfde plek of hetzelfde soort onderwerp (mens, dier, natuur, ruimte, eten, voorwerp) als de vorige video.
+   Wissel ook af tussen kleine en gigantische getallen, en tussen grappig en spannend.
 2. `python tools/whatif/whatif.py new <yyyy-mm-dd>-<slug> --question "What if …?" --env <plek>` en vul `plan.json`
    (zoals de FIRST RULE), met deze extra regels voor het sjabloon:
    - `on_screen` alleen: het onderwerp (bijv. "you", "rabbits"), bij water het waterwoord ("sea", "water"), en dingen van de plek
@@ -55,6 +58,28 @@ Chatterbox-python = `C:\Users\rane\Documents\Standaardproject\whatif\stem-env\Sc
 9. `PROGRESS.md` kort bijwerken, `git add <map>` (geen mp4/check/stills: staan in .gitignore), commit `"<slug>: nachtrun-short"`, `git push origin main`.
 10. Rapport ONDERAAN in het rapportbestand uit je opdracht (max ±12 regels): `=== IfScape3D: <titel> ===`, ingepland op
     <datum/tijd NL> + YouTube-link (of NIET ingepland + reden), kijklink `http://<tailscale-ip>:8765/ifscape3d/<slug>.mp4`, de TikTok-tekst.
+
+### 🌙 NACHTRUN – LANGE video (opdracht "Maak een lange IfScape3D-video"; eigenaar 19 okt 2026)
+Een lange video (16:9, ±3,5–4,5 min) = **3 hoofdstukken**, elk precies gemaakt als een Short hierboven (stap 1–6), met deze verschillen:
+- Eén overkoepelend onderwerp met 3 oplopende hoofdstukken, elk met een ander effect of een andere plek
+  (bijv. "What if everything kept growing?" → 1: jij groeit (grow, old-town) · 2: de zee stijgt (water, harbor) · 3: konijnen
+  vermenigvuldigen (multiply, forest-camp)). Hoofdstuk 3 = het spectaculairst.
+- Mappen: `<datum>-<slug>-1`, `-2`, `-3` (elk een gewone `whatif.py new`) + de lange map `<datum>-<slug>` met `long.json`:
+  `{"chapters": ["<datum>-<slug>-1", "<datum>-<slug>-2", "<datum>-<slug>-3"], "thumb_chapter": 3, "thumb_at": 0.7}`.
+- In elke `scene.json`: `"wide": true` en `"title"`: hoofdstuk 1 = de grote vraag, 2 en 3 = `"Chapter 2: <korte titel>"` enz.
+- Render per hoofdstuk: `node tools/whatif/render.mjs <hoofdstuk> video 4 --wide --gpu` en
+  `python tools/whatif/finish.py <hoofdstuk> <hoofdstuk>\chapter.mp4 --wide`.
+- Daarna: `python tools/whatif/make_long.py <lange-map> C:\Users\rane\Videos\alteraqon\ifscape3d\<slug>.mp4`
+  (moet eindigen op "Klaar en gecontroleerd"; maakt ook `afbeeldingen/T01.png`).
+- **Thumbnail**: `thumbnail.json` in de lange map, bijv. `{"image": "T01", "small": "WHAT IF EVERYTHING…", "lines": ["KEPT", "GROWING?"], "accent": "gold"}`
+  (2–3 regels, max ±10 tekens, twist niet verklappen), dan `python ..\vox-lux-alteraqon\alteraqon\tools\make_thumbnail.py <lange-map>`.
+  Laat `@beeldcontrole` hem beoordelen ("zou jij klikken? tekst leesbaar?").
+- `upload.json` in de lange map: titel `What if …?` (zonder #shorts), beschrijving 2–4 zinnen + vraag met 👇 + bronnen/credits
+  van alle hoofdstukken + 3 hashtags (geen #shorts), 4 tags, GEEN tiktok.
+- Inplannen (alleen als alles groen): `python ..\vox-lux-alteraqon\alteraqon\tools\upload_short.py <lange-map> <mp4> --long --schedule`.
+  Lukt de thumbnail niet (kanaal niet geverifieerd): meld in het rapport de link `http://<tailscale-ip>:8765/ifscape3d/<slug>-thumbnail.jpg`
+  (kopieer thumbnail.jpg daarheen).
+- Commit de 3 hoofdstukmappen + de lange map (geen mp4's).
 
 ## ⚠️ FIRST RULE — when the owner says "What if …"
 

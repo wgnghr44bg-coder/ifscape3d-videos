@@ -24,6 +24,11 @@ canvas { display: block; }
 #cap { position: absolute; left: 36px; right: 36px; top: 1000px; text-align: center; color: #f8f4ec; opacity: 0;
      font: 700 italic 40px PF, serif; padding: 12px 18px; border-radius: 16px;
      background: rgba(16,13,10,.58); text-shadow: 0 3px 14px rgba(0,0,0,.75); }
+/* liggend 16:9 (lange video, scene.json "wide": true) */
+html.wide, html.wide body { width: 1280px; height: 720px; }
+html.wide #hud { left: 40px; top: 36px; transform: scale(.8); transform-origin: 0 0; }
+html.wide #title { left: 200px; right: 200px; top: 220px; font-size: 54px; }
+html.wide #cap { left: 220px; right: 220px; top: 590px; font-size: 32px; }
 </style>
 </head>
 <body>
@@ -37,7 +42,8 @@ import { clone as skClone } from 'three/addons/utils/SkeletonUtils.js';
 import { loadModel } from '../assets/load.js';
 
 const CFG = /*CFG*/null;
-const C = CFG.counter, W = 720, H = 1280;
+const C = CFG.counter, W = CFG.wide ? 1280 : 720, H = CFG.wide ? 720 : 1280;
+if (CFG.wide) document.documentElement.classList.add('wide');
 const clamp = (x, a = 0, b = 1) => Math.min(b, Math.max(a, x));
 const smooth = (a, b, x) => { const t = clamp((x - a) / (b - a)); return t * t * (3 - 2 * t); };
 const lerp = (a, b, t) => a + (b - a) * t;

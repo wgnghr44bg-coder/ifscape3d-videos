@@ -1,6 +1,6 @@
 """Video afmaken: stille render + stem -> eind-mp4 (1080x1920, 30 fps, -14 LUFS), gratis (alleen ffmpeg).
 
-Gebruik:  python tools/whatif/finish.py <map> <uit.mp4>
+Gebruik:  python tools/whatif/finish.py <map> <uit.mp4> [--wide]   (--wide: 1920x1080, hoofdstuk van een lange video)
 Leest <map>/render.mp4 (node tools/whatif/render.mjs <map> video) en <map>/voice.mp3.
 De stem start op 0,5 s (VO_OFFSET in whatif.py: scènetijden = voice-times.tsv + 0,5 s).
 Geluid: zachte omgevingsruis (geen muziek, AGENTS.md punt 8) die na de stem bijna stil wordt, stem erbovenop,
@@ -10,7 +10,10 @@ Controleert daarna: formaat, geluid, duur 60-95 s, geen decodeerfouten.
 import json, subprocess, sys
 from pathlib import Path
 
-vid, out = Path(sys.argv[1]), Path(sys.argv[2])
+WIDE = '--wide' in sys.argv
+args = [a for a in sys.argv[1:] if a != '--wide']
+vid, out = Path(args[0]), Path(args[1])
+VW, VH = (1920, 1080) if WIDE else (1080, 1920)
 render, voice = vid / "render.mp4", vid / "voice.mp3"
 for f in (render, voice):
     if not f.exists():
@@ -32,7 +35,7 @@ else:   # bruine ruis als wind/stad, onder de stem; na de stem langzaam naar bij
     bedf = (f"[2:a]lowpass=f=700,highpass=f=60,volume=0.10,"
             f"afade=t=out:st={max(V - 2, 1):.2f}:d=4,apad[bed]")
 out.parent.mkdir(parents=True, exist_ok=True)
-fc = (f"[0:v]scale=1080:1920:flags=lanczos,setsar=1[v];"
+fc = (f"[0:v]scale={VW}:{VH}:flags=lanczos,setsar=1[v];"
       f"[1:a]aresample=44100,adelay=500:all=1,apad,asplit=2[vo][vk];{bedf};"
       f"[bed][vk]sidechaincompress=threshold=0.05:ratio=6:attack=20:release=400[duck];"
       f"[duck][vo]amix=inputs=2:normalize=0,atrim=0:{D:.2f},loudnorm=I=-14:TP=-1:LRA=11[a]")
@@ -47,11 +50,11 @@ kinds = {s["codec_type"] for s in info["streams"]}
 v = next(s for s in info["streams"] if s["codec_type"] == "video")
 errs = subprocess.run(["ffmpeg", "-v", "error", "-i", str(out), "-f", "null", "-"], capture_output=True, text=True).stderr
 probs = []
-if (v["width"], v["height"]) != (1080, 1920): probs.append(f"formaat {v['width']}x{v['height']}")
+if (v["width"], v["height"]) != (VW, VH): probs.append(f"formaat {v['width']}x{v['height']}")
 if "audio" not in kinds: probs.append("geen geluid")
 if not 60 <= dur(out) <= 95: probs.append(f"duur {dur(out):.1f} s")
 if errs.strip(): probs.append("decodeerfouten")
 if V + 0.5 > D: probs.append(f"stem ({V:.1f} s) langer dan beeld ({D:.1f} s)")
 if probs:
     sys.exit("FOUT: " + ", ".join(probs))
-print(f"Klaar en gecontroleerd: {out} (1080x1920, {dur(out):.1f} s, met geluid)")
+print(f"Klaar en gecontroleerd: {out} ({VW}x{VH}, {dur(out):.1f} s, met geluid)")
