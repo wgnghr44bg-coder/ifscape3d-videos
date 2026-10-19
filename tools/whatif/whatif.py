@@ -19,6 +19,14 @@ ENV_DIR = os.path.join(ROOT, 'environments')
 
 WORDS_PER_S = 2.8          # gravity voice: 187 words in 64 s of speech = 2.9 words/s; Chatterbox is a bit calmer
 PAUSE, LONG = 0.5, 1.0      # [pause], [long pause]
+
+
+def voice_consts(plan):
+    """Woorden/s, pauzes, woordenaantal en lengte. "voice": "alteraqon" (eigenaar 19 okt 2026: stem zoals Alteraqon,
+    rustig met lange pauzes: make_voice_local.py --pause-ms 700 --long-pause-ms 1600 --sentence-pause-ms 600 --speed 0.92)."""
+    if plan.get('voice') == 'alteraqon':
+        return {'wps': 2.9, 'pause': 1.3, 'long': 2.2, 'words': (115, 150), 'length': (72, 98)}
+    return {'wps': WORDS_PER_S, 'pause': PAUSE, 'long': LONG, 'words': (150, 200), 'length': (78, 92)}
 VO_OFFSET = 0.5             # voice starts at 0.5 s
 SILENCE = 4                 # 4 x [long pause] after the climax step (≈5 s with the line pause)
 END_HOLD = 3.5              # last frame stays after the last word
@@ -148,6 +156,7 @@ def template(question, env, folder):
         'environment': env,
         'pace': 'TODO slow | sudden  (how fast the change happens in the story)',
         'realism': 'fantasy',
+        'voice': 'alteraqon',
         'numbers': [
             {'id': 'TODO', 'value': 0, 'unit': 'TODO', 'said_as': [], 'meaning': 'TODO what this number is',
              'premise': False},
@@ -269,20 +278,21 @@ def vis_text(plan):
 
 def timing(plan):
     """Estimated video time for every step start, the stop word, and the end."""
+    V = voice_consts(plan)
     t = VO_OFFSET
     starts, words_at = [], []
     for st in plan['steps']:
         starts.append(t)
         for li, line in enumerate(st['lines']):
             n = len(line.split())
-            words_at.append((t, t + n / WORDS_PER_S, line, st['step']))
-            t += n / WORDS_PER_S
+            words_at.append((t, t + n / V['wps'], line, st['step']))
+            t += n / V['wps']
             if li < len(st['lines']) - 1:
-                t += PAUSE
-        t += LONG if st.get('pause_after') == 'long' else PAUSE
+                t += V['pause']
+        t += V['long'] if st.get('pause_after') == 'long' else V['pause']
         if st['step'] == 9:
-            t += SILENCE * LONG
-    return starts, words_at, t - LONG + END_HOLD
+            t += SILENCE * V['long']
+    return starts, words_at, t - V['long'] + END_HOLD
 
 
 def find_word(words_at, spec):
@@ -345,8 +355,9 @@ def check(plan, folder, skip_files=False, online=True):
     lines = [l for s in steps for l in s['lines']]
     script_text = ' '.join(lines)
     nwords = len(script_text.split())
-    if not 150 <= nwords <= 200:
-        R.fail('story', f'{nwords} words; must be 150–200.')
+    wmin, wmax = voice_consts(plan)['words']
+    if not wmin <= nwords <= wmax:
+        R.fail('story', f'{nwords} words; must be {wmin}–{wmax}.')
     for s in steps:
         if not 1 <= len(s['lines']) <= 3:
             R.fail('story', f'step {s["step"]}: 1–3 lines, not {len(s["lines"])}.')
@@ -648,8 +659,9 @@ def check(plan, folder, skip_files=False, online=True):
             R.fail('questions', f'question {x.get("question")!r}: give "my_choice".')
 
     # timing
-    if not 78 <= end <= 92:
-        R.fail('timing', f'estimated length {end:.0f} s; must be 80–90 s. Add or remove words.')
+    lmin, lmax = voice_consts(plan)['length']
+    if not lmin <= end <= lmax:
+        R.fail('timing', f'estimated length {end:.0f} s; must be {lmin}–{lmax} s. Add or remove words.')
     if not 52 <= starts[8] <= 68:
         R.warn('timing', f'climax (step 9) starts at ≈{starts[8]:.0f} s; in the template it is ≈57–64 s.')
     return R, (starts, words_at, end)

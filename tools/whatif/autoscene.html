@@ -24,6 +24,12 @@ canvas { display: block; }
 #cap { position: absolute; left: 36px; right: 36px; top: 1000px; text-align: center; color: #f8f4ec; opacity: 0;
      font: 700 italic 40px PF, serif; padding: 12px 18px; border-radius: 16px;
      background: rgba(16,13,10,.58); text-shadow: 0 3px 14px rgba(0,0,0,.75); }
+/* ondertitels zoals Alteraqon: Inter SemiBold, wit met zwarte rand, onderin (boven de YouTube-knoppen) */
+@font-face { font-family: IN; font-weight: 600; src: url(../node_modules/@fontsource/inter/files/inter-latin-600-normal.woff2); }
+#sub { position: absolute; left: 50px; right: 50px; bottom: 287px; text-align: center; color: #f2f2f2; opacity: 0;
+     font: 600 37px IN, 'Inter', 'Segoe UI', Arial, sans-serif; line-height: 1.25; letter-spacing: .3px;
+     text-shadow: -2px -2px 0 #000, 2px -2px 0 #000, -2px 2px 0 #000, 2px 2px 0 #000, 0 0 3px #000, 2px 3px 4px rgba(0,0,0,.7); }
+html.wide #sub { left: 160px; right: 160px; bottom: 47px; font-size: 33px; }
 /* liggend 16:9 (lange video, scene.json "wide": true) */
 html.wide, html.wide body { width: 1280px; height: 720px; }
 html.wide #hud { left: 40px; top: 36px; transform: scale(.8); transform-origin: 0 0; }
@@ -35,6 +41,7 @@ html.wide #cap { left: 220px; right: 220px; top: 590px; font-size: 32px; }
 <div id="hud"><div id="lab"></div><div id="num"></div><div id="lab2"></div><div id="num2"></div></div>
 <div id="title"></div>
 <div id="cap" class="caption"></div>
+<div id="sub" class="caption"></div>
 <script type="importmap">{ "imports": { "three": "../node_modules/three/build/three.module.js", "three/addons/": "../node_modules/three/examples/jsm/" } }</script>
 <script type="module">
 import * as THREE from 'three';
@@ -264,6 +271,9 @@ function hud(t) {
   let ct = '', ca = 0;
   for (const [a, b, s] of CFG.captions) if (t >= a - .1 && t <= b + .1) { ct = s; ca = smooth(a, a + .6, t) * (1 - smooth(b - .6, b, t)); }
   $('cap').textContent = ct; $('cap').style.opacity = ca;
+  let st = '', sa = 0;
+  for (const [a, b, s] of CFG.subs || []) if (t >= a && t <= b + .15) { st = s; sa = smooth(a, a + .15, t) * (1 - smooth(b, b + .15, t)); }
+  $('sub').textContent = st; $('sub').style.opacity = sa;
 }
 
 window.renderAt = function (t) {

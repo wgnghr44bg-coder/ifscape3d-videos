@@ -88,6 +88,13 @@ def build(folder):
         s = st[at_steps[i] - 1]
         caps.append([round(s['start'] + .3, 2), round(min(s['end'] + 1, s['start'] + 6), 2), text])
     words = lambda w: str(w).lower()
+    # ondertitels zoals Alteraqon: elke gesproken zin onderin, precies op de stem (voice-times.tsv + 0,5 s)
+    subs, tsv = [], os.path.join(folder, 'voice-times.tsv')
+    if os.path.exists(tsv):
+        for row in open(tsv, encoding='utf-8').read().splitlines()[1:]:
+            f = row.split('\t')
+            if len(f) >= 5 and f[-1].strip() and not row.startswith('#'):
+                subs.append([round(float(f[1]) + .5, 2), round(float(f[2]) + .5, 2), f[-1].strip()])
     cfg = {
         'env': plan['environment'], 'title': sc.get('title', plan['question']), 'effect': sc['effect'], 'wide': bool(sc.get('wide')),
         'subject': sc.get('subject'), 'water_word': words(sc.get('water_word', 'water')), 'at': sc.get('at'),
@@ -96,7 +103,7 @@ def build(folder):
                     'second_label': c.get('second_label', ''), 'second_from': c.get('second_from'),
                     'second_to': c.get('second_to'), 'second_unit': c.get('second_unit', ''),
                     'jump': c.get('motion') == 'jump', 'decimals': c.get('decimals'), 't0': round(t0, 2), 't1': round(t1, 2)},
-        'captions': caps, 'cuts': [st[6]['start'], st[8]['start']],
+        'captions': [] if subs else caps, 'subs': subs, 'cuts': [st[6]['start'], st[8]['start']],
         'T_END': round(st[-1]['end'] + 3.5, 2), 'titleOut': 9.0, 'hudIn': 9.0,
     }
     html = open(os.path.join(HERE, 'autoscene.html'), encoding='utf-8').read().replace('/*CFG*/null', json.dumps(cfg, ensure_ascii=False))

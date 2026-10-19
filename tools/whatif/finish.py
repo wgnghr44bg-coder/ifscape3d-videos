@@ -5,7 +5,7 @@ Leest <map>/render.mp4 (node tools/whatif/render.mjs <map> video) en <map>/voice
 De stem start op 0,5 s (VO_OFFSET in whatif.py: scènetijden = voice-times.tsv + 0,5 s).
 Geluid: zachte omgevingsruis (geen muziek, AGENTS.md punt 8) die na de stem bijna stil wordt, stem erbovenop,
 eindmix -14 LUFS / piek -1 dB. Heeft de map een eigen sfx-bed.wav (make_audio.py), dan wordt dat gebruikt.
-Controleert daarna: formaat, geluid, duur 60-95 s, geen decodeerfouten.
+Controleert daarna: formaat, geluid, duur 60-110 s, geen decodeerfouten.
 """
 import json, subprocess, sys
 from pathlib import Path
@@ -52,7 +52,7 @@ errs = subprocess.run(["ffmpeg", "-v", "error", "-i", str(out), "-f", "null", "-
 probs = []
 if (v["width"], v["height"]) != (VW, VH): probs.append(f"formaat {v['width']}x{v['height']}")
 if "audio" not in kinds: probs.append("geen geluid")
-if not 60 <= dur(out) <= 95: probs.append(f"duur {dur(out):.1f} s")
+if not 60 <= dur(out) <= 110: probs.append(f"duur {dur(out):.1f} s")
 if errs.strip(): probs.append("decodeerfouten")
 if V + 0.5 > D: probs.append(f"stem ({V:.1f} s) langer dan beeld ({D:.1f} s)")
 if probs:

@@ -14,8 +14,8 @@ Je bouwt de scène NIET zelf in three.js: het vaste sjabloon `tools/whatif/autos
 Paden op de pc: deze repo = de map waarin je start; vox-lux = `..\vox-lux-alteraqon`;
 Chatterbox-python = `C:\Users\rane\Documents\Standaardproject\whatif\stem-env\Scripts\python.exe`; video's = `C:\Users\rane\Videos\alteraqon\ifscape3d\`.
 
-0. **Eenmalig** (alleen als `node_modules/three` of `node_modules/@fontsource` ontbreekt):
-   `npm install three@0.170.0 playwright @fontsource/playfair-display @fontsource/cormorant-garamond` en `npx playwright install chromium`.
+0. **Eenmalig** (alleen als `node_modules/three`, `node_modules/@fontsource/inter` of een ander pakket ontbreekt):
+   `npm install three@0.170.0 playwright @fontsource/playfair-display @fontsource/cormorant-garamond @fontsource/inter` en `npx playwright install chromium`.
 1. `git pull origin main`. **Onderwerp**: zelf kiezen, spannend en extreem ("Gripping first", fantasy mag), nooit een titel die al
    in `*/upload.json`, `*/plan.json` (question) of `..\vox-lux-alteraqon\alteraqon\*\upload.json` staat. Het onderwerp MOET passen bij
    één van de 4 effecten van het sjabloon:
@@ -35,12 +35,16 @@ Chatterbox-python = `C:\Users\rane\Documents\Standaardproject\whatif\stem-env\Sc
    - `counter_matches`: grow → `{"object": "<onderwerp>", "measure": "height", "unit": "m", "hud_number": 0}`;
      water → `{"object": "<waterwoord>", "measure": "top", "unit": "m", "hud_number": 0, "from_ground": true}`;
      multiply/rain → `{"none": "aantal is niet te meten"}`. `subject` = het onderwerp-woord (niet bij water).
+   - `"voice": "alteraqon"` (zet `whatif.py new` er zelf in): 115–150 woorden.
+   - Teller-label (`counter.label`, `second_label`) past bij DIT onderwerp, kort en in hoofdletters (bijv. "HEIGHT", "SEA LEVEL", "RABBITS").
+   - Ondertitels (elke gesproken zin onderin, zoals Alteraqon) maakt het sjabloon zelf uit `voice-times.tsv`.
    - Geen `scale_checks`, geen close-ups in `shots` (het sjabloon heeft 3 shots: ooghoogte → ander standpunt vanaf stap 7 → hoog vanaf stap 9).
    - `whatif.py check` tot ALL CHECKS PASSED; daarna `@physics-review` op `STORYBOARD.md`, echte problemen oplossen, opnieuw check.
 3. `scene.json` in de map (voorbeeld en alle velden: bovenin `tools/whatif/autoscene.py`). Het model van het onderwerp staat onder
    `assets/` (bijv. `kenney/mini-characters/character-female-b.glb`, `kenney/nature-kit/...`, `nasa/...`); controleer dat het bestand bestaat.
 4. **Stem** (Chatterbox, gratis): kopieer `script.txt` naar `script-cues.txt` en start op de ACHTERGROND:
-   `Start-Process <Chatterbox-python> -ArgumentList '..\vox-lux-alteraqon\alteraqon\tools\make_voice_local.py','<map>','..\stem-cache','--pause-ms','500','--long-pause-ms','1000','--sentence-pause-ms','300' -RedirectStandardOutput <map>\voice.log -WindowStyle Hidden`
+   `Start-Process <Chatterbox-python> -ArgumentList '..\vox-lux-alteraqon\alteraqon\tools\make_voice_local.py','<map>','..\stem-cache','--pause-ms','700','--long-pause-ms','1600','--sentence-pause-ms','600','--speed','0.92' -RedirectStandardOutput <map>\voice.log -WindowStyle Hidden`
+   (precies dezelfde stem en hetzelfde rustige tempo als Alteraqon; plan.json heeft daarom `"voice": "alteraqon"`: 115–150 woorden, ±75–95 s)
    en kijk elke minuut of `voice-times.tsv` er is. Daarna opnieuw `whatif.py check` (de tijden komen nu uit de stem).
 5. `python tools/whatif/autoscene.py build <map>` (een FOUT daar = plan.json/scene.json aanpassen), dan
    `node tools/whatif/scenecheck.mjs <map>` tot **ALL PICTURE CHECKS PASSED** (oplossen via scene.json: `at` = andere plek op land,
