@@ -212,7 +212,7 @@ function place({ back = 'day', wall = false, ground = 'grass', items = [], dark 
   let g = `<rect width="1080" height="780" fill="${wall ? (BG[back] ? '#f6e7d2' : back) : (BG[back] || back)}"/>`;
   if (back === 'sunset' && !wall) g += `<rect width="1080" height="300" fill="#e76f51" opacity=".5"/>`;
   if ((back === 'night' || back === 'space') && !wall) g += ITEMS.stars();
-  const [behind, front] = [items.filter(i => !!FRONT.includes(i[0])), items.filter(i => FRONT.includes(i[0]))];
+  const [behind, front] = [items.filter(i => !FRONT.includes(i[0])), items.filter(i => FRONT.includes(i[0]))];
   for (const [n, ...a] of behind) g += ITEMS[n] ? ITEMS[n](...a) : '';
   g += GROUNDS[ground] || GROUNDS.grass;
   for (const [n, ...a] of front) g += ITEMS[n] ? ITEMS[n](...a) : '';
