@@ -36,6 +36,13 @@ Chatterbox-python = `C:\Users\rane\Documents\Standaardproject\whatif\stem-env\Sc
      water → `{"object": "<waterwoord>", "measure": "top", "unit": "m", "hud_number": 0, "from_ground": true}`;
      multiply/rain → `{"none": "aantal is niet te meten"}`. `subject` = het onderwerp-woord (niet bij water).
    - `"voice": "alteraqon"` (zet `whatif.py new` er zelf in): 115–150 woorden.
+   - **Script = Alteraqon-opbouw met spanning** (eigenaar 20 okt 2026: "geen script zoals Alteraqon, geen spanning"; de reindeer-video
+     is daarom verwijderd). Laat de 11 stappen ALTIJD schrijven door `@scriptschrijver` met de Script-checklist van
+     `..\vox-lux-alteraqon\AGENTS.md` (hook, POV, korte spannende zinnen, echte twist met bron):
+     1 "What if …?" + extreem gevolg · 2 "You are …" · 3 opbouw · 4 "Then." (witte flits) · 5-7 "After one hour." / "After …"
+     (tijdstappen in woorden) · 8 climax (daarna stilte) · 9 "But here's the twist." + ECHT verrassend feit · 10 wat het betekent ·
+     11 "So remember." + vraag aan de kijker. Getallen voluit, geen "Right now". `whatif.py check` controleert dit.
+     Een saaie, opsommende tekst ("You count them… You give up counting…") = opnieuw laten schrijven.
    - Teller-label (`counter.label`, `second_label`) past bij DIT onderwerp, kort en in hoofdletters (bijv. "HEIGHT", "SEA LEVEL", "RABBITS").
    - Ondertitels (elke gesproken zin onderin, zoals Alteraqon) maakt het sjabloon zelf uit `voice-times.tsv`.
    - Geen `scale_checks`, geen close-ups in `shots` (het sjabloon heeft 3 shots: ooghoogte → ander standpunt vanaf stap 7 → hoog vanaf stap 9).

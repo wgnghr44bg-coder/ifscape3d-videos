@@ -28,6 +28,27 @@ def voice_consts(plan):
         return {'wps': 2.9, 'pause': 1.3, 'long': 2.2, 'words': (115, 150), 'length': (72, 98)}
     return {'wps': WORDS_PER_S, 'pause': PAUSE, 'long': LONG, 'words': (150, 200), 'length': (78, 92)}
 VO_OFFSET = 0.5             # voice starts at 0.5 s
+
+
+def silence_after(plan):
+    """(stap, aantal [long pause]) stilte na de climax: Alteraqon-opbouw = na stap 8 (de twist volgt in stap 9)."""
+    return (8, 2) if plan.get('voice') == 'alteraqon' else (9, SILENCE)
+
+
+# Alteraqon-opbouw (eigenaar 20 okt 2026: "geen script zoals Alteraqon, geen spanning") – geldt bij "voice": "alteraqon"
+ALTERAQON_ROLES = [
+    'Hook: "What if …?" (eerste regel = de vraag) + meteen het extreme gevolg',
+    'POV: "You are …" (waar je bent, wat je ziet)',
+    'Opbouw: het begint, iets kleins klopt niet (teller begint)',
+    '"Then." (eerste regel precies "Then.", witte flits) + het omslagmoment',
+    'Tijdstap 1: "After one hour." (of minute/day …) + wat er nu gebeurt',
+    'Tijdstap 2: "After …" + het wordt erger',
+    'Tijdstap 3: "After …" + het grootste beeld',
+    'Climax: het hoogtepunt (daarna ±4 s stilte)',
+    '"But here\'s the twist." (eerste regel precies) + een ECHT verrassend feit met bron',
+    'Wat dat feit betekent (mag het verhaal niet tegenspreken)',
+    '"So remember." (eerste regel precies) + een vraag aan de kijker die eindigt op "?"',
+]
 SILENCE = 4                 # 4 x [long pause] after the climax step (≈5 s with the line pause)
 END_HOLD = 3.5              # last frame stays after the last word
 
@@ -161,7 +182,7 @@ def template(question, env, folder):
             {'id': 'TODO', 'value': 0, 'unit': 'TODO', 'said_as': [], 'meaning': 'TODO what this number is',
              'premise': False},
         ],
-        'steps': [{'step': i + 1, 'role': r, 'lines': ['TODO'], 'pause_after': 'long'} for i, r in enumerate(STEP_ROLES)],
+        'steps': [{'step': i + 1, 'role': r, 'lines': ['TODO'], 'pause_after': 'long'} for i, r in enumerate(ALTERAQON_ROLES)],
         'on_screen': [
             {'word': 'TODO word the voice says', 'model': 'TODO which model/object shows it', 'looks': 'TODO what the viewer sees'},
         ],
@@ -290,8 +311,8 @@ def timing(plan):
             if li < len(st['lines']) - 1:
                 t += V['pause']
         t += V['long'] if st.get('pause_after') == 'long' else V['pause']
-        if st['step'] == 9:
-            t += SILENCE * V['long']
+        if st['step'] == silence_after(plan)[0]:
+            t += silence_after(plan)[1] * V['long']
     return starts, words_at, t - V['long'] + END_HOLD
 
 
@@ -368,12 +389,32 @@ def check(plan, folder, skip_files=False, online=True):
                 R.fail('story', f'step {s["step"]}: no [pause] tags in lines – the generator adds them. Use a new line instead.')
             if len(l.split()) > 18:
                 R.fail('story', f'step {s["step"]}: line too long ({len(l.split())} words, max 18): {l!r}')
-    if not steps[0]['lines'][0].startswith('Imagine'):
-        R.fail('story', 'step 1 must start with "Imagine".')
-    if not re.search(r'\bYou are\b', ' '.join(steps[1]['lines'])):
-        R.fail('story', 'step 2 must say where you are: "You are standing …".')
-    if not re.search(r'\bBut\b', ' '.join(steps[7]['lines'])):
-        R.fail('story', 'step 8 must explain why it goes wrong with "… But …".')
+    if plan.get('voice') == 'alteraqon':
+        first = lambda n: steps[n - 1]['lines'][0].strip()
+        if not (first(1).startswith('What if') and first(1).endswith('?')):
+            R.fail('story', 'step 1: eerste regel = de "What if …?"-vraag (Alteraqon-opbouw).')
+        if not re.search(r'\bYou are\b', ' '.join(steps[1]['lines'])):
+            R.fail('story', 'step 2 must say where you are: "You are …".')
+        if first(4) != 'Then.':
+            R.fail('story', 'step 4: eerste regel precies "Then." (het omslagmoment, witte flits).')
+        for n in (5, 6, 7):
+            if not re.match(r'After (a|an|one|two|three|four|five|six|seven|eight|nine|ten|twelve|twenty|thirty|fifty|a hundred|a thousand|a million)\b[\w\s-]*\.$', first(n)):
+                R.fail('story', f'step {n}: eerste regel = een tijdstap in woorden, bijv. "After one hour." (Alteraqon-opbouw).')
+        if first(9) != "But here's the twist.":
+            R.fail('story', 'step 9: eerste regel precies "But here\'s the twist." + daarna een echt, verrassend feit met bron.')
+        if first(11) != 'So remember.' or not steps[10]['lines'][-1].strip().endswith('?'):
+            R.fail('story', 'step 11: eerste regel "So remember.", laatste regel een vraag aan de kijker (eindigt op "?").')
+        if re.search(r'\d', script_text):
+            R.fail('story', 'getallen in het script voluit schrijven ("two hundred and fifty-seven"), anders spreekt Chatterbox ze verkeerd uit.')
+        if re.search(r'\bright now\b', script_text, re.I):
+            R.fail('story', '"Right now" is een opvulzin – weghalen.')
+    else:
+        if not steps[0]['lines'][0].startswith('Imagine'):
+            R.fail('story', 'step 1 must start with "Imagine".')
+        if not re.search(r'\bYou are\b', ' '.join(steps[1]['lines'])):
+            R.fail('story', 'step 2 must say where you are: "You are standing …".')
+        if not re.search(r'\bBut\b', ' '.join(steps[7]['lines'])):
+            R.fail('story', 'step 8 must explain why it goes wrong with "… But …".')
 
     # units + spelling
     alltext = ' '.join([q, script_text] + plan.get('captions', []) +
@@ -662,7 +703,7 @@ def check(plan, folder, skip_files=False, online=True):
     lmin, lmax = voice_consts(plan)['length']
     if not lmin <= end <= lmax:
         R.fail('timing', f'estimated length {end:.0f} s; must be {lmin}–{lmax} s. Add or remove words.')
-    if not 52 <= starts[8] <= 68:
+    if plan.get('voice') != 'alteraqon' and not 52 <= starts[8] <= 68:
         R.warn('timing', f'climax (step 9) starts at ≈{starts[8]:.0f} s; in the template it is ≈57–64 s.')
     return R, (starts, words_at, end)
 
@@ -674,8 +715,8 @@ def script_txt(plan):
     for s in plan['steps']:
         body = ' [pause] '.join(s['lines'])
         out.append(body + (' [long pause]' if s['pause_after'] == 'long' else ' [pause]'))
-        if s['step'] == 9:
-            out.append(' '.join(['[long pause]'] * SILENCE))
+        if s['step'] == silence_after(plan)[0]:
+            out.append(' '.join(['[long pause]'] * silence_after(plan)[1]))
     out[-1] = re.sub(r' \[(long )?pause\]$', '', out[-1])
     return '\n'.join(out) + '\n'
 
@@ -693,7 +734,7 @@ def storyboard_md(plan, tim, warns):
          '(estimate; final times from `voice-times.tsv`)', '',
          '## Script', '', '| step | ≈ s | text |', '|---|---|---|']
     for s, t in zip(plan['steps'], starts):
-        txt = ' · '.join(s['lines']) + (' **[≈5 s silence]**' if s['step'] == 9 else '')
+        txt = ' · '.join(s['lines']) + (' **[≈5 s silence]**' if s['step'] == silence_after(plan)[0] else '')
         L.append(f'| {s["step"]} | {t:.0f} | {txt} |')
     L += ['', '## Numbers (one table – everything uses these)', '', '| number | value | said as | meaning |', '|---|---|---|---|']
     for n in plan['numbers']:

@@ -103,7 +103,10 @@ def build(folder):
                     'second_label': c.get('second_label', ''), 'second_from': c.get('second_from'),
                     'second_to': c.get('second_to'), 'second_unit': c.get('second_unit', ''),
                     'jump': c.get('motion') == 'jump', 'decimals': c.get('decimals'), 't0': round(t0, 2), 't1': round(t1, 2)},
-        'captions': [] if subs else caps, 'subs': subs, 'cuts': [st[6]['start'], st[8]['start']],
+        'captions': [] if subs else caps, 'subs': subs,
+        # Alteraqon-opbouw: shot 2 vanaf de eerste tijdstap (stap 5), shot 3 (hoog) vanaf de climax (stap 8); flits bij "Then." (stap 4)
+        'cuts': [st[4]['start'], st[7]['start']] if plan.get('voice') == 'alteraqon' else [st[6]['start'], st[8]['start']],
+        'flash': st[3]['start'] if plan.get('voice') == 'alteraqon' else None,
         'T_END': round(st[-1]['end'] + 3.5, 2), 'titleOut': 9.0, 'hudIn': 9.0,
     }
     html = open(os.path.join(HERE, 'autoscene.html'), encoding='utf-8').read().replace('/*CFG*/null', json.dumps(cfg, ensure_ascii=False))
