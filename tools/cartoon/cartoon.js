@@ -101,7 +101,7 @@ function machine(x, light = 0) {
   <circle cx="0" cy="240" r="20" fill="${light > 0.5 ? '#ff6a5a' : '#e0483e'}"/>${light ? `<circle cx="0" cy="240" r="${20 + 30 * light}" fill="#ff6a5a" opacity="${0.4 * (1 - light)}"/>` : ''}
   <text x="0" y="-12" text-anchor="middle" font-family="Inter Display,Arial Black,DejaVu Sans,Arial" font-weight="900" font-size="30" fill="#6b7a8f">CLONE</text></g>`;
 }
-function bedroom({ night = false, tv = false, light = 0, machineAt = 960 } = {}) {
+function bedroom({ night = false, tv = false, light = 0, machineAt = 0 } = {}) {
   return `<rect width="1080" height="780" fill="${night ? '#5b5470' : '#f6e7d2'}"/>
   <rect x="600" y="60" width="300" height="300" fill="url(#${night ? 'night' : 'sky'})"/>
   ${night ? `<circle cx="820" cy="130" r="34" fill="#f5f0c8"/><g fill="#fff">${[[650,110],[700,200],[860,250],[760,90]].map(([a, b]) => `<circle cx="${a}" cy="${b}" r="3"/>`).join('')}</g>`
@@ -122,6 +122,42 @@ function classroom(board = '') {
   ${board}
   <rect x="0" y="520" width="1080" height="260" fill="#c9b08c"/><path d="M0,560 H1080 M0,620 H1080 M0,700 H1080" stroke="#b39874" stroke-width="2"/>
   <circle cx="980" cy="120" r="50" fill="#fff" stroke="#555" stroke-width="6"/><path d="M980,120 L980,90 M980,120 L1000,130" stroke="#333" stroke-width="5"/>`;
+}
+function street({ night = false } = {}) {
+  return `<rect width="1080" height="780" fill="url(#${night ? 'night' : 'sky'})"/>
+  ${[[0, 160, 220, '#c9705a'], [230, 100, 200, '#e2b45a'], [440, 200, 240, '#7a9cc6'], [690, 130, 180, '#b5835a'], [880, 180, 200, '#8fb07a']].map(([x, y, w, c]) =>
+    `<rect x="${x}" y="${y}" width="${w}" height="${470 - y}" fill="${c}"/>` +
+    [0, 1, 2].map(r => [0, 1, 2].map(k => `<rect x="${x + 25 + k * (w - 50) / 3}" y="${y + 30 + r * 90}" width="${(w - 50) / 3 - 18}" height="50" fill="${night ? '#f5e08a' : '#dff1fb'}"/>`).join('')).join('')).join('')}
+  <rect x="0" y="470" width="1080" height="70" fill="#b9b2a6"/><rect x="0" y="540" width="1080" height="240" fill="#4a4a52"/>
+  ${[0, 1, 2, 3, 4].map(i => `<rect x="${40 + i * 220}" y="650" width="120" height="14" fill="#f2f2f2"/>`).join('')}
+  ${night ? `<rect width="1080" height="780" fill="#0a1030" opacity=".35"/>` : ''}`;
+}
+function park() {
+  return `<rect width="1080" height="780" fill="url(#sky)"/><circle cx="900" cy="120" r="60" fill="#ffd95a"/>
+  <path d="M0,420 Q270,330 540,400 T1080,380 L1080,780 L0,780Z" fill="#7cc46a"/><rect x="0" y="520" width="1080" height="260" fill="#6db35b"/>
+  ${[[120, 300], [330, 330], [980, 310]].map(([x, y]) => `<rect x="${x - 14}" y="${y}" width="28" height="${520 - y}" fill="#7a4f33"/><circle cx="${x}" cy="${y - 20}" r="80" fill="#3f8f4a"/><circle cx="${x - 50}" cy="${y + 20}" r="55" fill="#4aa055"/><circle cx="${x + 50}" cy="${y + 20}" r="55" fill="#4aa055"/>`).join('')}
+  <path d="M380,780 Q520,600 700,520 L760,520 Q600,620 520,780Z" fill="#d9c28f"/>
+  <g transform="translate(760,560)"><rect x="0" y="0" width="200" height="16" fill="#9b6b45"/><rect x="0" y="-40" width="200" height="12" fill="#9b6b45"/><rect x="10" y="16" width="10" height="50" fill="#555"/><rect x="180" y="16" width="10" height="50" fill="#555"/></g>`;
+}
+function kitchen() {
+  return `<rect width="1080" height="780" fill="#fbe9c6"/>
+  ${[0, 1, 2, 3, 4, 5, 6].map(i => `<rect x="0" y="${300 + i * 30}" width="1080" height="2" fill="#efd8a8"/>`).join('')}
+  <rect x="60" y="60" width="380" height="140" rx="8" fill="#e8f1f5" stroke="#9fb3bf" stroke-width="6"/><rect x="60" y="230" width="380" height="0" fill="none"/>
+  <rect x="0" y="380" width="620" height="150" fill="#c07a4a"/><rect x="0" y="370" width="620" height="18" fill="#e9e2d6"/>
+  <rect x="80" y="400" width="120" height="110" rx="6" fill="#b06a3c"/><rect x="230" y="400" width="120" height="110" rx="6" fill="#b06a3c"/>
+  <rect x="760" y="140" width="200" height="390" rx="14" fill="#e6eef2" stroke="#b9c7cf" stroke-width="5"/><rect x="935" y="250" width="10" height="70" rx="4" fill="#9aa"/>
+  <rect x="0" y="520" width="1080" height="260" fill="#d9d1c3"/>${[0, 1, 2, 3, 4, 5, 6, 7].map(i => `<rect x="${i * 140}" y="520" width="2" height="260" fill="#c8bfae"/>`).join('')}`;
+}
+function space() {
+  let st = ''; for (let i = 0; i < 60; i++) st += `<circle cx="${(i * 197) % 1080}" cy="${(i * 113) % 520}" r="${1 + (i % 3)}" fill="#fff" opacity="${0.4 + (i % 5) / 8}"/>`;
+  return `<rect width="1080" height="780" fill="#0b0f2a"/>${st}<circle cx="860" cy="170" r="110" fill="#3b82d6"/><path d="M780,120 Q840,150 820,210 Q880,230 930,180" fill="#4caf6a"/>
+  <path d="M0,560 Q540,470 1080,560 L1080,780 L0,780Z" fill="#9b9ba8"/>${[[200, 640, 40], [620, 700, 28], [900, 620, 34]].map(([x, y, r]) => `<ellipse cx="${x}" cy="${y}" rx="${r}" ry="${r / 3}" fill="#7d7d8a"/>`).join('')}`;
+}
+function beach() {
+  return `<rect width="1080" height="780" fill="url(#sky)"/><circle cx="160" cy="130" r="60" fill="#ffd95a"/>
+  <rect x="0" y="330" width="1080" height="200" fill="#3fa3d6"/>${[0, 1, 2, 3].map(i => `<path d="M${i * 300},${380 + (i % 2) * 40} q40,-14 80,0" stroke="#fff" stroke-width="5" fill="none"/>`).join('')}
+  <path d="M0,500 Q540,470 1080,500 L1080,780 L0,780Z" fill="#f1d9a0"/>
+  <g transform="translate(860,520)"><rect x="-4" y="-260" width="8" height="260" fill="#ddd"/><path d="M-120,-250 Q0,-330 120,-250Z" fill="#e0483e"/></g>`;
 }
 function desk(x) { return `<g transform="translate(${x},600)"><rect x="-90" y="0" width="180" height="22" fill="#b07a4a"/><rect x="-80" y="22" width="12" height="90" fill="#7a4f33"/><rect x="68" y="22" width="12" height="90" fill="#7a4f33"/></g>`; }
 function heart(x, y, s = 1, o = 1) { return `<path transform="translate(${x},${y}) scale(${s})" opacity="${o}" d="M0,10 C-30,-15 -15,-35 0,-18 C15,-35 30,-15 0,10Z" fill="#ff4d6d"/>`; }
