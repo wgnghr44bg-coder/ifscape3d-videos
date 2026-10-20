@@ -1,15 +1,16 @@
 // Maakt de video van een cartoon-map: <map>/story.js + <map>/timing.json (+ voice.mp3 als die er is).
 // node tools/cartoon/render.mjs <map>            → <map>/build/video.mp4 + <map>/CHECK.jpg (één beeld per scène)
 // node tools/cartoon/render.mjs <map> --check    → alleen CHECK.jpg (snel)
-import { chromium } from '/opt/node-tools/node_modules/playwright/index.mjs';
 import { spawn, execFileSync } from 'child_process';
-import fs from 'fs'; import path from 'path'; import { fileURLToPath } from 'url';
+import fs from 'fs'; import path from 'path'; import { fileURLToPath, pathToFileURL } from 'url';
+// Playwright: normaal via `npm install playwright` (pc); in de cloudsessie staat hij in /opt/node-tools.
+const { chromium } = await import('playwright').catch(() => import('/opt/node-tools/node_modules/playwright/index.mjs'));
 const here = path.dirname(fileURLToPath(import.meta.url));
 const dir = path.resolve(process.argv[2]), onlyCheck = process.argv.includes('--check'), fps = 30;
 const timing = JSON.parse(fs.readFileSync(path.join(dir, 'timing.json'), 'utf8'));
 fs.mkdirSync(path.join(dir, 'build'), { recursive: true });
 const b = await chromium.launch(); const p = await b.newPage({ viewport: { width: 1080, height: 1920 } });
-await p.goto('file://' + path.join(here, 'cartoon.html'));
+await p.goto(pathToFileURL(path.join(here, 'cartoon.html')).href);
 await p.addScriptTag({ path: path.join(dir, 'story.js') });
 await p.evaluate(t => { window.TIMING = t; }, timing);
 const shot = async T => { await p.evaluate(T => draw(T), T); return p.screenshot({ type: 'jpeg', quality: 92 }); };

@@ -29,3 +29,18 @@ Daarna `timing.py` en `render.mjs` opnieuw: dan lopen beeld en ondertitels preci
   `bubble` (tekstballon).
 - Geluidjes (gratis, ffmpeg): `poof`, `ding`, `click`, `boom` via `STORY.sfx`.
 Nodig: Playwright (Chromium) en ffmpeg – staan al in de cloudsessie.
+
+## Op de pc (Windows)
+Eenmalig, in de map `ifscape3d-videos`: Node.js, Python en ffmpeg moeten er zijn (ffmpeg staat er al voor de stem). Dan:
+```
+npm install playwright
+npx playwright install chromium
+```
+Daarna per video (vox-lux en ifscape3d-videos naast elkaar in dezelfde map):
+```
+cd vox-lux
+python tools/comfy/make_voice_local.py ../ifscape3d-videos/<map>      # stem (stem-omgeving actief)
+cd ../ifscape3d-videos
+python tools/cartoon/timing.py <map>
+node tools/cartoon/render.mjs <map>                                    # → <map>/build/video.mp4
+```

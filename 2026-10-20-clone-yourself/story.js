@@ -100,7 +100,7 @@ const STORY = {
       return zoom(1.8, 760, 330, s9layout(9, 10, T, true) + word('COPY', 730, 470, 100, 1.1, '#ff3b3b', -10)) +
         `<rect width="1080" height="780" fill="#000" opacity=".55"/>` +
         `<g transform="translate(540,390) scale(${0.5 + 0.5 * k})"><rect x="-260" y="-80" width="520" height="160" rx="26" fill="#fff"/>
-         <text x="0" y="38" text-anchor="middle" font-family="Inter Display,DejaVu Sans" font-weight="900" font-style="italic" font-size="110" fill="#111">PART 2?</text></g>`;
+         <text x="0" y="38" text-anchor="middle" font-family="Inter Display,Arial Black,DejaVu Sans,Arial" font-weight="900" font-style="italic" font-size="110" fill="#111">PART 2?</text></g>`;
     },
   },
 };

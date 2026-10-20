@@ -91,7 +91,7 @@ const FLOOR = 680;
 function machine(x, light = 0) {
   return `<g transform="translate(${x},380)"><rect x="-70" y="0" width="140" height="300" rx="60" fill="#6b7a8f"/><rect x="-48" y="30" width="96" height="170" rx="40" fill="#9fe8ff" opacity="${0.7 + 0.3 * light}"/>
   <circle cx="0" cy="240" r="20" fill="${light > 0.5 ? '#ff6a5a' : '#e0483e'}"/>${light ? `<circle cx="0" cy="240" r="${20 + 30 * light}" fill="#ff6a5a" opacity="${0.4 * (1 - light)}"/>` : ''}
-  <text x="0" y="-12" text-anchor="middle" font-family="Inter Display,DejaVu Sans" font-weight="900" font-size="30" fill="#6b7a8f">CLONE</text></g>`;
+  <text x="0" y="-12" text-anchor="middle" font-family="Inter Display,Arial Black,DejaVu Sans,Arial" font-weight="900" font-size="30" fill="#6b7a8f">CLONE</text></g>`;
 }
 function bedroom({ night = false, tv = false, light = 0, machineAt = 960 } = {}) {
   return `<rect width="1080" height="780" fill="${night ? '#5b5470' : '#f6e7d2'}"/>
@@ -118,11 +118,11 @@ function classroom(board = '') {
 function desk(x) { return `<g transform="translate(${x},600)"><rect x="-90" y="0" width="180" height="22" fill="#b07a4a"/><rect x="-80" y="22" width="12" height="90" fill="#7a4f33"/><rect x="68" y="22" width="12" height="90" fill="#7a4f33"/></g>`; }
 function heart(x, y, s = 1, o = 1) { return `<path transform="translate(${x},${y}) scale(${s})" opacity="${o}" d="M0,10 C-30,-15 -15,-35 0,-18 C15,-35 30,-15 0,10Z" fill="#ff4d6d"/>`; }
 function word(txt, x, y, size, k = 1, col = '#9cff3a', rot = -8) {
-  return `<text x="${x}" y="${y}" text-anchor="middle" transform="rotate(${rot} ${x} ${y})" font-family="Inter Display,DejaVu Sans" font-weight="900" font-size="${size * k}" fill="${col}" stroke="#000" stroke-width="${size / 10}" paint-order="stroke">${txt}</text>`;
+  return `<text x="${x}" y="${y}" text-anchor="middle" transform="rotate(${rot} ${x} ${y})" font-family="Inter Display,Arial Black,DejaVu Sans,Arial" font-weight="900" font-size="${size * k}" fill="${col}" stroke="#000" stroke-width="${size / 10}" paint-order="stroke">${txt}</text>`;
 }
 function bubble(txt, x, y, k = 1) {
   return `<g transform="translate(${x},${y}) scale(${k})"><rect x="-150" y="-60" width="300" height="90" rx="40" fill="#fff" stroke="#111" stroke-width="5"/><path d="M-20,28 L-40,70 L10,28Z" fill="#fff" stroke="#111" stroke-width="5"/><rect x="-25" y="22" width="40" height="10" fill="#fff"/>
-  <text x="0" y="2" text-anchor="middle" font-family="Inter Display,DejaVu Sans" font-weight="900" font-size="44" fill="#111">${txt}</text></g>`;
+  <text x="0" y="2" text-anchor="middle" font-family="Inter Display,Arial Black,DejaVu Sans,Arial" font-weight="900" font-size="44" fill="#111">${txt}</text></g>`;
 }
 
 // Ondertitels: elke stemregel in stukjes van max. 4 woorden, tijd naar verhouding van het aantal letters.
@@ -143,7 +143,7 @@ function draw(T) {
   const sc = TIMING.scenes.find(s => T >= s.start && T < s.end) || TIMING.scenes[TIMING.scenes.length - 1];
   const scene = STORY.scenes[sc.id](T - sc.start, sc.end - sc.start, T);
   const cap = captionAt(T, TIMING.rows);
-  const F = 'font-family="Inter Display,DejaVu Sans" font-weight="900"';
+  const F = 'font-family="Inter Display,Arial Black,DejaVu Sans,Arial" font-weight="900"';
   document.getElementById('s').innerHTML = DEFS + `<rect width="1080" height="1920" fill="url(#plank)"/>
   ${STORY.title.map((l, i) => { const w = l.length * 42 + 80; return `<rect x="${540 - w / 2}" y="${200 + i * 100}" width="${w}" height="${i ? 110 : 120}" rx="22" fill="#fff"/>`; }).join('')}
   ${STORY.title.map((l, i) => `<text x="540" y="${290 + i * 95}" text-anchor="middle" ${F} font-size="76" fill="#111">${esc(l)}</text>`).join('')}
