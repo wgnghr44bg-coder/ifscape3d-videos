@@ -24,6 +24,11 @@ Chatterbox-python = `C:\Users\rane\Documents\Standaardproject\whatif\stem-env\Sc
    - `multiply` – iets vermenigvuldigt zich (teller = aantal, max 400) – konijnen, bomen, robots;
    - `rain` – iets valt uit de lucht en stapelt op (teller = aantal, max 400) – sneeuwpoppen, pompoenen, meteorieten.
    Plekken: `python tools/whatif/whatif.py envs`; modellen: `assets/CATALOG.md`.
+   **Spannend, niet saai** (eigenaar 20 okt 2026 over "What if the reindeer kept multiplying?": "echt helemaal niks en saai"):
+   het onderwerp moet gevaar, een ramp of iets onmogelijks/absurds hebben dat de kijker raakt (jij, je huis, je stad, de aarde).
+   Dus wél: een reus die door de stad loopt, de zee die je dorp overspoelt, meteorieten die op je straat vallen, je kat zo groot
+   als een flat. Níet: rustige dieren die bijkomen, iets wat alleen "meer wordt" zonder gevolg. `multiply` alleen als het
+   bedreigend of absurd is (bijv. spinnen, robots die alles overnemen). Nooit meer rendieren/kuddes.
    **Afwisselen** (eigenaar: "gevarieerd"): kijk naar de laatste 3 video's (`*/plan.json`, nieuwste eerst): nooit hetzelfde
    effect, dezelfde plek of hetzelfde soort onderwerp (mens, dier, natuur, ruimte, eten, voorwerp) als de vorige video.
    Wissel ook af tussen kleine en gigantische getallen, en tussen grappig en spannend.
