@@ -47,7 +47,8 @@ if not 100 <= len(w) <= 140:
     fout.append(f"{len(w)} woorden (moet 100–140)")
 js = open(os.path.join(m, "story.js"), encoding="utf-8").read()
 eigen_plek = re.findall(r"(?:function|const)\s+(\w+)\s*=?\s*\(?[^)]*\)?\s*=?>?\s*\{?\s*(?:return\s*)?`<rect width=\"1080\" height=\"780\"", js)
-gebruikt = {p for p in PLEKKEN if re.search(rf"\b{p}\(", js)} | set(eigen_plek)
+bouw = {f"place:{b}/{g}" for b, g in re.findall(r"place\(\{[^}]*?back:\s*'([^']+)'[^}]*?ground:\s*'(\w+)'", js)}
+gebruikt = {p for p in PLEKKEN if re.search(rf"\b{p}\(", js)} | set(eigen_plek) | bouw
 if len(gebruikt) < 3:
     fout.append(f"maar {len(gebruikt)} plek(ken): {', '.join(sorted(gebruikt)) or '-'} (minstens 3)")
 if gebruikt and gebruikt <= {"bedroom", "classroom"}:

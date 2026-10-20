@@ -12,8 +12,8 @@ Lees eerst `tools/cartoon/README.md` en het voorbeeld `2026-10-20-clone-yourself
 2. EIGEN VERHAAL eerst (eigenaar 21 okt 2026: "niet echt een eigen verhaal"). Schrijf `<map>/idee.md` (5 regels):
    - de kracht/situatie in één zin;
    - 3 momenten die ALLEEN bij dit onderwerp kunnen (bij onzichtbaar bv. door een feest sluipen, een hond die je wél ruikt);
-   - 3–5 plekken die bij dit verhaal horen: `bedroom`, `classroom`, `street`, `park`, `kitchen`, `space`, `beach`
-     (opties `{night: true}` bij bedroom/street), of maak een eigen plek in story.js;
+   - 3–5 plekken die bij dit verhaal horen. Bouw ze ZELF uit het script met de bouwdoos `place({...})` (zie hieronder);
+     de vaste plekken (`bedroom`, `classroom`, `street`, `park`, `kitchen`, `space`, `beach`) alleen als ze echt passen;
    - het einde/de twist, eigen voor dit onderwerp.
    VERBODEN (komt uit het eerste voorbeeld): een voorwerp met "één woord erop", "at first it's amazing", school/cijfers/A+,
    mama die langs je loopt, "you are the copy". Kopieer GEEN zinnen of scènes uit andere mappen; alleen de opbouw van story.js.
@@ -24,6 +24,15 @@ Lees eerst `tools/cartoon/README.md` en het voorbeeld `2026-10-20-clone-yourself
    `clamp01`, `blinkAt`, `FLOOR`). Elke `{img:sN}` heeft precies één functie `sN(t, d, T)` in `STORY.scenes`.
    De hoofdpersoon ("you") is ALTIJD `char({ ...HOOFDPERSOON, x, y, ... })` (vaste keuze eigenaar).
    Andere mensen: `skin` (bv. '#f6d2b0', '#d9a273', '#8a5a3b'), `hair`, `top` ('jas', 'hoodie', 'tshirt', 'trui', 'pak').
+   BOUWDOOS (plek uit het script, zonder zelf SVG te tekenen), bijvoorbeeld een bos 's nachts:
+   `place({ back: 'night', ground: 'grass', items: [['moon'], ['pine', 100], ['tree', 330], ['bush', 480]] })`
+   - `back`: 'day' | 'night' | 'sunset' | 'space' | een kleur; `wall: true` = binnen (back = muurkleur, bv. '#e8dcc8').
+   - `ground`: 'wood' | 'grass' | 'road' | 'tiles' | 'sand' | 'snow' | 'water' | 'carpet' | 'moon'.
+   - `items` (x = midden, 0–1080; volgorde = van achter naar voor): sun, moon, cloud(x,y), mountain(x,kleur),
+     building(x,kleur,hoogte), house(x,kleur), tree(x), pine(x), bush(x), fence(x,breedte), lamp(x), car(x,kleur),
+     window(x,y), door(x), picture(x,y), shelf(x,y), table(x), sofa(x,kleur), bed(x), tv(x), fridge(x), counter(x),
+     board(x,tekst), rug(x,kleur), rock(x), sign(x,tekst), text(x,y,tekst,kleur).
+   Ontbreekt er iets wat het script noemt? Voeg het toe als eigen functie in story.js in dezelfde platte stijl.
    Wat de stem in een scène noemt, moet in die scène te zien zijn. Pas `title` aan (2 regels, elk ≤ 24 tekens).
    Controle: `python tools/cartoon/check_story.py <map>` tot er `VERHAAL OK` staat. Nooit omzeilen: herschrijf het verhaal.
 4. `python tools/cartoon/timing.py <map> --vox-lux ..\vox-lux-alteraqon` en `node tools/cartoon/render.mjs <map> --check`.
