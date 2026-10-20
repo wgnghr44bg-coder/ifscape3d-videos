@@ -1,0 +1,266 @@
+{
+ "source": "voice-times.tsv",
+ "total": 63.28,
+ "scenes": [
+  {
+   "id": "s1",
+   "start": 0.0,
+   "end": 6.67
+  },
+  {
+   "id": "s2",
+   "start": 6.67,
+   "end": 8.78
+  },
+  {
+   "id": "s3",
+   "start": 8.78,
+   "end": 14.98
+  },
+  {
+   "id": "s4",
+   "start": 14.98,
+   "end": 20.46
+  },
+  {
+   "id": "s5",
+   "start": 20.46,
+   "end": 25.04
+  },
+  {
+   "id": "s6",
+   "start": 25.04,
+   "end": 30.71
+  },
+  {
+   "id": "s7",
+   "start": 30.71,
+   "end": 37.53
+  },
+  {
+   "id": "s8",
+   "start": 37.53,
+   "end": 42.89
+  },
+  {
+   "id": "s9",
+   "start": 42.89,
+   "end": 46.55
+  },
+  {
+   "id": "s10",
+   "start": 46.55,
+   "end": 56.52
+  },
+  {
+   "id": "s11",
+   "start": 56.52,
+   "end": 63.28
+  }
+ ],
+ "rows": [
+  {
+   "start": 0.8,
+   "end": 3.21,
+   "cue": "s1",
+   "text": "Imagine you find a tiny bottle on your desk.",
+   "scene": "s1"
+  },
+  {
+   "start": 3.91,
+   "end": 5.22,
+   "cue": "",
+   "text": "There is one word on it.",
+   "scene": "s1"
+  },
+  {
+   "start": 5.92,
+   "end": 6.67,
+   "cue": "",
+   "text": "Invisible.",
+   "scene": "s1"
+  },
+  {
+   "start": 6.67,
+   "end": 7.18,
+   "cue": "s2",
+   "text": "You drink it.",
+   "scene": "s2"
+  },
+  {
+   "start": 8.78,
+   "end": 10.99,
+   "cue": "s3",
+   "text": "And suddenly, nobody can see you.",
+   "scene": "s3"
+  },
+  {
+   "start": 11.69,
+   "end": 13.54,
+   "cue": "",
+   "text": "Your clothes float in the air.",
+   "scene": "s3"
+  },
+  {
+   "start": 14.24,
+   "end": 14.98,
+   "cue": "",
+   "text": "You are gone.",
+   "scene": "s3"
+  },
+  {
+   "start": 14.98,
+   "end": 16.4,
+   "cue": "s4",
+   "text": "At first, it is amazing.",
+   "scene": "s4"
+  },
+  {
+   "start": 17.1,
+   "end": 18.86,
+   "cue": "",
+   "text": "Your mom walks right past you.",
+   "scene": "s4"
+  },
+  {
+   "start": 20.46,
+   "end": 22.36,
+   "cue": "s5",
+   "text": "You go to school without being seen.",
+   "scene": "s5"
+  },
+  {
+   "start": 23.06,
+   "end": 25.04,
+   "cue": "",
+   "text": "The teacher never checks your homework.",
+   "scene": "s5"
+  },
+  {
+   "start": 25.04,
+   "end": 27.37,
+   "cue": "s6",
+   "text": "You walk up to the board and change your own grade.",
+   "scene": "s6"
+  },
+  {
+   "start": 28.07,
+   "end": 28.86,
+   "cue": "",
+   "text": "A plus.",
+   "scene": "s6"
+  },
+  {
+   "start": 29.56,
+   "end": 30.71,
+   "cue": "",
+   "text": "Nobody sees a thing.",
+   "scene": "s6"
+  },
+  {
+   "start": 30.71,
+   "end": 33.33,
+   "cue": "s7",
+   "text": "But at lunch, your best friend sits alone.",
+   "scene": "s7"
+  },
+  {
+   "start": 34.03,
+   "end": 34.83,
+   "cue": "",
+   "text": "You talk to her.",
+   "scene": "s7"
+  },
+  {
+   "start": 35.53,
+   "end": 37.53,
+   "cue": "",
+   "text": "She just stares at an empty chair.",
+   "scene": "s7"
+  },
+  {
+   "start": 37.53,
+   "end": 39.29,
+   "cue": "s8",
+   "text": "The next day, she is gone.",
+   "scene": "s8"
+  },
+  {
+   "start": 39.99,
+   "end": 40.82,
+   "cue": "",
+   "text": "No messages.",
+   "scene": "s8"
+  },
+  {
+   "start": 41.52,
+   "end": 42.89,
+   "cue": "",
+   "text": "Nobody is looking for you.",
+   "scene": "s8"
+  },
+  {
+   "start": 42.89,
+   "end": 44.05,
+   "cue": "s9",
+   "text": "You scream for help.",
+   "scene": "s9"
+  },
+  {
+   "start": 44.75,
+   "end": 46.55,
+   "cue": "",
+   "text": "Your mom walks right past the door.",
+   "scene": "s9"
+  },
+  {
+   "start": 46.55,
+   "end": 48.0,
+   "cue": "s10",
+   "text": "But here is the twist.",
+   "scene": "s10"
+  },
+  {
+   "start": 48.7,
+   "end": 51.32,
+   "cue": "",
+   "text": "To see anything, light must hit your eyes.",
+   "scene": "s10"
+  },
+  {
+   "start": 52.02,
+   "end": 54.01,
+   "cue": "",
+   "text": "If the light passes straight through you,",
+   "scene": "s10"
+  },
+  {
+   "start": 54.71,
+   "end": 56.52,
+   "cue": "",
+   "text": "it never reaches your eyes either.",
+   "scene": "s10"
+  },
+  {
+   "start": 56.52,
+   "end": 57.26,
+   "cue": "s11",
+   "text": "Invisible.",
+   "scene": "s11"
+  },
+  {
+   "start": 57.96,
+   "end": 58.86,
+   "cue": "",
+   "text": "And blind.",
+   "scene": "s11"
+  },
+  {
+   "start": 59.46,
+   "end": 60.78,
+   "cue": "",
+   "text": "Follow for part two.",
+   "scene": "s11"
+  }
+ ]
+}
