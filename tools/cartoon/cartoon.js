@@ -8,17 +8,17 @@ const blinkAt = (t, off = 0) => ((t + off) % 3.1) < 0.12 ? 0.1 : 1;
 const shade = c => { const n = parseInt(c.slice(1), 16), f = v => Math.round(v * 0.82);
   return '#' + [n >> 16, (n >> 8) & 255, n & 255].map(v => f(v).toString(16).padStart(2, '0')).join(''); };
 
-function face(expr, blink, look) {
-  const E = (x, y, rx, ry) => `<ellipse cx="${x}" cy="${y}" rx="${rx}" ry="${ry}" fill="#fff"/>`;
+function face(expr, blink, look, ink = '#fff', eyeLine = '') {
+  const E = (x, y, rx, ry) => `<ellipse cx="${x}" cy="${y}" rx="${rx}" ry="${ry}" fill="#fff"${eyeLine}/>`;
   const P = (x, y, r) => `<circle cx="${x + look}" cy="${y}" r="${r}" fill="#111"/>`;
-  const line = (d, w = 3.5, c = '#fff') => `<path d="${d}" stroke="${c}" stroke-width="${w}" fill="none" stroke-linecap="round"/>`;
+  const line = (d, w = 3.5, c = ink) => `<path d="${d}" stroke="${c}" stroke-width="${w}" fill="none" stroke-linecap="round"/>`;
   let eyes = '', rest = '';
   switch (expr) {
     case 'stiekem': eyes = E(-15,-298,11,8)+E(15,-298,11,8)+P(-13,-297,4.5)+P(17,-297,4.5);
       rest = line('M-30,-316 L-5,-306 M5,-306 L30,-316', 5, '#111') + line('M-12,-275 Q4,-266 16,-280'); break;
-    case 'blij': rest = line('M-25,-298 Q-15,-312 -5,-298 M5,-298 Q15,-312 25,-298', 5) + `<path d="M-16,-280 Q0,-258 16,-280 Z" fill="#fff"/>`; break;
+    case 'blij': rest = line('M-25,-298 Q-15,-312 -5,-298 M5,-298 Q15,-312 25,-298', 5) + `<path d="M-16,-280 Q0,-258 16,-280 Z" fill="${ink === '#fff' ? '#fff' : '#7a2b2b'}"/>`; break;
     case 'bang': eyes = E(-15,-302,13,16)+E(15,-302,13,16)+P(-15,-300,3.5)+P(15,-300,3.5);
-      rest = line('M-28,-326 Q-16,-332 -5,-326 M5,-326 Q16,-332 28,-326', 4, '#111') + `<ellipse cx="0" cy="-272" rx="7" ry="9" fill="#fff"/>`; break;
+      rest = line('M-28,-326 Q-16,-332 -5,-326 M5,-326 Q16,-332 28,-326', 4, '#111') + `<ellipse cx="0" cy="-272" rx="7" ry="9" fill="${ink === '#fff' ? '#fff' : '#7a2b2b'}"/>`; break;
     case 'boos': eyes = E(-15,-298,11,11)+E(15,-298,11,11)+P(-13,-296,5)+P(13,-296,5);
       rest = line('M-30,-320 L-5,-305 M5,-305 L30,-320', 6, '#111') + line('M-11,-270 Q0,-280 11,-270'); break;
     case 'verdrietig': eyes = E(-15,-298,11,12)+E(15,-298,11,12)+P(-15,-295,5)+P(15,-295,5);
@@ -52,7 +52,8 @@ function prop(p) {
 //    hold ('broom'|'phone'|'controller'), lie (graden, bv. -90 = liggen)
 function char(o) {
   const { x, y, s = 1, col = '#f39a2b', expr = 'normaal', blink = 1, look = 0, walk = 0, hop = 0, shake = 0, pop = 1,
-    alpha = 1, flip = false, hair = '', hairCol = '#6b3f22', glasses = false, cap = '', armL = 0, armR = 0, hold = '', lie = 0 } = o;
+    alpha = 1, flip = false, hair = '', hairCol = '#6b3f22', glasses = false, cap = '', armL = 0, armR = 0, hold = '', lie = 0, skin = '', top = 'jas', top2 = '#ffffff' } = o;
+  const ink = skin ? '#3a2a20' : '#fff', arm = top === 'tshirt' ? (skin || DARK) : col;
   const sh = shade(col), a = walk ? Math.sin(walk) * 22 : 0, bob = walk ? -Math.abs(Math.sin(walk)) * 6 : 0;
   const leg = (lx, ang) => `<g transform="rotate(${ang} ${lx + 5} -122)"><rect x="${lx}" y="-125" width="11" height="125" rx="5" fill="${DARK}"/><ellipse cx="${lx + 5}" cy="-3" rx="15" ry="6" fill="${DARK}"/></g>`;
   const ctrl = hold === 'controller';
@@ -63,15 +64,20 @@ function char(o) {
   <g transform="translate(0,${-hop + bob})">
   ${leg(-22, a)}${leg(11, -a)}
   ${hairBack(hair, hairCol)}
-  <path d="M-38,-238 Q-42,-180 -40,-112 L40,-112 Q42,-180 38,-238 Q0,-256 -38,-238Z" fill="${col}"/>
-  <path d="M2,-245 L2,-112" stroke="${sh}" stroke-width="4"/>
+  ${top === 'hoodie' ? `<circle cx="0" cy="-292" r="58" fill="${sh}"/>` : ''}
+  <path d="M-38,-238 Q-42,-180 -40,-112 L40,-112 Q42,-180 38,-238 Q0,-256 -38,-238Z" fill="${top === 'pak' ? '#2c3442' : col}"/>
+  ${top === 'jas' ? `<path d="M2,-245 L2,-112" stroke="${sh}" stroke-width="4"/>
   <path d="M-28,-170 L-6,-170 L-6,-150 L-28,-150Z M6,-170 L28,-170 L28,-150 L6,-150Z" fill="${sh}" opacity=".7"/>
-  <path d="M-34,-250 Q0,-228 34,-250 Q38,-238 30,-232 Q0,-214 -30,-232 Q-38,-238 -34,-250Z" fill="${sh}"/>
-  <g transform="rotate(${aL} -41 -235)"><rect x="-50" y="-240" width="17" height="105" rx="8" fill="${col}"/><circle cx="-41" cy="-130" r="9" fill="${DARK}"/></g>
-  <g transform="rotate(${aR} 41 -235)"><rect x="33" y="-240" width="17" height="105" rx="8" fill="${col}"/><circle cx="41" cy="-130" r="9" fill="${DARK}"/>${prop(hold)}</g>
+  <path d="M-34,-250 Q0,-228 34,-250 Q38,-238 30,-232 Q0,-214 -30,-232 Q-38,-238 -34,-250Z" fill="${sh}"/>` : ''}
+  ${top === 'hoodie' ? `<path d="M-26,-165 L26,-165 L32,-128 L-32,-128Z" fill="${sh}"/><path d="M-10,-240 L-12,-200 M10,-240 L12,-200" stroke="#fff" stroke-width="3"/>` : ''}
+  ${top === 'trui' ? [0, 1, 2].map(i => `<rect x="-41" y="${-215 + i * 32}" width="82" height="12" fill="${top2}"/>`).join('') : ''}
+  ${top === 'tshirt' ? `<path d="M-16,-246 Q0,-232 16,-246" stroke="${sh}" stroke-width="5" fill="none"/><circle cx="0" cy="-185" r="18" fill="${top2}"/>` : ''}
+  ${top === 'pak' ? `<path d="M-16,-246 L0,-180 L16,-246Z" fill="#fff"/><path d="M0,-238 L-6,-225 L0,-185 L6,-225Z" fill="${col}"/>` : ''}
+  <g transform="rotate(${aL} -41 -235)"><rect x="-50" y="-240" width="17" height="105" rx="8" fill="${top === 'pak' ? '#2c3442' : arm}"/>${top === 'tshirt' ? `<rect x="-52" y="-242" width="21" height="45" rx="8" fill="${col}"/>` : ''}<circle cx="-41" cy="-130" r="9" fill="${skin || DARK}"/></g>
+  <g transform="rotate(${aR} 41 -235)"><rect x="33" y="-240" width="17" height="105" rx="8" fill="${top === 'pak' ? '#2c3442' : arm}"/>${top === 'tshirt' ? `<rect x="31" y="-242" width="21" height="45" rx="8" fill="${col}"/>` : ''}<circle cx="41" cy="-130" r="9" fill="${skin || DARK}"/>${prop(hold)}</g>
   ${ctrl ? `<rect x="-26" y="-150" width="52" height="22" rx="10" fill="#333"/><circle cx="-12" cy="-139" r="4" fill="#e0483e"/><circle cx="12" cy="-139" r="4" fill="#3b82d6"/>` : ''}
-  <circle cx="0" cy="-295" r="46" fill="url(#hg)"/>
-  ${face(expr, blink, look)}
+  <circle cx="0" cy="-295" r="46" fill="${skin || 'url(#hg)'}"/>
+  ${face(expr, blink, look, ink, skin ? ' stroke="#3a2a20" stroke-width="2.5"' : '')}
   ${hairFront(hair, hairCol)}
   ${glasses ? `<g stroke="#ddd" stroke-width="3" fill="none"><circle cx="-15" cy="-300" r="15"/><circle cx="15" cy="-300" r="15"/><path d="M0,-302 L0,-302"/></g>` : ''}
   ${cap ? `<path d="M-46,-312 Q0,-372 46,-312Z" fill="${cap}"/><path d="M20,-318 L72,-312 Q60,-304 20,-306Z" fill="${shade(cap)}"/>` : ''}
