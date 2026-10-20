@@ -8,3 +8,4 @@ __pycache__/
 20*/check/
 tools/whatif/examples/scene-hooks/check/
 tools/whatif/examples/scene-hooks/CHECK.*
+20*/build/

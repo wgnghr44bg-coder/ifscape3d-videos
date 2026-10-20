@@ -1,0 +1,238 @@
+{
+ "source": "schatting",
+ "total": 70.26,
+ "scenes": [
+  {
+   "id": "s1",
+   "start": 0.0,
+   "end": 11.02
+  },
+  {
+   "id": "s2",
+   "start": 11.02,
+   "end": 13.88
+  },
+  {
+   "id": "s3",
+   "start": 13.88,
+   "end": 22.68
+  },
+  {
+   "id": "s4",
+   "start": 22.68,
+   "end": 29.35
+  },
+  {
+   "id": "s5",
+   "start": 29.35,
+   "end": 36.4
+  },
+  {
+   "id": "s6",
+   "start": 36.4,
+   "end": 42.08
+  },
+  {
+   "id": "s7",
+   "start": 42.08,
+   "end": 48.75
+  },
+  {
+   "id": "s8",
+   "start": 48.75,
+   "end": 53.11
+  },
+  {
+   "id": "s9",
+   "start": 53.11,
+   "end": 59.39
+  },
+  {
+   "id": "s10",
+   "start": 59.39,
+   "end": 66.22
+  },
+  {
+   "id": "s11",
+   "start": 66.22,
+   "end": 70.26
+  }
+ ],
+ "rows": [
+  {
+   "start": 0.8,
+   "end": 4.26,
+   "cue": "s1",
+   "text": "Imagine you find a strange machine in your room.",
+   "scene": "s1"
+  },
+  {
+   "start": 5.16,
+   "end": 6.7,
+   "cue": "",
+   "text": "It has one button.",
+   "scene": "s1"
+  },
+  {
+   "start": 7.6,
+   "end": 9.52,
+   "cue": "",
+   "text": "And one word on it.",
+   "scene": "s1"
+  },
+  {
+   "start": 10.42,
+   "end": 11.02,
+   "cue": "",
+   "text": "Clone.",
+   "scene": "s1"
+  },
+  {
+   "start": 11.02,
+   "end": 12.18,
+   "cue": "s2",
+   "text": "You press it.",
+   "scene": "s2"
+  },
+  {
+   "start": 13.88,
+   "end": 16.57,
+   "cue": "s3",
+   "text": "And suddenly, there are two of you.",
+   "scene": "s3"
+  },
+  {
+   "start": 17.47,
+   "end": 18.24,
+   "cue": "",
+   "text": "Same face.",
+   "scene": "s3"
+  },
+  {
+   "start": 18.84,
+   "end": 19.61,
+   "cue": "",
+   "text": "Same hoodie.",
+   "scene": "s3"
+  },
+  {
+   "start": 20.21,
+   "end": 20.98,
+   "cue": "",
+   "text": "Same everything.",
+   "scene": "s3"
+  },
+  {
+   "start": 22.68,
+   "end": 24.22,
+   "cue": "s4",
+   "text": "At first, it's amazing.",
+   "scene": "s4"
+  },
+  {
+   "start": 25.12,
+   "end": 29.35,
+   "cue": "",
+   "text": "Your clone cleans your room, while you play games all day.",
+   "scene": "s4"
+  },
+  {
+   "start": 29.35,
+   "end": 32.04,
+   "cue": "s5",
+   "text": "It even goes to school for you.",
+   "scene": "s5"
+  },
+  {
+   "start": 32.94,
+   "end": 36.4,
+   "cue": "",
+   "text": "And it gets better grades than you ever did.",
+   "scene": "s5"
+  },
+  {
+   "start": 36.4,
+   "end": 37.94,
+   "cue": "s6",
+   "text": "Your teacher loves it.",
+   "scene": "s6"
+  },
+  {
+   "start": 38.84,
+   "end": 40.38,
+   "cue": "",
+   "text": "Your friends love it.",
+   "scene": "s6"
+  },
+  {
+   "start": 42.08,
+   "end": 44.77,
+   "cue": "s7",
+   "text": "But one night, the clone comes home\u2026",
+   "scene": "s7"
+  },
+  {
+   "start": 45.67,
+   "end": 48.75,
+   "cue": "",
+   "text": "and it doesn't go back in the machine.",
+   "scene": "s7"
+  },
+  {
+   "start": 48.75,
+   "end": 50.67,
+   "cue": "s8",
+   "text": "It sleeps in your bed.",
+   "scene": "s8"
+  },
+  {
+   "start": 51.57,
+   "end": 53.11,
+   "cue": "",
+   "text": "It takes your room.",
+   "scene": "s8"
+  },
+  {
+   "start": 53.11,
+   "end": 56.18,
+   "cue": "s9",
+   "text": "The next morning, your mom calls your name\u2026",
+   "scene": "s9"
+  },
+  {
+   "start": 57.08,
+   "end": 59.39,
+   "cue": "",
+   "text": "and she walks right past you.",
+   "scene": "s9"
+  },
+  {
+   "start": 59.39,
+   "end": 61.7,
+   "cue": "s10",
+   "text": "Because now, the clone is you.",
+   "scene": "s10"
+  },
+  {
+   "start": 63.4,
+   "end": 64.17,
+   "cue": "",
+   "text": "And you\u2026",
+   "scene": "s10"
+  },
+  {
+   "start": 65.07,
+   "end": 66.22,
+   "cue": "",
+   "text": "are the copy.",
+   "scene": "s10"
+  },
+  {
+   "start": 66.22,
+   "end": 67.76,
+   "cue": "s11",
+   "text": "Follow for part two.",
+   "scene": "s11"
+  }
+ ]
+}
