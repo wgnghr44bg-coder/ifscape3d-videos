@@ -15,6 +15,7 @@ Lees eerst `tools/cartoon/README.md` en het voorbeeld `2026-10-20-clone-yourself
 3. `story.js`: kopieer de OPBOUW van het voorbeeld (niet de scènes). Gebruik alleen functies uit `tools/cartoon/cartoon.js`
    (`char`, `bedroom`, `classroom`, `desk`, `machine`, `heart`, `word`, `bubble`, `zoom`-hulpje uit het voorbeeld, `lerp`,
    `clamp01`, `blinkAt`, `FLOOR`). Elke `{img:sN}` heeft precies één functie `sN(t, d, T)` in `STORY.scenes`.
+   De hoofdpersoon ("you", ook de kloon) is ALTIJD `char({ ...HOOFDPERSOON, x, y, ... })` (vaste keuze eigenaar).
    Wat de stem in een scène noemt, moet in die scène te zien zijn. Pas `title` aan (2 regels, elk ≤ 24 tekens).
    Nodig je een plek die er niet is (straat, bos, ruimte …)? Voeg in story.js een eigen functie toe in dezelfde platte stijl
    (rechthoeken/cirkels, 1080 x 780, vloer vanaf y 520, poppetjes op `FLOOR`).
