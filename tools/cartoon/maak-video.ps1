@@ -21,7 +21,6 @@ $VoxLux = (Resolve-Path $VoxLux).Path
 $MapPad = Join-Path (Get-Location) $Map
 
 Stap "1. Nieuwste versie ophalen ($Branch)"
-if (git status --porcelain --untracked-files=no) { Write-Host "Er zijn niet-opgeslagen wijzigingen in deze repo. Eerst committen of 'git stash'." -ForegroundColor Red; exit 1 }
 git fetch origin $Branch; Check "git fetch"
 git checkout $Branch; Check "git checkout"
 git pull origin $Branch; Check "git pull"
