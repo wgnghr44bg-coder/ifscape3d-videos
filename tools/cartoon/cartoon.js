@@ -159,6 +159,66 @@ function beach() {
   <path d="M0,500 Q540,470 1080,500 L1080,780 L0,780Z" fill="#f1d9a0"/>
   <g transform="translate(860,520)"><rect x="-4" y="-260" width="8" height="260" fill="#ddd"/><path d="M-120,-250 Q0,-330 120,-250Z" fill="#e0483e"/></g>`;
 }
+// ── Bouwdoos: een plek maken uit een korte beschrijving (voor OpenCode: plek uit het script, zonder zelf SVG te tekenen) ──
+// place({ back: 'day'|'night'|'sunset'|'space'|'#kleur' (lucht of muurkleur), wall: true (binnen: muur i.p.v. lucht),
+//         ground: 'wood'|'grass'|'road'|'tiles'|'sand'|'snow'|'water'|'carpet', items: [['tree', x], ['house', x, '#kleur'], ...] })
+// x = midden van het ding (0–1080). Dingen staan op de vloer (y 520) tenzij anders vermeld. Volgorde = van achter naar voor.
+const ITEMS = {
+  sun: (x = 900, y = 120) => `<circle cx="${x}" cy="${y}" r="60" fill="#ffd95a"/>`,
+  moon: (x = 880, y = 120) => `<circle cx="${x}" cy="${y}" r="45" fill="#f5f0c8"/><circle cx="${x + 18}" cy="${y - 10}" r="40" fill="#1a2550"/>`,
+  cloud: (x = 300, y = 110) => `<g fill="#fff" opacity=".9"><ellipse cx="${x}" cy="${y}" rx="70" ry="30"/><ellipse cx="${x - 40}" cy="${y + 10}" rx="45" ry="24"/><ellipse cx="${x + 45}" cy="${y + 8}" rx="50" ry="25"/></g>`,
+  stars: () => { let o = ''; for (let i = 0; i < 40; i++) o += `<circle cx="${(i * 197) % 1080}" cy="${(i * 89) % 420}" r="${1 + i % 3}" fill="#fff" opacity=".8"/>`; return o; },
+  mountain: (x = 540, c = '#8d9bb0') => `<path d="M${x - 300},520 L${x},170 L${x + 300},520Z" fill="${c}"/><path d="M${x - 60},240 L${x},170 L${x + 60},240 L${x + 25},225 L${x},250 L${x - 30},228Z" fill="#fff"/>`,
+  building: (x = 200, c = '#c9705a', h = 330) => { const w = 200, y = 520 - h; let o = `<rect x="${x - w / 2}" y="${y}" width="${w}" height="${h}" fill="${c}"/>`;
+    for (let r = 0; r < Math.floor((h - 40) / 80); r++) for (let k = 0; k < 3; k++) o += `<rect x="${x - 80 + k * 58}" y="${y + 25 + r * 80}" width="40" height="48" fill="#dff1fb"/>`; return o; },
+  house: (x = 700, c = '#e0483e') => `<rect x="${x - 130}" y="320" width="260" height="200" fill="${c}"/><path d="M${x - 160},325 L${x},200 L${x + 160},325Z" fill="#7a4f33"/>
+    <rect x="${x - 30}" y="420" width="60" height="100" fill="#5a3a24"/><rect x="${x - 110}" y="360" width="60" height="50" fill="#dff1fb"/><rect x="${x + 50}" y="360" width="60" height="50" fill="#dff1fb"/>`,
+  tree: (x = 200) => `<rect x="${x - 14}" y="330" width="28" height="190" fill="#7a4f33"/><circle cx="${x}" cy="300" r="80" fill="#3f8f4a"/><circle cx="${x - 50}" cy="340" r="55" fill="#4aa055"/><circle cx="${x + 50}" cy="340" r="55" fill="#4aa055"/>`,
+  pine: (x = 200) => `<rect x="${x - 10}" y="450" width="20" height="70" fill="#7a4f33"/><path d="M${x - 70},460 L${x},250 L${x + 70},460Z" fill="#2f6b3a"/>`,
+  bush: (x = 300) => `<ellipse cx="${x}" cy="505" rx="70" ry="35" fill="#4aa055"/>`,
+  fence: (x = 540, w = 400) => { let o = `<rect x="${x - w / 2}" y="455" width="${w}" height="10" fill="#e9e2d6"/>`; for (let i = 0; i <= w / 40; i++) o += `<rect x="${x - w / 2 + i * 40}" y="430" width="14" height="90" fill="#f4efe6"/>`; return o; },
+  lamp: (x = 900) => `<rect x="${x - 5}" y="230" width="10" height="290" fill="#444"/><rect x="${x - 25}" y="215" width="50" height="22" rx="6" fill="#444"/><circle cx="${x}" cy="245" r="14" fill="#fff3a0"/>`,
+  car: (x = 700, c = '#3b82d6') => `<g transform="translate(${x},600)"><rect x="-120" y="-60" width="240" height="60" rx="16" fill="${c}"/><path d="M-70,-60 L-40,-105 L50,-105 L80,-60Z" fill="${c}"/><path d="M-55,-62 L-35,-95 L5,-95 L5,-62Z M15,-62 L15,-95 L45,-95 L65,-62Z" fill="#dff1fb"/><circle cx="-70" cy="0" r="24" fill="#222"/><circle cx="70" cy="0" r="24" fill="#222"/></g>`,
+  window: (x = 750, y = 80) => `<rect x="${x - 150}" y="${y}" width="300" height="260" fill="url(#sky)"/><rect x="${x - 160}" y="${y - 10}" width="320" height="280" fill="none" stroke="#fff" stroke-width="16"/><path d="M${x},${y} V${y + 260} M${x - 150},${y + 130} H${x + 150}" stroke="#fff" stroke-width="8"/>`,
+  door: (x = 950) => `<rect x="${x - 60}" y="250" width="120" height="270" fill="#8a5a3b"/><circle cx="${x + 35}" cy="400" r="8" fill="#f2c45a"/>`,
+  picture: (x = 250, y = 120) => `<rect x="${x - 70}" y="${y}" width="140" height="100" fill="#fff" stroke="#7a4f33" stroke-width="8"/><path d="M${x - 60},${y + 90} L${x - 20},${y + 40} L${x + 10},${y + 70} L${x + 30},${y + 50} L${x + 60},${y + 90}Z" fill="#4caf6a"/>`,
+  shelf: (x = 200, y = 160) => `<rect x="${x - 110}" y="${y}" width="220" height="12" fill="#9b6b45"/>${[0, 1, 2, 3, 4].map(i => `<rect x="${x - 100 + i * 30}" y="${y - 50 + (i % 2) * 10}" width="22" height="${50 - (i % 2) * 10}" fill="${['#d0704a', '#5b8c6a', '#3b82d6', '#f2c45a', '#8e5bd1'][i]}"/>`).join('')}`,
+  table: (x = 540) => `<rect x="${x - 120}" y="440" width="240" height="18" fill="#b07a4a"/><rect x="${x - 105}" y="458" width="12" height="62" fill="#7a4f33"/><rect x="${x + 93}" y="458" width="12" height="62" fill="#7a4f33"/>`,
+  sofa: (x = 300, c = '#8e5bd1') => `<rect x="${x - 160}" y="380" width="320" height="90" rx="20" fill="${shade(c)}"/><rect x="${x - 150}" y="430" width="300" height="70" rx="14" fill="${c}"/><rect x="${x - 175}" y="410" width="40" height="100" rx="14" fill="${shade(c)}"/><rect x="${x + 135}" y="410" width="40" height="100" rx="14" fill="${shade(c)}"/>`,
+  bed: (x = 240) => `<rect x="${x - 230}" y="340" width="26" height="250" rx="6" fill="#6b4329"/><rect x="${x - 220}" y="470" width="440" height="60" rx="14" fill="#5f9ad1"/><rect x="${x - 220}" y="470" width="90" height="40" rx="12" fill="#fff"/><rect x="${x - 220}" y="525" width="440" height="60" fill="#7a4f33"/>`,
+  tv: (x = 790) => `<rect x="${x - 100}" y="470" width="200" height="50" fill="#555"/><rect x="${x - 130}" y="300" width="260" height="170" rx="10" fill="#222"/><rect x="${x - 118}" y="312" width="236" height="146" fill="#6ad1ff"/>`,
+  fridge: (x = 860) => `<rect x="${x - 100}" y="140" width="200" height="380" rx="14" fill="#e6eef2" stroke="#b9c7cf" stroke-width="5"/><rect x="${x + 70}" y="250" width="10" height="70" rx="4" fill="#9aa"/>`,
+  counter: (x = 300) => `<rect x="${x - 300}" y="380" width="600" height="140" fill="#c07a4a"/><rect x="${x - 300}" y="370" width="600" height="18" fill="#e9e2d6"/>`,
+  board: (x = 540, txt = '') => `<rect x="${x - 340}" y="60" width="680" height="300" rx="10" fill="#7a4f33"/><rect x="${x - 325}" y="75" width="650" height="270" fill="#2f5d4a"/><text x="${x - 300}" y="140" font-family="DejaVu Sans" font-weight="700" font-size="44" fill="#fff">${txt}</text>`,
+  rug: (x = 560, c = '#e2725b') => `<ellipse cx="${x}" cy="${FLOOR + 10}" rx="340" ry="34" fill="${c}" opacity=".75"/>`,
+  rock: (x = 300) => `<ellipse cx="${x}" cy="510" rx="60" ry="30" fill="#8a8a95"/>`,
+  sign: (x = 900, txt = '') => `<rect x="${x - 5}" y="300" width="10" height="220" fill="#555"/><rect x="${x - 90}" y="250" width="180" height="70" rx="8" fill="#2f7d4a"/><text x="${x}" y="296" text-anchor="middle" font-family="DejaVu Sans" font-weight="700" font-size="30" fill="#fff">${txt}</text>`,
+  text: (x = 540, y = 200, txt = '', c = '#111') => `<text x="${x}" y="${y}" text-anchor="middle" font-family="Inter Display,DejaVu Sans" font-weight="900" font-size="54" fill="${c}">${txt}</text>`,
+};
+const GROUNDS = {
+  wood: `<rect x="0" y="520" width="1080" height="260" fill="url(#wood)"/>`,
+  grass: `<rect x="0" y="520" width="1080" height="260" fill="#6db35b"/><path d="M0,520 Q270,500 540,520 T1080,515 L1080,540 L0,540Z" fill="#7cc46a"/>`,
+  road: `<rect x="0" y="470" width="1080" height="70" fill="#b9b2a6"/><rect x="0" y="540" width="1080" height="240" fill="#4a4a52"/>${[0, 1, 2, 3, 4].map(i => `<rect x="${40 + i * 220}" y="650" width="120" height="14" fill="#f2f2f2"/>`).join('')}`,
+  tiles: `<rect x="0" y="520" width="1080" height="260" fill="#d9d1c3"/>${[0, 1, 2, 3, 4, 5, 6, 7].map(i => `<rect x="${i * 140}" y="520" width="2" height="260" fill="#c8bfae"/>`).join('')}`,
+  sand: `<path d="M0,500 Q540,470 1080,500 L1080,780 L0,780Z" fill="#f1d9a0"/>`,
+  snow: `<path d="M0,500 Q540,480 1080,505 L1080,780 L0,780Z" fill="#f4f8fb"/>`,
+  water: `<rect x="0" y="420" width="1080" height="360" fill="#3fa3d6"/>${[0, 1, 2, 3, 4].map(i => `<path d="M${i * 230},${480 + (i % 2) * 60} q40,-14 80,0" stroke="#fff" stroke-width="5" fill="none"/>`).join('')}`,
+  carpet: `<rect x="0" y="520" width="1080" height="260" fill="#b58a6a"/>`,
+  moon: `<path d="M0,560 Q540,470 1080,560 L1080,780 L0,780Z" fill="#9b9ba8"/>`,
+};
+const FRONT = ['car', 'rug', 'table', 'sofa', 'counter', 'rock', 'bush'];   // staan op de vloer, vóór de grond getekend
+function place({ back = 'day', wall = false, ground = 'grass', items = [], dark = false } = {}) {
+  const BG = { day: 'url(#sky)', night: 'url(#night)', sunset: '#f4a261', space: '#0b0f2a' };
+  let g = `<rect width="1080" height="780" fill="${wall ? (BG[back] ? '#f6e7d2' : back) : (BG[back] || back)}"/>`;
+  if (back === 'sunset' && !wall) g += `<rect width="1080" height="300" fill="#e76f51" opacity=".5"/>`;
+  if ((back === 'night' || back === 'space') && !wall) g += ITEMS.stars();
+  const [behind, front] = [items.filter(i => !!FRONT.includes(i[0])), items.filter(i => FRONT.includes(i[0]))];
+  for (const [n, ...a] of behind) g += ITEMS[n] ? ITEMS[n](...a) : '';
+  g += GROUNDS[ground] || GROUNDS.grass;
+  for (const [n, ...a] of front) g += ITEMS[n] ? ITEMS[n](...a) : '';
+  if (dark || back === 'night') g += `<rect width="1080" height="780" fill="#0a1030" opacity="${back === 'night' ? 0.3 : 0.5}"/>`;
+  return g;
+}
 function desk(x) { return `<g transform="translate(${x},600)"><rect x="-90" y="0" width="180" height="22" fill="#b07a4a"/><rect x="-80" y="22" width="12" height="90" fill="#7a4f33"/><rect x="68" y="22" width="12" height="90" fill="#7a4f33"/></g>`; }
 function heart(x, y, s = 1, o = 1) { return `<path transform="translate(${x},${y}) scale(${s})" opacity="${o}" d="M0,10 C-30,-15 -15,-35 0,-18 C15,-35 30,-15 0,10Z" fill="#ff4d6d"/>`; }
 function word(txt, x, y, size, k = 1, col = '#9cff3a', rot = -8) {

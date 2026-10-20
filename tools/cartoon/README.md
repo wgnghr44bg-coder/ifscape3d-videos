@@ -27,7 +27,8 @@ Daarna `timing.py` en `render.mjs` opnieuw: dan lopen beeld en ondertitels preci
 - `char({...})`: hoofd (`skin`), shirt (`top`: jas/hoodie/tshirt/trui/pak), kleur, gezicht (`normaal`, `blij`, `bang`, `boos`, `stiekem`, `verdrietig`, `slaap`), knipperen,
   kijkrichting, lopen, springen, schudden, verschijnen (`pop`), spiegelen, haar (`long`, `bun`, `kort`), bril, pet,
   armen draaien (wijzen, knop indrukken), vasthouden (`broom`, `controller`, `phone`), liggen (`lie: -90`).
-- Plekken: `bedroom({night, tv, light, machineAt})`, `classroom(bordtekst)`, `street({night})`, `park()`, `kitchen()`,
+- Bouwdoos: `place({ back, wall, ground, items })` maakt een plek uit een korte beschrijving (zie `.opencode/command/cartoon.md`).
+- Vaste plekken: `bedroom({night, tv, light, machineAt})`, `classroom(bordtekst)`, `street({night})`, `park()`, `kitchen()`,
   `space()`, `beach()`, plus `desk`, `machine`, `heart`, `word` (POOF!, A+),
   `bubble` (tekstballon).
 - Geluidjes (gratis, ffmpeg): `poof`, `ding`, `click`, `boom` via `STORY.sfx`.
