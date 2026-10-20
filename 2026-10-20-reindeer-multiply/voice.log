@@ -1,0 +1,37 @@
+    1.      'Imagine: one reindeer walks into camp, and it starts making copies.'  + 1600 ms
+    2.      'You are standing in a camp in a green clearing, with the campers.'  + 1600 ms
+    3.      'One at the edge of the clearing.'  + 600 ms
+    4.      'Then another.'  + 600 ms
+    5.      'Then another.'  + 1600 ms
+    6.      'You count them yourself, to be sure you are awake.'  + 1600 ms
+    7.      'You give up counting, and start watching instead.'  + 1600 ms
+    8.      'The largest real herds reach five hundred thousand animals.'  + 1600 ms
+    9.      'They stand shoulder to shoulder, and every hour, thirty-two more arriv'  + 700 ms
+   10.      'Even so, it is only a fraction of a real herd.'  + 1600 ms
+   11.      'But a herd that stays in one place eats the ground bare.'  + 700 ms
+   12.      'A migrating herd walks up to five thousand kilometres a year, eating a'  + 1600 ms
+   13.      'After eight hours, the arrivals stop, and the herd stands still.'  + 700 ms
+   14.      'Two hundred and fifty-seven reindeer surround the camp.'  + 8000 ms
+   15.      'By the end of the day, the herd has not moved.'  + 1600 ms
+   16.      'Nobody was hurt.'  + 600 ms
+   17.      'There was simply no space left.'
+17 zinnen, 0 uit de cache, 17 nieuw
+loaded PerthNet (Implicit) at step 250,000
+  1/17 klaar: Imagine: one reindeer walks into camp, and it starts making 
+  2/17 klaar: You are standing in a camp in a green clearing, with the cam
+  3/17 klaar: One at the edge of the clearing.
+  4/17 klaar: Then another.
+  5/17 klaar: Then another.
+  6/17 klaar: You count them yourself, to be sure you are awake.
+  7/17 klaar: You give up counting, and start watching instead.
+  8/17 klaar: The largest real herds reach five hundred thousand animals.
+  9/17 klaar: They stand shoulder to shoulder, and every hour, thirty-two 
+  10/17 klaar: Even so, it is only a fraction of a real herd.
+  11/17 klaar: But a herd that stays in one place eats the ground bare.
+  12/17 klaar: A migrating herd walks up to five thousand kilometres a year
+  13/17 klaar: After eight hours, the arrivals stop, and the herd stands st
+  14/17 klaar: Two hundred and fifty-seven reindeer surround the camp.
+  15/17 klaar: By the end of the day, the herd has not moved.
+  16/17 klaar: Nobody was hurt.
+  17/17 klaar: There was simply no space left.
+voice.mp3 + voice-times.tsv: 17 regels, stem eindigt op 75.8 s

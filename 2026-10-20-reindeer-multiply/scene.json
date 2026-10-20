@@ -1,0 +1,21 @@
+{
+ "effect": "multiply",
+ "subject": {
+  "word": "reindeer",
+  "model": "kenney/holiday-kit/reindeer.glb",
+  "height": 1.6
+ },
+ "spacing": 0.55,
+ "people": "campers",
+ "at": [-1, 5],
+ "tags": [
+  {
+   "word": "forest",
+   "match": "tree"
+  },
+  {
+   "word": "trees",
+   "match": "tree"
+  }
+ ]
+}

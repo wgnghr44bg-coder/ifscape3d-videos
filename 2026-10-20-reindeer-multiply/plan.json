@@ -1,0 +1,336 @@
+{
+ "_help": "Fill in every TODO, then run: python tools/whatif/whatif.py check <folder>. See tools/whatif/README.md.",
+ "question": "What if the reindeer kept multiplying?",
+ "slug": "reindeer-multiply",
+ "spelling": "metres",
+ "environment": "forest-camp",
+ "pace": "slow",
+ "realism": "fantasy",
+ "voice": "alteraqon",
+ "numbers": [
+  {
+   "id": "start",
+   "value": 1,
+   "unit": "reindeer",
+   "said_as": [],
+   "meaning": "the one reindeer that walks into the camp (the premise of the what if)",
+   "premise": true
+  },
+  {
+   "id": "per_hour",
+   "value": 32,
+   "unit": "reindeer an hour",
+   "said_as": [],
+   "meaning": "how many reindeer come into the camp every hour (the premise of the what if)",
+   "premise": true
+  },
+  {
+   "id": "hours",
+   "value": 8,
+   "unit": "h",
+   "said_as": [],
+   "meaning": "how many hours the arrivals last (the premise of the what if)",
+   "premise": true
+  },
+  {
+   "id": "herd",
+   "value": 257,
+   "unit": "reindeer",
+   "said_as": [],
+   "meaning": "the herd at the end: the first reindeer plus eight hours of arrivals",
+   "premise": false
+  },
+  {
+   "id": "big_herd",
+   "value": 500000,
+   "unit": "reindeer",
+   "said_as": [],
+   "meaning": "the peak size of the largest real reindeer herds (NOAA Arctic Report Card 2024)"
+  },
+  {
+   "id": "migration",
+   "value": 5000,
+   "unit": "km a year",
+   "said_as": [],
+   "meaning": "how far the longest reindeer migrations go in a year (Wikipedia, Reindeer)"
+  }
+ ],
+ "steps": [
+  {
+   "step": 1,
+   "role": "Imagine… in a single second/minute/night, <it happens>. + what that means",
+   "lines": [
+    "Imagine: one reindeer walks into camp, and it starts making copies."
+   ],
+   "pause_after": "long"
+  },
+  {
+   "step": 2,
+   "role": "Where you are: \"You are standing …\" (the place on screen)",
+   "lines": [
+    "You are standing in a camp in a green clearing, with the campers."
+   ],
+   "pause_after": "long"
+  },
+  {
+   "step": 3,
+   "role": "The normal number → the new number (the counter jumps or starts)",
+   "lines": [
+    "One at the edge of the clearing. Then another. Then another."
+   ],
+   "pause_after": "long"
+  },
+  {
+   "step": 4,
+   "role": "What you notice yourself",
+   "lines": [
+    "You count them yourself, to be sure you are awake."
+   ],
+   "pause_after": "long"
+  },
+  {
+   "step": 5,
+   "role": "How people react; vehicles, animals, things in the street",
+   "lines": [
+    "You give up counting, and start watching instead."
+   ],
+   "pause_after": "long"
+  },
+  {
+   "step": 6,
+   "role": "One real fact with a number",
+   "lines": [
+    "The largest real herds reach five hundred thousand animals."
+   ],
+   "pause_after": "long"
+  },
+  {
+   "step": 7,
+   "role": "It escalates; one big image",
+   "lines": [
+    "They stand shoulder to shoulder, and every hour, thirty-two more arrive.",
+    "Even so, it is only a fraction of a real herd."
+   ],
+   "pause_after": "long"
+  },
+  {
+   "step": 8,
+   "role": "Why it goes wrong: \"… But …\"",
+   "lines": [
+    "But a herd that stays in one place eats the ground bare.",
+    "A migrating herd walks up to five thousand kilometres a year, eating as it goes."
+   ],
+   "pause_after": "long"
+  },
+  {
+   "step": 9,
+   "role": "Climax (the generator adds ≈5 s of silence after this step)",
+   "lines": [
+    "After eight hours, the arrivals stop, and the herd stands still.",
+    "Two hundred and fifty-seven reindeer surround the camp."
+   ],
+   "pause_after": "long"
+  },
+  {
+   "step": 10,
+   "role": "Aftermath: what is still there",
+   "lines": [
+    "By the end of the day, the herd has not moved."
+   ],
+   "pause_after": "long"
+  },
+  {
+   "step": 11,
+   "role": "A closing line that stays with you",
+   "lines": [
+    "Nobody was hurt. There was simply no space left."
+   ],
+   "pause_after": "long"
+  }
+ ],
+ "on_screen": [
+  {
+   "word": "reindeer",
+   "model": "kenney/holiday-kit/reindeer.glb, copied up to 257 times around the camp",
+   "looks": "brown low-poly reindeer with antlers: one at the edge of the clearing, then a herd that fills the whole camp"
+  },
+  {
+   "word": "campers",
+   "model": "kenney/mini-characters: six walkers, two of them tagged",
+   "looks": "the people of the camp, backing away from the herd as it grows"
+  }
+ ],
+ "counter": {
+  "label": "REINDEER",
+  "from": 1,
+  "to": 257,
+  "unit": "animals",
+  "second_label": "HOURS",
+  "second_from": 0,
+  "second_to": 8,
+  "second_unit": "h",
+  "motion": "steady",
+  "starts_on_word": "3:One",
+  "stops_on_word": "9:stop"
+ },
+ "captions": [
+  "One reindeer walks into the camp.",
+  "Hour after hour, one after another, they come.",
+  "Real herds reach 500 000 animals.",
+  "Thirty-two more every hour."
+ ],
+ "facts": [
+  {
+   "claim": "The five largest reindeer herds on Earth peak at about 500 000 animals",
+   "number_ids": [
+    "big_herd"
+   ],
+   "source": "NOAA Arctic Report Card 2024, Migratory Tundra Caribou in a Warmer Climate",
+   "url": "https://arctic.noaa.gov/report-card/report-card-2024/migratory-tundra-caribou-in-a-warmer-climate",
+   "source_says": "The five largest herds are inland (Taimyr, Bathurst, George River, Qamanirjuaq and Western Arctic), with peak herd sizes of close to or above 500,000 caribou."
+  },
+  {
+   "claim": "Some reindeer herds migrate up to 5 000 kilometres a year, the longest migration of any land mammal",
+   "number_ids": [
+    "migration"
+   ],
+   "source": "Wikipedia, Reindeer (Rangifer tarandus)",
+   "url": "https://en.wikipedia.org/wiki/Reindeer",
+   "source_says": "migrate the farthest of any terrestrial mammal, traveling up to 5,000 km (3,000 mi) a year"
+  }
+ ],
+ "shots": [
+  {
+   "type": "shot",
+   "from_step": 1,
+   "camera": "camp",
+   "shows": "eye level at the camp: one reindeer at the edge of the clearing, the tents and the trees behind it; nothing big in front of the lens during the title"
+  },
+  {
+   "type": "shot",
+   "from_step": 7,
+   "camera": "lake",
+   "shows": "from the other side of the clearing: reindeer shoulder to shoulder over the camp, more of them coming, the trees close behind"
+  },
+  {
+   "type": "shot",
+   "from_step": 9,
+   "camera": "aerial",
+   "shows": "high over the whole clearing: hundreds of reindeer fill the camp up to the tree line, the counter stopped at 257, and the herd stands still; the frame holds at the end"
+  }
+ ],
+ "climax": {
+  "visual": "the high shot over the clearing: the whole camp is covered in reindeer, the counter stops on 257, and every animal stands still for about five seconds of silence",
+  "why_it_fits_the_closing_line": "The closing line says nobody was hurt and there was no space left, so the climax is not a charge or a crash: it is the silent picture of a clearing with no room in it, filled edge to edge with a herd that has stopped moving."
+ },
+ "models": [
+  {
+   "name": "forest-camp environment",
+   "source": "environment",
+   "path": "environments/forest-camp.js",
+   "new": false,
+   "licence": "CC0",
+   "credit": ""
+  },
+  {
+   "name": "Holiday Kit (reindeer)",
+   "source": "kenney",
+   "path": "assets/kenney/holiday-kit",
+   "new": false,
+   "licence": "CC0",
+   "credit": ""
+  },
+  {
+   "name": "Nature Kit (trees, tents, rocks, canoe)",
+   "source": "kenney",
+   "path": "assets/kenney/nature-kit",
+   "new": false,
+   "licence": "CC0",
+   "credit": ""
+  },
+  {
+   "name": "Mini Characters (campers)",
+   "source": "kenney",
+   "path": "assets/kenney/mini-characters",
+   "new": false,
+   "licence": "CC0",
+   "credit": ""
+  }
+ ],
+ "derivations": [
+  {
+   "result": "herd",
+   "formula": "start + per_hour * hours",
+   "explain": "the first reindeer plus thirty-two new arrivals every hour for eight hours gives two hundred and fifty-seven animals in the clearing"
+  }
+ ],
+ "scale_checks": [],
+ "may_float": [],
+ "subject": "reindeer",
+ "subject_min_px": 180,
+ "counter_matches": {
+  "none": "the counter counts the reindeer that are really in the clearing: every animal you can see is one more on the counter, because one is added each time a new one arrives; the second line counts the hours that have passed, so the two lines together show the rate of thirty-two an hour"
+ },
+ "reality": [
+  {
+   "step": 7,
+   "why_it_really_happens": "Reindeer are herd animals that crowd together when they cannot spread out over the range. Animals that keep arriving in the same clearing therefore stand closer and closer together, until they are shoulder to shoulder and the ones at the edge start pushing the ones behind them."
+  },
+  {
+   "step": 9,
+   "why_it_really_happens": "Two hundred and fifty-seven reindeer crowd into a clearing that is only 32 metres across; the herd is about 16 metres wide, so the tents, the fire ring and the logs of the camp stand inside it and there is no open ground left between the animals."
+  },
+  {
+   "step": 10,
+   "why_it_really_happens": "A real herd that stays in one place grazes the lichen, grass and shoots off the ground and tramples it: two hundred and fifty-seven animals that do not move eat the whole clearing bare over a day, while a herd on the move takes its food with it."
+  }
+ ],
+ "critic": [
+  {
+   "weak_point": "The first version had the voice say 'then two. Then four.' while the counter already showed thirteen and twenty-two: the voice and the picture disagreed about how many reindeer there were.",
+   "fix": "the voice now only says counts the counter really shows - one at the start and two hundred and fifty-seven at the end - and the growth in between is described without numbers, so nothing in the script can contradict the counter."
+  },
+  {
+   "weak_point": "The first version said the herd doubled every hour, but the scene adds the animals one by one, so the picture shows a steady stream and never a doubling.",
+   "fix": "the premise is now a drip: the first reindeer, then thirty-two new ones every hour for eight hours. The counter and the hours line are the same line of numbers, so herd = start + per_hour x hours = 257 holds exactly on screen."
+  },
+  {
+   "weak_point": "The first version was a night story in a day-lit scene: the camp has no flames, only a ring of stones, and the sky is a day sky, so 'the edge of the light', 'eight o'clock' and 'by morning' were not in the picture.",
+   "fix": "there is no night in the story any more: it happens over eight hours of daylight, the voice never names the fire, and the counter's second line simply says how many hours have passed."
+  },
+  {
+   "weak_point": "The first version put the herd at 26 metres across, which is narrower than the 32 metre clearing, so the closing line 'no space left' was not true on screen.",
+   "fix": "the copies stand close together around the camp, so 257 of them make a herd about 16 metres wide: the tents, the fire and the logs of the camp stand inside it, the ground between the animals is gone, and the closing line is true."
+  },
+  {
+   "weak_point": "The first version ended with 'the camp is gone' and 'the ground is bare', but the picture shows a green field with reindeer standing on it: neither the tents nor the grass change in the scene.",
+   "fix": "the voice now only says what the picture shows - the herd has not moved - and the grazing is explained in the reality notes, not claimed on screen."
+  },
+  {
+   "weak_point": "The first version named the trees and the tents, but a group of ninety scattered trees and two tents cannot be measured by the picture checker: the trees were reported as 'hidden' and the tents as 'out of frame'.",
+   "fix": "the voice only names what the checker can really see - the reindeer and the campers - and the place is a 'green clearing'; the trees and the tents stay in the picture without being promised in words."
+  },
+  {
+   "weak_point": "The first version named the reindeer in the middle of the film, where the camera has already pulled back to 40 metres and the animals are only about 70 pixels high; the picture checker would have failed the subject.",
+   "fix": "the voice names the reindeer in step 1 (one animal, close to the lens) and in the climax (the whole herd from the air, where it measures 400 pixels); in between it says 'the herd' and 'them'."
+  },
+  {
+   "weak_point": "The first version spoke the half-million fact and dropped it, and the rate of thirty-two an hour was never said, so the two counter lines had no meaning for the viewer.",
+   "fix": "step 6 gives the fact, step 7 gives the rate and reacts to the fact, and the counter's two lines (animals and hours) are exactly what the viewer needs to follow the story."
+  }
+ ],
+ "questions": [
+  {
+   "question": "The place: forest-camp, or another clearing?",
+   "my_choice": "forest-camp: a clearing with a lake, a wall of trees, tents and a jetty. The herd fills the clearing, the high shot shows the whole valley, and no new environment has to be built."
+  },
+  {
+   "question": "The animal: the Kenney holiday reindeer, or a new model?",
+   "my_choice": "the Kenney holiday reindeer: a low-poly deer with antlers that reads as a reindeer both close up and from the air, CC0, no new model files and no new licences."
+  },
+  {
+   "question": "The second counter line: what should it show?",
+   "my_choice": "the hours of the day, 0 to 8 h. The first line counts the animals, the second line counts the hours, and together they show the rate of thirty-two an hour; the voice says 'after eight hours' at exactly the moment both lines reach their end."
+  }
+ ]
+}
