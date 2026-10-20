@@ -7,9 +7,10 @@ param(
   [string]$Branch = "claude/video-what-if-simple-xxvouf",
   [string]$VoxLux = "..\vox-lux-alteraqon",
   [string]$StemPython = "C:\Users\rane\Documents\Standaardproject\whatif\stem-env\Scripts\python.exe",
-  [string]$Uit = "C:\Users\rane\Videos\alteraqon\ifscape3d",
+  [string]$Uit = "C:\Users\rane\Videos\alteraqon\cartoon",
   [switch]$NieuweStem,   # stem opnieuw maken, ook als voice.mp3 er al is
-  [switch]$GeenPush      # stem en tijden niet terug naar GitHub sturen
+  [switch]$GeenPush,     # stem en tijden niet terug naar GitHub sturen
+  [switch]$GeenOphalen   # geen git fetch/checkout/pull (OpenCode doet dat zelf)
 )
 $ErrorActionPreference = "Stop"
 function Stap($t) { Write-Host "`n=== $t ===" -ForegroundColor Cyan }
@@ -20,11 +21,13 @@ if (-not (Test-Path $VoxLux)) { $VoxLux = "..\vox-lux" }
 $VoxLux = (Resolve-Path $VoxLux).Path
 $MapPad = Join-Path (Get-Location) $Map
 
+if (-not $GeenOphalen) {
 Stap "1. Nieuwste versie ophalen ($Branch)"
 git fetch origin $Branch; Check "git fetch"
 git checkout $Branch; Check "git checkout"
 git pull origin $Branch; Check "git pull"
 Push-Location $VoxLux; git pull; Pop-Location
+}
 
 Stap "2. Programma's controleren"
 foreach ($p in "node", "npm", "ffmpeg", "python") {

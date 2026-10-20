@@ -3,6 +3,10 @@
 These are the owner's standing rules (PART A). Read them before starting any new "What if".
 The template to copy is `2026-10-04-gravity-doubled/` — read its `GRAVITY-VIDEO.md` first.
 
+## 🎨 Cartoon-video (platte 2D-poppetjes)
+Zegt de eigenaar "cartoon" of `/cartoon What if …?`: volg `.opencode/command/cartoon.md` (eindigt met een kijklink voor de iPhone).
+De regels hieronder (plan.json, autoscene, physics) gelden NIET voor cartoons.
+
 ## 🌙 NACHTRUN — automatisch, elke nacht (eigenaar 19 okt 2026: "ja doe de nacht maar")
 
 Staat er "NACHTRUN" in je opdracht, dan maak je ZELF één complete Short en zet je hem op het schema. De eigenaar slaapt:
