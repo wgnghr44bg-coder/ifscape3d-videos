@@ -30,7 +30,11 @@ Daarna `timing.py` en `render.mjs` opnieuw: dan lopen beeld en ondertitels preci
 - Geluidjes (gratis, ffmpeg): `poof`, `ding`, `click`, `boom` via `STORY.sfx`.
 Nodig: Playwright (Chromium) en ffmpeg – staan al in de cloudsessie.
 
-## Op de pc (Windows)
+## Op de pc (Windows) – alles in één keer
+`powershell -ExecutionPolicy Bypass -File tools\cartoon\maak-video.ps1 -Map <map>` doet hieronder alles
+(ophalen, eenmalig installeren, stem, tijden, video, kopie naar Video's, stem terug naar GitHub).
+
+## Op de pc (Windows) – met de hand
 Eenmalig, in de map `ifscape3d-videos`: Node.js, Python en ffmpeg moeten er zijn (ffmpeg staat er al voor de stem). Dan:
 ```
 npm install playwright
