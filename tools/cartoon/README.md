@@ -11,6 +11,7 @@ platte kamers, witte titel bovenin, PART-label en grote ondertitels. Alles wordt
 
 ## Stappen
 ```
+python3 tools/cartoon/check_story.py <map>              # eigen verhaal? (geen tekst/scènes uit andere video's, ≥ 3 plekken)
 python3 tools/cartoon/timing.py <map>                   # tijden (geschat, of uit voice-times.tsv als die er is)
 node tools/cartoon/render.mjs <map> --check             # alleen CHECK.jpg: één beeld per scène (snel)
 node tools/cartoon/render.mjs <map>                     # <map>/build/video.mp4 (1080x1920, met stem als voice.mp3 er is)
@@ -22,10 +23,12 @@ python tools/comfy/make_voice_local.py ../ifscape3d-videos/<map>     # → voice
 Daarna `timing.py` en `render.mjs` opnieuw: dan lopen beeld en ondertitels precies mee met de stem.
 
 ## Wat de engine kan (`cartoon.js`)
-- `char({...})`: kleur jas, gezicht (`normaal`, `blij`, `bang`, `boos`, `stiekem`, `verdrietig`, `slaap`), knipperen,
+- `HOOFDPERSOON`: vaste hoofdpersoon (getint hoofd, zwart t-shirt) → `char({ ...HOOFDPERSOON, x, y })`.
+- `char({...})`: hoofd (`skin`), shirt (`top`: jas/hoodie/tshirt/trui/pak), kleur, gezicht (`normaal`, `blij`, `bang`, `boos`, `stiekem`, `verdrietig`, `slaap`), knipperen,
   kijkrichting, lopen, springen, schudden, verschijnen (`pop`), spiegelen, haar (`long`, `bun`, `kort`), bril, pet,
   armen draaien (wijzen, knop indrukken), vasthouden (`broom`, `controller`, `phone`), liggen (`lie: -90`).
-- Plekken: `bedroom({night, tv, light})`, `classroom(bordtekst)`, plus `desk`, `machine`, `heart`, `word` (POOF!, A+),
+- Plekken: `bedroom({night, tv, light, machineAt})`, `classroom(bordtekst)`, `street({night})`, `park()`, `kitchen()`,
+  `space()`, `beach()`, plus `desk`, `machine`, `heart`, `word` (POOF!, A+),
   `bubble` (tekstballon).
 - Geluidjes (gratis, ffmpeg): `poof`, `ding`, `click`, `boom` via `STORY.sfx`.
 Nodig: Playwright (Chromium) en ffmpeg – staan al in de cloudsessie.

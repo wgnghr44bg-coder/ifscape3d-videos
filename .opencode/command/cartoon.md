@@ -9,16 +9,23 @@ Lees eerst `tools/cartoon/README.md` en het voorbeeld `2026-10-20-clone-yourself
 
 1. `git pull`. Map: `<datum van vandaag>-<korte-slug>/` (bijv. `2026-10-21-become-invisible`).
    Geen onderwerp gegeven? Kies zelf een "What IF you could …?"-superkracht of situatie die nog niet in een map staat.
-2. `script-cues.txt` (Engels): 9–12 scènes `{img:s1}` … , elk 1–2 korte zinnen met `[pause]` / `[long pause]`,
-   ±110–130 woorden totaal (≈60–75 s). Opbouw: wat-als → het is eerst geweldig → het gaat mis → twist → laatste scène
-   `Follow for part two.` Getallen voluit schrijven ("two", niet "2").
-3. `story.js`: kopieer de OPBOUW van het voorbeeld (niet de scènes). Gebruik alleen functies uit `tools/cartoon/cartoon.js`
-   (`char`, `bedroom`, `classroom`, `desk`, `machine`, `heart`, `word`, `bubble`, `zoom`-hulpje uit het voorbeeld, `lerp`,
+2. EIGEN VERHAAL eerst (eigenaar 21 okt 2026: "niet echt een eigen verhaal"). Schrijf `<map>/idee.md` (5 regels):
+   - de kracht/situatie in één zin;
+   - 3 momenten die ALLEEN bij dit onderwerp kunnen (bij onzichtbaar bv. door een feest sluipen, een hond die je wél ruikt);
+   - 3–5 plekken die bij dit verhaal horen: `bedroom`, `classroom`, `street`, `park`, `kitchen`, `space`, `beach`
+     (opties `{night: true}` bij bedroom/street), of maak een eigen plek in story.js;
+   - het einde/de twist, eigen voor dit onderwerp.
+   VERBODEN (komt uit het eerste voorbeeld): een voorwerp met "één woord erop", "at first it's amazing", school/cijfers/A+,
+   mama die langs je loopt, "you are the copy". Kopieer GEEN zinnen of scènes uit andere mappen; alleen de opbouw van story.js.
+   `script-cues.txt` (Engels): 9–12 scènes `{img:s1}` …, elk 1–2 korte zinnen met `[pause]` / `[long pause]`,
+   100–140 woorden totaal (≈60–75 s). Laatste zin mag `Follow for part two.` zijn. Getallen voluit ("two", niet "2").
+3. `story.js`: kopieer de OPBOUW van `2026-10-20-clone-yourself/story.js` (niet de scènes). Gebruik functies uit
+   `tools/cartoon/cartoon.js` (`char`, de plekken hierboven, `desk`, `machine`, `heart`, `word`, `bubble`, `lerp`,
    `clamp01`, `blinkAt`, `FLOOR`). Elke `{img:sN}` heeft precies één functie `sN(t, d, T)` in `STORY.scenes`.
-   De hoofdpersoon ("you", ook de kloon) is ALTIJD `char({ ...HOOFDPERSOON, x, y, ... })` (vaste keuze eigenaar).
+   De hoofdpersoon ("you") is ALTIJD `char({ ...HOOFDPERSOON, x, y, ... })` (vaste keuze eigenaar).
+   Andere mensen: `skin` (bv. '#f6d2b0', '#d9a273', '#8a5a3b'), `hair`, `top` ('jas', 'hoodie', 'tshirt', 'trui', 'pak').
    Wat de stem in een scène noemt, moet in die scène te zien zijn. Pas `title` aan (2 regels, elk ≤ 24 tekens).
-   Nodig je een plek die er niet is (straat, bos, ruimte …)? Voeg in story.js een eigen functie toe in dezelfde platte stijl
-   (rechthoeken/cirkels, 1080 x 780, vloer vanaf y 520, poppetjes op `FLOOR`).
+   Controle: `python tools/cartoon/check_story.py <map>` tot er `VERHAAL OK` staat. Nooit omzeilen: herschrijf het verhaal.
 4. `python tools/cartoon/timing.py <map> --vox-lux ..\vox-lux-alteraqon` en `node tools/cartoon/render.mjs <map> --check`.
    Fout in story.js? Herstel en opnieuw. Laat `<map>/CHECK.jpg` (één beeld per scène) beoordelen door `@beeldcontrole`:
    past elk beeld bij de zin, staat niets buiten beeld of over elkaar, is de tekst leesbaar? Herstel tot het goed is.
