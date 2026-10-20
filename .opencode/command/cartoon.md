@@ -21,6 +21,7 @@ Lees eerst `tools/cartoon/README.md` en het voorbeeld `2026-10-20-clone-yourself
 4. `python tools/cartoon/timing.py <map> --vox-lux ..\vox-lux-alteraqon` en `node tools/cartoon/render.mjs <map> --check`.
    Fout in story.js? Herstel en opnieuw. Laat `<map>/CHECK.jpg` (één beeld per scène) beoordelen door `@beeldcontrole`:
    past elk beeld bij de zin, staat niets buiten beeld of over elkaar, is de tekst leesbaar? Herstel tot het goed is.
+   (Bestaat `@beeldcontrole` niet: bekijk CHECK.jpg zelf en meld in het rapport "beelden niet door @beeldcontrole bekeken".)
 5. Stem + video op de ACHTERGROND (duurt minuten; je shell zou het afkappen):
    `Start-Process powershell -ArgumentList '-ExecutionPolicy','Bypass','-File','tools\cartoon\maak-video.ps1','-Map','<map>','-GeenOphalen','-GeenPush' -RedirectStandardOutput <map>\maak.log -RedirectStandardError <map>\maak.err -WindowStyle Hidden`
    Kijk elke minuut in `<map>\maak.log` tot er `KLAAR` staat (of FOUT: lees maak.err, herstel, start opnieuw;
