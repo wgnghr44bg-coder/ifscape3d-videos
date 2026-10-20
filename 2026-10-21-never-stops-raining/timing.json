@@ -1,0 +1,200 @@
+{
+ "source": "voice-times.tsv",
+ "total": 72.8,
+ "scenes": [
+  {
+   "id": "s1",
+   "start": 0.0,
+   "end": 7.94
+  },
+  {
+   "id": "s2",
+   "start": 7.94,
+   "end": 16.22
+  },
+  {
+   "id": "s3",
+   "start": 16.22,
+   "end": 23.44
+  },
+  {
+   "id": "s4",
+   "start": 23.44,
+   "end": 29.72
+  },
+  {
+   "id": "s5",
+   "start": 29.72,
+   "end": 35.94
+  },
+  {
+   "id": "s6",
+   "start": 35.94,
+   "end": 42.12
+  },
+  {
+   "id": "s7",
+   "start": 42.12,
+   "end": 52.42
+  },
+  {
+   "id": "s8",
+   "start": 52.42,
+   "end": 61.64
+  },
+  {
+   "id": "s9",
+   "start": 61.64,
+   "end": 72.8
+  }
+ ],
+ "rows": [
+  {
+   "start": 0.8,
+   "end": 5.02,
+   "cue": "s1",
+   "text": "Imagine your alarm rings, and it has been raining for three days.",
+   "scene": "s1"
+  },
+  {
+   "start": 5.92,
+   "end": 7.94,
+   "cue": "",
+   "text": "Not one second of sun.",
+   "scene": "s1"
+  },
+  {
+   "start": 7.94,
+   "end": 11.36,
+   "cue": "s2",
+   "text": "Today the water pushed past your front door.",
+   "scene": "s2"
+  },
+  {
+   "start": 12.26,
+   "end": 14.52,
+   "cue": "",
+   "text": "You block it with stacked towels.",
+   "scene": "s2"
+  },
+  {
+   "start": 16.22,
+   "end": 19.36,
+   "cue": "s3",
+   "text": "Outside, your street has become a little sea.",
+   "scene": "s3"
+  },
+  {
+   "start": 21.06,
+   "end": 23.44,
+   "cue": "",
+   "text": "Our blue car floats like an island.",
+   "scene": "s3"
+  },
+  {
+   "start": 23.44,
+   "end": 25.38,
+   "cue": "s4",
+   "text": "Ducks moved in for free.",
+   "scene": "s4"
+  },
+  {
+   "start": 26.28,
+   "end": 28.02,
+   "cue": "",
+   "text": "They swim where the road was.",
+   "scene": "s4"
+  },
+  {
+   "start": 29.72,
+   "end": 31.7,
+   "cue": "s5",
+   "text": "Upstairs the water follows.",
+   "scene": "s5"
+  },
+  {
+   "start": 32.6,
+   "end": 35.94,
+   "cue": "",
+   "text": "On day four, your family sleeps on the kitchen table.",
+   "scene": "s5"
+  },
+  {
+   "start": 35.94,
+   "end": 38.8,
+   "cue": "s6",
+   "text": "So you wait on the flat roof with the whole street.",
+   "scene": "s6"
+  },
+  {
+   "start": 39.7,
+   "end": 42.12,
+   "cue": "",
+   "text": "Waiting for the rain to take one breath.",
+   "scene": "s6"
+  },
+  {
+   "start": 42.12,
+   "end": 44.74,
+   "cue": "s7",
+   "text": "From up here you can see where the rain ends.",
+   "scene": "s7"
+  },
+  {
+   "start": 46.44,
+   "end": 47.94,
+   "cue": "",
+   "text": "A perfect circle.",
+   "scene": "s7"
+  },
+  {
+   "start": 49.64,
+   "end": 52.42,
+   "cue": "",
+   "text": "Outside it, the sun still shines.",
+   "scene": "s7"
+  },
+  {
+   "start": 52.42,
+   "end": 55.28,
+   "cue": "s8",
+   "text": "Yesterday, that circle was exactly your city.",
+   "scene": "s8"
+  },
+  {
+   "start": 56.18,
+   "end": 58.28,
+   "cue": "",
+   "text": "Today it is one street wider.",
+   "scene": "s8"
+  },
+  {
+   "start": 59.98,
+   "end": 61.64,
+   "cue": "",
+   "text": "The rain is growing.",
+   "scene": "s8"
+  },
+  {
+   "start": 61.64,
+   "end": 64.7,
+   "cue": "s9",
+   "text": "One street wider, every single day.",
+   "scene": "s9"
+  },
+  {
+   "start": 65.6,
+   "end": 66.98,
+   "cue": "",
+   "text": "Where does it stop?",
+   "scene": "s9"
+  },
+  {
+   "start": 68.68,
+   "end": 70.3,
+   "cue": "",
+   "text": "Follow for part two.",
+   "scene": "s9"
+  }
+ ]
+}
