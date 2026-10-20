@@ -94,6 +94,8 @@ const DEFS = `<defs><radialGradient id="hg" cx="40%" cy="35%" r="70%"><stop offs
 
 // Plekken: tekening van 1080 x 780, vloer vanaf y 520, poppetjes staan op y ≈ 680.
 const FLOOR = 680;
+// Vaste hoofdpersoon (keuze eigenaar 21 okt 2026: hoofd 3 'getint' + shirt F 't-shirt'). Gebruik: char({ ...HOOFDPERSOON, x, y, ... })
+const HOOFDPERSOON = { skin: '#d9a273', hair: 'kort', hairCol: '#2a1b12', top: 'tshirt', col: '#111111', top2: '#ffffff' };
 function machine(x, light = 0) {
   return `<g transform="translate(${x},380)"><rect x="-70" y="0" width="140" height="300" rx="60" fill="#6b7a8f"/><rect x="-48" y="30" width="96" height="170" rx="40" fill="#9fe8ff" opacity="${0.7 + 0.3 * light}"/>
   <circle cx="0" cy="240" r="20" fill="${light > 0.5 ? '#ff6a5a' : '#e0483e'}"/>${light ? `<circle cx="0" cy="240" r="${20 + 30 * light}" fill="#ff6a5a" opacity="${0.4 * (1 - light)}"/>` : ''}
