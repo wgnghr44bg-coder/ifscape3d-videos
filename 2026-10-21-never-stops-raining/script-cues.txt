@@ -1,22 +1,18 @@
 {img:s1}
-Imagine it starts raining. [pause] And it just never stops.
+Imagine your alarm rings, and it has been raining for three days. [pause] Not one second of sun.
 {img:s2}
-Day one is fun. [pause] You jump in every puddle in the park.
+Today the water pushed past your front door. [pause] You block it with stacked towels. [long pause]
 {img:s3}
-Day seven. [pause] School is closed, [pause] and your street is a river up to your knees.
+Outside, your street has become a little sea. [long pause] Our blue car floats like an island.
 {img:s4}
-Day thirty. [pause] Cars float away. [pause] Your neighbour rows to work in a little boat.
+Ducks moved in for free. [pause] They swim where the road was. [long pause]
 {img:s5}
-Water creeps in under the door. [pause] Your kitchen table becomes an island.
+Upstairs the water follows. [pause] On day four, your family sleeps on the kitchen table.
 {img:s6}
-Day one hundred. [pause] Your whole town is under water. [pause] Only the roofs stick out.
+So you wait on the flat roof with the whole street. [pause] Waiting for the rain to take one breath.
 {img:s7}
-You live on a roof now. [pause] You can't even remember what the sun looks like.
+From up here you can see where the rain ends. [long pause] A perfect circle. [long pause] Outside it, the sun still shines.
 {img:s8}
-But here's the crazy part. [long pause]
+Yesterday, that circle was exactly your city. [pause] Today it is one street wider. [long pause] The rain is growing.
 {img:s9}
-This already happened. [pause] About two hundred thirty million years ago, [pause] Earth stayed wet for up to two million years.
-{img:s10}
-And when it finally dried out… [pause] the dinosaurs got their chance.
-{img:s11}
-Follow for part two.
+One street wider, every single day. [pause] Where does it stop? [long pause] Follow for part two.

@@ -1,231 +1,200 @@
 {
- "source": "schatting",
- "total": 66.7,
+ "source": "voice-times.tsv",
+ "total": 72.8,
  "scenes": [
   {
    "id": "s1",
    "start": 0.0,
-   "end": 5.16
+   "end": 7.94
   },
   {
    "id": "s2",
-   "start": 5.16,
-   "end": 10.68
+   "start": 7.94,
+   "end": 16.22
   },
   {
    "id": "s3",
-   "start": 10.68,
-   "end": 18.25
+   "start": 16.22,
+   "end": 23.44
   },
   {
    "id": "s4",
-   "start": 18.25,
-   "end": 25.43
+   "start": 23.44,
+   "end": 29.72
   },
   {
    "id": "s5",
-   "start": 25.43,
-   "end": 30.95
+   "start": 29.72,
+   "end": 35.94
   },
   {
    "id": "s6",
-   "start": 30.95,
-   "end": 38.13
+   "start": 35.94,
+   "end": 42.12
   },
   {
    "id": "s7",
-   "start": 38.13,
-   "end": 44.8
+   "start": 42.12,
+   "end": 52.42
   },
   {
    "id": "s8",
-   "start": 44.8,
-   "end": 48.42
+   "start": 52.42,
+   "end": 61.64
   },
   {
    "id": "s9",
-   "start": 48.42,
-   "end": 57.53
-  },
-  {
-   "id": "s10",
-   "start": 57.53,
-   "end": 62.66
-  },
-  {
-   "id": "s11",
-   "start": 62.66,
-   "end": 66.7
+   "start": 61.64,
+   "end": 72.8
   }
  ],
  "rows": [
   {
    "start": 0.8,
-   "end": 2.34,
+   "end": 5.02,
    "cue": "s1",
-   "text": "Imagine it starts raining.",
+   "text": "Imagine your alarm rings, and it has been raining for three days.",
    "scene": "s1"
   },
   {
-   "start": 3.24,
-   "end": 5.16,
+   "start": 5.92,
+   "end": 7.94,
    "cue": "",
-   "text": "And it just never stops.",
+   "text": "Not one second of sun.",
    "scene": "s1"
   },
   {
-   "start": 5.16,
-   "end": 6.7,
+   "start": 7.94,
+   "end": 11.36,
    "cue": "s2",
-   "text": "Day one is fun.",
+   "text": "Today the water pushed past your front door.",
    "scene": "s2"
   },
   {
-   "start": 7.6,
-   "end": 10.68,
+   "start": 12.26,
+   "end": 14.52,
    "cue": "",
-   "text": "You jump in every puddle in the park.",
+   "text": "You block it with stacked towels.",
    "scene": "s2"
   },
   {
-   "start": 10.68,
-   "end": 11.45,
+   "start": 16.22,
+   "end": 19.36,
    "cue": "s3",
-   "text": "Day seven.",
+   "text": "Outside, your street has become a little sea.",
    "scene": "s3"
   },
   {
-   "start": 12.35,
-   "end": 13.5,
+   "start": 21.06,
+   "end": 23.44,
    "cue": "",
-   "text": "School is closed,",
+   "text": "Our blue car floats like an island.",
    "scene": "s3"
   },
   {
-   "start": 14.4,
-   "end": 18.25,
-   "cue": "",
-   "text": "and your street is a river up to your knees.",
-   "scene": "s3"
-  },
-  {
-   "start": 18.25,
-   "end": 19.02,
+   "start": 23.44,
+   "end": 25.38,
    "cue": "s4",
-   "text": "Day thirty.",
+   "text": "Ducks moved in for free.",
    "scene": "s4"
   },
   {
-   "start": 19.92,
-   "end": 21.07,
+   "start": 26.28,
+   "end": 28.02,
    "cue": "",
-   "text": "Cars float away.",
+   "text": "They swim where the road was.",
    "scene": "s4"
   },
   {
-   "start": 21.97,
-   "end": 25.43,
-   "cue": "",
-   "text": "Your neighbour rows to work in a little boat.",
-   "scene": "s4"
-  },
-  {
-   "start": 25.43,
-   "end": 27.74,
+   "start": 29.72,
+   "end": 31.7,
    "cue": "s5",
-   "text": "Water creeps in under the door.",
+   "text": "Upstairs the water follows.",
    "scene": "s5"
   },
   {
-   "start": 28.64,
-   "end": 30.95,
+   "start": 32.6,
+   "end": 35.94,
    "cue": "",
-   "text": "Your kitchen table becomes an island.",
+   "text": "On day four, your family sleeps on the kitchen table.",
    "scene": "s5"
   },
   {
-   "start": 30.95,
-   "end": 32.1,
+   "start": 35.94,
+   "end": 38.8,
    "cue": "s6",
-   "text": "Day one hundred.",
+   "text": "So you wait on the flat roof with the whole street.",
    "scene": "s6"
   },
   {
-   "start": 33.0,
-   "end": 35.31,
+   "start": 39.7,
+   "end": 42.12,
    "cue": "",
-   "text": "Your whole town is under water.",
+   "text": "Waiting for the rain to take one breath.",
    "scene": "s6"
   },
   {
-   "start": 36.21,
-   "end": 38.13,
-   "cue": "",
-   "text": "Only the roofs stick out.",
-   "scene": "s6"
-  },
-  {
-   "start": 38.13,
-   "end": 40.44,
+   "start": 42.12,
+   "end": 44.74,
    "cue": "s7",
-   "text": "You live on a roof now.",
+   "text": "From up here you can see where the rain ends.",
    "scene": "s7"
   },
   {
-   "start": 41.34,
-   "end": 44.8,
+   "start": 46.44,
+   "end": 47.94,
    "cue": "",
-   "text": "You can't even remember what the sun looks like.",
+   "text": "A perfect circle.",
    "scene": "s7"
   },
   {
-   "start": 44.8,
-   "end": 46.72,
+   "start": 49.64,
+   "end": 52.42,
+   "cue": "",
+   "text": "Outside it, the sun still shines.",
+   "scene": "s7"
+  },
+  {
+   "start": 52.42,
+   "end": 55.28,
    "cue": "s8",
-   "text": "But here's the crazy part.",
+   "text": "Yesterday, that circle was exactly your city.",
    "scene": "s8"
   },
   {
-   "start": 48.42,
-   "end": 49.58,
+   "start": 56.18,
+   "end": 58.28,
+   "cue": "",
+   "text": "Today it is one street wider.",
+   "scene": "s8"
+  },
+  {
+   "start": 59.98,
+   "end": 61.64,
+   "cue": "",
+   "text": "The rain is growing.",
+   "scene": "s8"
+  },
+  {
+   "start": 61.64,
+   "end": 64.7,
    "cue": "s9",
-   "text": "This already happened.",
+   "text": "One street wider, every single day.",
    "scene": "s9"
   },
   {
-   "start": 50.48,
-   "end": 53.17,
+   "start": 65.6,
+   "end": 66.98,
    "cue": "",
-   "text": "About two hundred thirty million years ago,",
+   "text": "Where does it stop?",
    "scene": "s9"
   },
   {
-   "start": 54.07,
-   "end": 57.53,
+   "start": 68.68,
+   "end": 70.3,
    "cue": "",
-   "text": "Earth stayed wet for up to two million years.",
-   "scene": "s9"
-  },
-  {
-   "start": 57.53,
-   "end": 59.84,
-   "cue": "s10",
-   "text": "And when it finally dried out\u2026",
-   "scene": "s10"
-  },
-  {
-   "start": 60.74,
-   "end": 62.66,
-   "cue": "",
-   "text": "the dinosaurs got their chance.",
-   "scene": "s10"
-  },
-  {
-   "start": 62.66,
-   "end": 64.2,
-   "cue": "s11",
    "text": "Follow for part two.",
-   "scene": "s11"
+   "scene": "s9"
   }
  ]
 }
