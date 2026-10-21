@@ -1,0 +1,231 @@
+{
+ "source": "voice-times.tsv",
+ "total": 63.02,
+ "scenes": [
+  {
+   "id": "s1",
+   "start": 0.0,
+   "end": 5.5
+  },
+  {
+   "id": "s2",
+   "start": 5.5,
+   "end": 10.56
+  },
+  {
+   "id": "s3",
+   "start": 10.56,
+   "end": 17.18
+  },
+  {
+   "id": "s4",
+   "start": 17.18,
+   "end": 24.48
+  },
+  {
+   "id": "s5",
+   "start": 24.48,
+   "end": 30.1
+  },
+  {
+   "id": "s6",
+   "start": 30.1,
+   "end": 36.84
+  },
+  {
+   "id": "s7",
+   "start": 36.84,
+   "end": 42.02
+  },
+  {
+   "id": "s8",
+   "start": 42.02,
+   "end": 45.62
+  },
+  {
+   "id": "s9",
+   "start": 45.62,
+   "end": 54.44
+  },
+  {
+   "id": "s10",
+   "start": 54.44,
+   "end": 59.1
+  },
+  {
+   "id": "s11",
+   "start": 59.1,
+   "end": 63.02
+  }
+ ],
+ "rows": [
+  {
+   "start": 0.8,
+   "end": 2.94,
+   "cue": "s1",
+   "text": "Imagine it starts raining.",
+   "scene": "s1"
+  },
+  {
+   "start": 3.84,
+   "end": 5.5,
+   "cue": "",
+   "text": "And it just never stops.",
+   "scene": "s1"
+  },
+  {
+   "start": 5.5,
+   "end": 7.16,
+   "cue": "s2",
+   "text": "Day one is fun.",
+   "scene": "s2"
+  },
+  {
+   "start": 8.06,
+   "end": 10.56,
+   "cue": "",
+   "text": "You jump in every puddle in the park.",
+   "scene": "s2"
+  },
+  {
+   "start": 10.56,
+   "end": 11.18,
+   "cue": "s3",
+   "text": "Day seven.",
+   "scene": "s3"
+  },
+  {
+   "start": 12.08,
+   "end": 13.62,
+   "cue": "",
+   "text": "School is closed,",
+   "scene": "s3"
+  },
+  {
+   "start": 14.52,
+   "end": 17.18,
+   "cue": "",
+   "text": "and your street is a river up to your knees.",
+   "scene": "s3"
+  },
+  {
+   "start": 17.18,
+   "end": 18.16,
+   "cue": "s4",
+   "text": "Day thirty.",
+   "scene": "s4"
+  },
+  {
+   "start": 19.06,
+   "end": 20.76,
+   "cue": "",
+   "text": "Cars float away.",
+   "scene": "s4"
+  },
+  {
+   "start": 21.66,
+   "end": 24.48,
+   "cue": "",
+   "text": "Your neighbour rows to work in a little boat.",
+   "scene": "s4"
+  },
+  {
+   "start": 24.48,
+   "end": 26.62,
+   "cue": "s5",
+   "text": "Water creeps in under the door.",
+   "scene": "s5"
+  },
+  {
+   "start": 27.52,
+   "end": 30.1,
+   "cue": "",
+   "text": "Your kitchen table becomes an island.",
+   "scene": "s5"
+  },
+  {
+   "start": 30.1,
+   "end": 31.2,
+   "cue": "s6",
+   "text": "Day one hundred.",
+   "scene": "s6"
+  },
+  {
+   "start": 32.1,
+   "end": 34.16,
+   "cue": "",
+   "text": "Your whole town is under water.",
+   "scene": "s6"
+  },
+  {
+   "start": 35.06,
+   "end": 36.84,
+   "cue": "",
+   "text": "Only the roofs stick out.",
+   "scene": "s6"
+  },
+  {
+   "start": 36.84,
+   "end": 38.26,
+   "cue": "s7",
+   "text": "You live on a roof now.",
+   "scene": "s7"
+  },
+  {
+   "start": 39.16,
+   "end": 42.02,
+   "cue": "",
+   "text": "You can't even remember what the sun looks like.",
+   "scene": "s7"
+  },
+  {
+   "start": 42.02,
+   "end": 43.92,
+   "cue": "s8",
+   "text": "But here's the crazy part.",
+   "scene": "s8"
+  },
+  {
+   "start": 45.62,
+   "end": 47.08,
+   "cue": "s9",
+   "text": "This already happened.",
+   "scene": "s9"
+  },
+  {
+   "start": 47.98,
+   "end": 50.6,
+   "cue": "",
+   "text": "About two hundred thirty million years ago,",
+   "scene": "s9"
+  },
+  {
+   "start": 51.5,
+   "end": 54.44,
+   "cue": "",
+   "text": "Earth stayed wet for up to two million years.",
+   "scene": "s9"
+  },
+  {
+   "start": 54.44,
+   "end": 56.22,
+   "cue": "s10",
+   "text": "And when it finally dried out\u2026",
+   "scene": "s10"
+  },
+  {
+   "start": 57.12,
+   "end": 59.1,
+   "cue": "",
+   "text": "the dinosaurs got their chance.",
+   "scene": "s10"
+  },
+  {
+   "start": 59.1,
+   "end": 60.52,
+   "cue": "s11",
+   "text": "Follow for part two.",
+   "scene": "s11"
+  }
+ ]
+}
