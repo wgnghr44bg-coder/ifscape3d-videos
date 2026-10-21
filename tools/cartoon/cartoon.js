@@ -43,6 +43,7 @@ function hairFront(h, c) {
 }
 function prop(p) {
   if (p === 'broom') return `<g transform="translate(41,-130)"><path d="M0,-70 L0,120" stroke="#9b6b45" stroke-width="6"/><path d="M-18,120 L18,120 L24,150 L-24,150Z" fill="#e8c35a"/></g>`;
+  if (p === 'umbrella') return `<g transform="translate(41,-130)"><path d="M0,0 L0,-250" stroke="#333" stroke-width="5"/><path d="M0,8 q0,12 -12,10" stroke="#333" stroke-width="5" fill="none"/><path d="M-110,-240 Q0,-330 110,-240 Q82,-252 55,-240 Q28,-254 0,-240 Q-28,-254 -55,-240 Q-82,-252 -110,-240Z" fill="#e0483e"/></g>`;
   if (p === 'phone') return `<rect x="34" y="-150" width="16" height="28" rx="3" fill="#222"/>`;
   return '';
 }
@@ -212,12 +213,43 @@ function place({ back = 'day', wall = false, ground = 'grass', items = [], dark 
   let g = `<rect width="1080" height="780" fill="${wall ? (BG[back] ? '#f6e7d2' : back) : (BG[back] || back)}"/>`;
   if (back === 'sunset' && !wall) g += `<rect width="1080" height="300" fill="#e76f51" opacity=".5"/>`;
   if ((back === 'night' || back === 'space') && !wall) g += ITEMS.stars();
-  const [behind, front] = [items.filter(i => !!FRONT.includes(i[0])), items.filter(i => FRONT.includes(i[0]))];
+  const [behind, front] = [items.filter(i => !FRONT.includes(i[0])), items.filter(i => FRONT.includes(i[0]))];
   for (const [n, ...a] of behind) g += ITEMS[n] ? ITEMS[n](...a) : '';
   g += GROUNDS[ground] || GROUNDS.grass;
   for (const [n, ...a] of front) g += ITEMS[n] ? ITEMS[n](...a) : '';
   if (dark || back === 'night') g += `<rect width="1080" height="780" fill="#0a1030" opacity="${back === 'night' ? 0.3 : 0.5}"/>`;
   return g;
+}
+// Weer en water. rain(T, k): vallende regen over de hele plek (k = 0..1 hoe hard). Teken hem als LAATSTE.
+function rain(T, k = 1, n = 90) {
+  let o = `<rect width="1080" height="780" fill="#5a6b7c" opacity="${0.18 * k}"/><g stroke="#d7ecff" stroke-width="3" stroke-linecap="round" opacity="${0.75 * k}">`;
+  for (let i = 0; i < n; i++) { const sp = 900 + (i % 4) * 120, x = (i * 137) % 1120 - 20, y = ((i * 71 + T * sp) % 900) - 100; o += `<path d="M${x},${y} l-8,32"/>`; }
+  return o + '</g>';
+}
+// flood(level, T): water vanaf hoogte `level` (vloer = 520, knie bij FLOOR ≈ 600, alles onder = 300). Teken NA de poppetjes.
+function flood(level, T = 0) {
+  let w = `M0,${level}`; for (let x = 0; x <= 1080; x += 60) w += ` Q${x + 30},${level - 10 + Math.sin(T * 3 + x / 90) * 6} ${x + 60},${level}`;
+  return `<path d="${w} L1080,780 L0,780Z" fill="#3a8fc9" opacity=".78"/><path d="${w}" stroke="#bfe3ff" stroke-width="5" fill="none"/>`;
+}
+// boat(x, y): bootje; y = waterlijn. Zet een poppetje erin met char({x, y: y + 75, s: 0.9, ...}) en teken de boot DAARNA.
+function boat(x, y, c = '#9b6b45') {
+  return `<g transform="translate(${x},${y})"><path d="M-130,-30 L130,-30 L95,25 L-95,25Z" fill="${c}"/><rect x="-130" y="-38" width="260" height="12" rx="5" fill="${shade(c)}"/></g>`;
+}
+// dino(x, y, s, c, walk): platte dinosaurus die op y staat, kijkt naar rechts (flip met s < 0).
+function dino(x, y, s = 1, c = '#4caf6a', walk = 0) {
+  const a = walk ? Math.sin(walk) * 18 : 0, sh = shade(c);
+  return `<g transform="translate(${x},${y}) scale(${s},${Math.abs(s)})">
+  <g transform="rotate(${a} -20 -80)"><rect x="-30" y="-85" width="22" height="85" rx="9" fill="${sh}"/></g>
+  <g transform="rotate(${-a} 20 -80)"><rect x="10" y="-85" width="22" height="85" rx="9" fill="${sh}"/></g>
+  <path d="M-50,-120 Q-150,-140 -210,-95 Q-140,-95 -50,-70Z" fill="${c}"/>
+  <ellipse cx="0" cy="-105" rx="80" ry="45" fill="${c}"/><path d="M40,-130 Q70,-190 90,-200 L120,-170 Q80,-150 70,-110Z" fill="${c}"/>
+  <ellipse cx="115" cy="-200" rx="45" ry="28" fill="${c}"/><circle cx="125" cy="-208" r="7" fill="#fff"/><circle cx="127" cy="-208" r="3.5" fill="#111"/>
+  <path d="M135,-188 Q148,-186 156,-192" stroke="#111" stroke-width="3" fill="none"/><path d="M60,-110 L80,-85" stroke="${sh}" stroke-width="9" stroke-linecap="round"/>
+  ${[-40, -10, 20].map(d => `<path d="M${d},-148 l10,-16 l10,16Z" fill="${sh}"/>`).join('')}</g>`;
+}
+// tag(txt): label linksboven in de plek (bv. 'DAY 7').
+function tag(txt, k = 1) {
+  return `<g transform="translate(30,30) scale(${k})"><rect width="${txt.length * 34 + 50}" height="84" rx="16" fill="#fff"/><text x="25" y="60" font-family="Inter Display,DejaVu Sans" font-weight="900" font-size="56" fill="#111">${txt}</text></g>`;
 }
 function desk(x) { return `<g transform="translate(${x},600)"><rect x="-90" y="0" width="180" height="22" fill="#b07a4a"/><rect x="-80" y="22" width="12" height="90" fill="#7a4f33"/><rect x="68" y="22" width="12" height="90" fill="#7a4f33"/></g>`; }
 function heart(x, y, s = 1, o = 1) { return `<path transform="translate(${x},${y}) scale(${s})" opacity="${o}" d="M0,10 C-30,-15 -15,-35 0,-18 C15,-35 30,-15 0,10Z" fill="#ff4d6d"/>`; }

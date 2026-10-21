@@ -1,0 +1,5 @@
+- Situatie: het begint te regenen en het stopt nooit meer; het water stijgt elke dag.
+- Momenten die alleen bij regen kunnen: springen in plassen; de straat wordt een rivier tot je knieën; auto's drijven weg en de buurman roeit naar zijn werk; de keukentafel wordt een eiland; alleen de daken steken nog boven het water uit.
+- Plekken (bouwdoos): grijze straat, park met plassen, ondergelopen straat, keuken, dorp onder water, dak 's nachts, oertijd-moeras, droog land met dinosaurussen.
+- Twist (echt): de Carnian Pluvial Episode, ±234–232 miljoen jaar geleden, 1–2 miljoen jaar heel nat (Wikipedia; Dal Corso e.a. 2020). Ná die natte periode werd het droog en kregen de dinosaurussen hun kans (Mike Benton).
+- Einde: "Follow for part two."
