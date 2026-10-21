@@ -32,6 +32,8 @@ Daarna `timing.py` en `render.mjs` opnieuw: dan lopen beeld en ondertitels preci
   `space()`, `beach()`, plus `desk`, `machine`, `heart`, `word` (POOF!, A+),
   `bubble` (tekstballon).
 - Geluidjes (gratis, ffmpeg): `poof`, `ding`, `click`, `boom` via `STORY.sfx`.
+- Omgevingsgeluid (gratis, ffmpeg): `rain`, `storm`, `water`, `wind`, `crickets`, `room` via `STORY.ambient`.
+  `render.mjs <map> --audio` maakt alleen het geluid opnieuw (snel, beeld blijft).
 Nodig: Playwright (Chromium) en ffmpeg – staan al in de cloudsessie.
 
 ## Op de pc (Windows) – alles in één keer

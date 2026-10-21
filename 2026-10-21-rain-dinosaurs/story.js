@@ -12,6 +12,9 @@ const STORY = {
   title: ['What IF It Never', 'Stopped Raining?'],
   part: 'PART 1',
   sfx: [{ scene: 's8', at: 0, type: 'boom' }, { scene: 's10', frac: 0.5, type: 'ding' }],
+  ambient: [{ from: 's1', to: 's2', type: 'rain', vol: 0.6, at: 0.8 }, { from: 's3', to: 's7', type: 'storm', vol: 0.7 },
+            { from: 's3', to: 's7', type: 'water', vol: 0.6 }, { from: 's7', to: 's8', type: 'crickets', vol: 0.3 },
+            { from: 's9', to: 's9', type: 'rain', vol: 0.6 }, { from: 's10', to: 's11', type: 'wind', vol: 0.5 }],
   scenes: {
     s1(t, d, T) {
       const k = clamp01((t - 0.8) / 1.5);
