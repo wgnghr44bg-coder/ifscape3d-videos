@@ -34,6 +34,8 @@ Lees eerst `tools/cartoon/README.md` en het voorbeeld `2026-10-20-clone-yourself
      board(x,tekst), rug(x,kleur), rock(x), sign(x,tekst), text(x,y,tekst,kleur).
    Extra: `rain(T, k)` (regen, als laatste tekenen), `flood(niveau, T)` (water; vloer 520, knie ≈ 600; na de poppetjes),
    `boat(x, y)`, `dino(x, y, s, kleur, walk)`, `tag('DAY 7')` (label linksboven), `hold: 'umbrella'` bij char.
+   OMGEVINGSGELUID (verplicht bij buitenscènes): `STORY.ambient = [{ from: 's1', to: 's4', type: 'rain', vol: 0.6 }]`;
+   types: rain, storm, water, wind, crickets (nacht), room (stil binnen). Effecten: `STORY.sfx` (poof, ding, click, boom).
    Geef eigen functies in story.js een naam die NIET al in cartoon.js staat (dus niet `street`, `park`, `place` …),
    anders laadt story.js niet. render.mjs meldt zo'n fout als "FOUT in story.js".
    Ontbreekt er iets wat het script noemt? Voeg het toe als eigen functie in story.js in dezelfde platte stijl.
