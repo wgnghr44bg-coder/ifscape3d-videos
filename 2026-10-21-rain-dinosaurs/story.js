@@ -14,7 +14,7 @@ const STORY = {
   sfx: [{ scene: 's8', at: 0, type: 'boom' }, { scene: 's10', frac: 0.5, type: 'ding' }],
   ambient: [{ from: 's1', to: 's2', type: 'rain', vol: 0.6, at: 0.8 }, { from: 's3', to: 's7', type: 'storm', vol: 0.7 },
             { from: 's3', to: 's7', type: 'water', vol: 0.6 }, { from: 's7', to: 's8', type: 'crickets', vol: 0.3 },
-            { from: 's9', to: 's9', type: 'rain', vol: 0.6 }, { from: 's10', to: 's11', type: 'wind', vol: 0.5 }],
+            { from: 's9', to: 's9', type: 'rain', vol: 0.6 }, { from: 's10', to: 's10', type: 'wind', vol: 0.5 }],
   scenes: {
     s1(t, d, T) {
       const k = clamp01((t - 0.8) / 1.5);
@@ -72,12 +72,6 @@ const STORY = {
       return place({ back: 'day', ground: 'sand', items: [['sun', 880, 120], ['mountain', 300, '#c9a37a'], ['rock', 900]] }) +
         dino(lerp(100, 380, t / d), FLOOR, 1, '#4caf6a', T * 7) + dino(lerp(-200, 120, t / d), FLOOR + 30, 0.7, '#e2b45a', T * 8) +
         dino(lerp(600, 760, t / d), FLOOR - 20, 0.6, '#d0704a', T * 7) + rain(T, 1 - k);
-    },
-    s11(t, d, T) {
-      const k = clamp01(t / 0.3);
-      return STORY.scenes.s10(6, 6, T) + `<rect width="1080" height="780" fill="#000" opacity=".55"/>` +
-        `<g transform="translate(540,390) scale(${0.5 + 0.5 * k})"><rect x="-260" y="-80" width="520" height="160" rx="26" fill="#fff"/>
-         <text x="0" y="38" text-anchor="middle" font-family="Inter Display,Arial Black,DejaVu Sans,Arial" font-weight="900" font-style="italic" font-size="110" fill="#111">PART 2?</text></g>`;
     },
   },
 };
