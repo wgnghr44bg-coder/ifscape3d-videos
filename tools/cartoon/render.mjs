@@ -10,6 +10,7 @@ const dir = path.resolve(process.argv[2]), onlyCheck = process.argv.includes('--
 const timing = JSON.parse(fs.readFileSync(path.join(dir, 'timing.json'), 'utf8'));
 fs.mkdirSync(path.join(dir, 'build'), { recursive: true });
 const b = await chromium.launch(); const p = await b.newPage({ viewport: { width: 1080, height: 1920 } });
+p.on('pageerror', e => { console.error('FOUT in story.js / cartoon.js:', e.message); process.exitCode = 1; });
 await p.goto(pathToFileURL(path.join(here, 'cartoon.html')).href);
 await p.addScriptTag({ path: path.join(dir, 'story.js') });
 await p.evaluate(t => { window.TIMING = t; }, timing);

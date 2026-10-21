@@ -32,6 +32,10 @@ Lees eerst `tools/cartoon/README.md` en het voorbeeld `2026-10-20-clone-yourself
      building(x,kleur,hoogte), house(x,kleur), tree(x), pine(x), bush(x), fence(x,breedte), lamp(x), car(x,kleur),
      window(x,y), door(x), picture(x,y), shelf(x,y), table(x), sofa(x,kleur), bed(x), tv(x), fridge(x), counter(x),
      board(x,tekst), rug(x,kleur), rock(x), sign(x,tekst), text(x,y,tekst,kleur).
+   Extra: `rain(T, k)` (regen, als laatste tekenen), `flood(niveau, T)` (water; vloer 520, knie ≈ 600; na de poppetjes),
+   `boat(x, y)`, `dino(x, y, s, kleur, walk)`, `tag('DAY 7')` (label linksboven), `hold: 'umbrella'` bij char.
+   Geef eigen functies in story.js een naam die NIET al in cartoon.js staat (dus niet `street`, `park`, `place` …),
+   anders laadt story.js niet. render.mjs meldt zo'n fout als "FOUT in story.js".
    Ontbreekt er iets wat het script noemt? Voeg het toe als eigen functie in story.js in dezelfde platte stijl.
    Wat de stem in een scène noemt, moet in die scène te zien zijn. Pas `title` aan (2 regels, elk ≤ 24 tekens).
    Controle: `python tools/cartoon/check_story.py <map>` tot er `VERHAAL OK` staat. Nooit omzeilen: herschrijf het verhaal.
