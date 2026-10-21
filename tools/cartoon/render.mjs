@@ -61,7 +61,7 @@ if (hasVoice) { args.push('-i', voice); parts.push(`[${n++}:a]volume=1.0[a0]`); 
 sfx.forEach((x, i) => { args.push('-f', 'lavfi', '-i', SFX[x.type]); const ms = Math.round(x.t * 1000); parts.push(`[${n++}:a]adelay=${ms}|${ms},volume=0.8[s${i}]`); });
 amb.forEach((x, i) => { const d = x.d.toFixed(2), ms = Math.round(x.t * 1000);
   args.push('-f', 'lavfi', '-i', AMB[x.type](d));
-  parts.push(`[${n++}:a]afade=t=in:d=1.2,afade=t=out:st=${Math.max(0, x.d - 1.2).toFixed(2)}:d=1.2,adelay=${ms}|${ms},volume=${x.vol * (hasVoice ? 0.35 : 0.6)}[m${i}]`); });
+  parts.push(`[${n++}:a]afade=t=in:d=1.2,afade=t=out:st=${Math.max(0, x.d - 1.2).toFixed(2)}:d=1.2,adelay=${ms}|${ms},volume=${x.vol * (hasVoice ? 0.12 : 0.4)}[m${i}]`); });
 const labels = (hasVoice ? ['[a0]'] : []).concat(sfx.map((_, i) => `[s${i}]`), amb.map((_, i) => `[m${i}]`));
 parts.push(`${labels.join('')}amix=inputs=${labels.length}:normalize=0:duration=longest,apad,atrim=0:${timing.total}[a]`);
 const out = path.join(dir, 'build', 'video.mp4');

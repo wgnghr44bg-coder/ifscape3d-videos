@@ -1,6 +1,6 @@
 {
  "source": "voice-times.tsv",
- "total": 63.02,
+ "total": 61.6,
  "scenes": [
   {
    "id": "s1",
@@ -50,12 +50,7 @@
   {
    "id": "s10",
    "start": 54.44,
-   "end": 59.1
-  },
-  {
-   "id": "s11",
-   "start": 59.1,
-   "end": 63.02
+   "end": 61.6
   }
  ],
  "rows": [
@@ -219,13 +214,6 @@
    "cue": "",
    "text": "the dinosaurs got their chance.",
    "scene": "s10"
-  },
-  {
-   "start": 59.1,
-   "end": 60.52,
-   "cue": "s11",
-   "text": "Follow for part two.",
-   "scene": "s11"
   }
  ]
 }

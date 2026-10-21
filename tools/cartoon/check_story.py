@@ -9,9 +9,9 @@ Gebruik: python3 tools/cartoon/check_story.py <map>   → eindigt op "VERHAAL OK
 import glob, os, re, sys
 
 KAL = ["one word on it", "at first", "walks right past", "a plus", "better grades", "goes to school for you",
-       "it takes your room", "you press it", "you drink it", "and suddenly"]
+       "it takes your room", "you press it", "you drink it", "and suddenly", "part two"]
 PLEKKEN = ["bedroom", "classroom", "street", "park", "kitchen", "space", "beach"]
-VAST = {"follow for part two"}
+VAST = set()
 
 
 def tekst(map_):

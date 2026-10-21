@@ -18,7 +18,7 @@ Lees eerst `tools/cartoon/README.md` en het voorbeeld `2026-10-20-clone-yourself
    VERBODEN (komt uit het eerste voorbeeld): een voorwerp met "één woord erop", "at first it's amazing", school/cijfers/A+,
    mama die langs je loopt, "you are the copy". Kopieer GEEN zinnen of scènes uit andere mappen; alleen de opbouw van story.js.
    `script-cues.txt` (Engels): 9–12 scènes `{img:s1}` …, elk 1–2 korte zinnen met `[pause]` / `[long pause]`,
-   100–140 woorden totaal (≈60–75 s). Laatste zin mag `Follow for part two.` zijn. Getallen voluit ("two", niet "2").
+   100–140 woorden totaal (≈60–75 s). GEEN "part two"-einde en geen PART 2-scène (eigenaar 21 okt 2026). Getallen voluit ("two", niet "2").
 3. `story.js`: kopieer de OPBOUW van `2026-10-20-clone-yourself/story.js` (niet de scènes). Gebruik functies uit
    `tools/cartoon/cartoon.js` (`char`, de plekken hierboven, `desk`, `machine`, `heart`, `word`, `bubble`, `lerp`,
    `clamp01`, `blinkAt`, `FLOOR`). Elke `{img:sN}` heeft precies één functie `sN(t, d, T)` in `STORY.scenes`.
