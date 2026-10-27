@@ -8,3 +8,4 @@
 - Standaardstem: Chatterbox als bm_george, rustig (gratis, pc): `vox-lux/tools/comfy/make_voice_local.py <map>`. xAI-stem alleen op verzoek.
 - Craft-apps (FilmCraft, EffectCraft, …) worden bij elke sessie geïnstalleerd (`tools/install-craft.sh`);
   uitleg en voorbeelden: `vox-lux/tools/craft/README.md`.
+- YouTube-titel, beschrijving en tags van What If-video's: altijd volgens `YOUTUBE-WHATIF.md` (zelfde stijl als de rest van het kanaal).
