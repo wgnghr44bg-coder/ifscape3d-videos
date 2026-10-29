@@ -10,6 +10,7 @@ Het volledige overzicht staat in repo **vox-lux**: `SOFTWARE.md`. Kort voor deze
 | **Stem (standaard)** | Chatterbox als bm_george, rustig (pc) | `vox-lux/tools/comfy/make_voice_local.py` | Nee |
 | Stem (alleen op verzoek) | xAI Atlas | `vox-lux/tools/xai_voiceover.py` | **Ja – eerst vragen** |
 | Montage / effecten | Craft-apps (FilmCraft, EffectCraft, …) | `tools/install-craft.sh`, uitleg `vox-lux/tools/craft/README.md` | Nee |
+| Websites uitlezen (scrapen) | **Scrapling** (`from scrapling.fetchers import Fetcher`) – automatisch geïnstalleerd | https://github.com/D4Vinci/Scrapling | Nee |
 
 Werkwijze: still → ComfyUI (Wan) laat hem bewegen op de pc → clipcontrole → montage met de Craft-apps.
 Stills en clips staan in .gitignore: `git add -f`.
